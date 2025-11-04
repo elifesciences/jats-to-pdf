@@ -21,17 +21,17 @@ const { fileSync } = tmp;
 const app = express();
 const port = 3000;
 
-const XSL_STYLESHEET = path.join('xsl', 'jats-to-html.xsl');
-const COMPILED_SEF = path.join('xsl', 'jats-to-html.sef.json');
+const XSL_STYLESHEET = join('xsl', 'jats-to-html.xsl');
+const COMPILED_SEF = join('xsl', 'jats-to-html.sef.json');
 let COMPILED_STYLESHEET = null;
 
 const ADDITIONAL_SCRIPTS = [
-    path.join('paged-js', 'js', 'csstree.js'),
-    path.join('paged-js', 'js', 'elife-custom-scripts.js'),
-    path.join('paged-js', 'js', 'pagedjs-fill-page.js'),
-    path.join('paged-js', 'js', 'pagedjs-plugin-baseline.js'),
+    join('paged-js', 'js', 'csstree.js'),
+    join('paged-js', 'js', 'elife-custom-scripts.js'),
+    join('paged-js', 'js', 'pagedjs-fill-page.js'),
+    join('paged-js', 'js', 'pagedjs-plugin-baseline.js'),
 ];
-const MAIN_CSS = path.join('paged-js', 'print.css');
+const MAIN_CSS = join('paged-js', 'print.css');
 
 async function initializeAssets() {
     const requiredFiles = [...ADDITIONAL_SCRIPTS, ...MAIN_CSS];
@@ -64,7 +64,7 @@ async function initializeAssets() {
 
 function compileXsl() {
     return new Promise((resolve, reject) => {
-        const cliPath = path.join(__dirname, 'node_modules', '.bin', 'xslt3');
+        const cliPath = join(__dirname, 'node_modules', '.bin', 'xslt3');
         const command = `${cliPath} -xsl:${XSL_STYLESHEET} -export:${COMPILED_SEF} -nogo`;
 
         exec(command, (error, stdout, stderr) => { 
@@ -169,7 +169,7 @@ app.post('/', async (req, res) => {
         tempXML = fileSync({ prefix: 'input-', postfix: '.xml', keep: false }).name;
         const pagedJsPath = join(__dirname, 'paged-js');
         const jobId = Math.random().toString(36).substring(2, 8); 
-        tempHTML = path.join(pagedJsPath, `output-${jobId}.html`); 
+        tempHTML = join(pagedJsPath, `output-${jobId}.html`); 
         tempPDF = fileSync({ prefix: 'final-', postfix: '.pdf', keep: true }).name;
 
         console.log("Starting XSLT transformation...");
