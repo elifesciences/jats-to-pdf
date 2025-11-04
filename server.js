@@ -8,7 +8,7 @@ to return a PDF
 
 const express = require('express');
 const { exec } = require('child_process');
-const fs = require('fs'); // Alias for the file system module methods
+const fs = require('fs');
 const path = require('path');
 const tmp = require('tmp');
 const SaxonJS = require('saxon-js');
