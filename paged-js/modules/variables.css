@@ -1,0 +1,14 @@
+:root {
+  --color-main: var(--color-elife-blue);
+  --color-main-light: var(--color-elife-blue-light);
+  --color-sub: var(--color-elife-grey);
+  --color-sub-light: var(--color-elife-grey-light);
+  --color-elife-blue: rgb(8, 122, 204);
+  --color-elife-blue-light: rgb(159, 215, 255);
+  --color-elife-grey: rgb(118, 118, 118);
+  --color-elife-grey-light: rgb(240, 240, 240);
+  --color-elife-black: rgb(37, 42, 54);
+  --font-sans: "Noto Sans", sans-serif;
+  --font-serif: "Noto Serif";
+}
+

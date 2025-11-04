@@ -1,0 +1,96 @@
+:root {
+  --border-timeline-default: #edeff4;
+  --border-timeline-reviewed: #f29524;
+  --border-timeline-revised: #42aea4;
+  --link-timeline-reviewed: #d04310;
+  --link-timeline-revised: #207b74;
+}
+
+.review-timeline {
+  padding: 0;
+  margin: 4px;
+}
+
+.review-timeline dt {
+  margin: 0;
+}
+
+.review-timeline__version {
+  font-weight: 600;
+}
+
+.review-timeline__version::after {
+  content: " • ";
+}
+
+.review-timeline__date {
+  color: grey;
+}
+
+.review-timeline__link {
+  display: block;
+  font-size: 0.9em;
+  color: var(--timeline-link);
+  gap: 2.5ch;
+
+}
+
+@media print {
+  .review-timeline__link {
+    pointer-events: none;
+    cursor: default; /* Changes the cursor to default */
+  }
+}
+
+.review-timeline {
+  display: grid;
+  grid-template-columns: 8px 1fr;
+}
+
+.review-timeline :is(dt, dd) {
+  grid-column: 2;
+  position: relative;
+}
+
+.review-timeline__event:before {
+  border-radius: 6px 6px;
+  background: var(--timeline-border);
+  content: "";
+  height: 100%;
+  display: block;
+  position: absolute;
+  width: 1ch;
+  left: -2ch;
+  height: 3.5em;
+  /* height: 100%; */
+}
+
+.review-timeline__event:has(+ dd .review-timeline__link):before {
+  height: 5em;
+}
+
+[class*="revised"]:is(dt, dd) {
+  --timeline-border: var(--border-timeline-revised);
+  --timeline-link: var(--link-timeline-revised);
+}
+
+[class*="reviewed"]:is(dt,
+  dd) {
+  --timeline-border: var(--border-timeline-reviewed);
+  --timeline-link: var(--link-timeline-reviewed);
+}
+
+.review-timeline {
+  --timeline-border: var(--border-timeline-default);
+  --timeline-link: var(--border-timeline);
+}
+
+/* .review-timeline__event--revised { */
+/*   --timeline-border: var(--border-timeline-revised); */
+/*   --timeline-link: var(--link-timeline-revised); */
+/* } */
+/**/
+/* .review-timeline__event--reviewed { */
+/*   --timeline-border: var(--border-timeline-reviewed); */
+/*   --timeline-link: var(--link-timeline-reviewed); */
+/* } */

@@ -1,0 +1,23 @@
+/* things we hide:  */
+#tab-content,
+[class*="tabbed-navigation_tabbed-navigation__tabs"],
+[class*="timeline_review-timeline__reviews_link"] {
+  display: none;
+}
+
+/*thing we may repeat*/
+[class*="jump-to-menu_jump-menu"] {
+  display: none;
+}
+
+.return-button {
+  display: none;
+}
+
+.content-header__authors--showall-label:empty::after {
+  display: none;
+}
+
+input {
+  display: none;
+}

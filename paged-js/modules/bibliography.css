@@ -1,0 +1,12 @@
+.bibliography {
+  list-style-type: none;
+  padding: 0;
+  gap: 12px;
+  column-count: 1;
+  font-size: 12px;
+  line-height:1.2;
+  font-family: var(--font-sans);
+}
+.bibliography h2 {
+  column-span: all;
+}

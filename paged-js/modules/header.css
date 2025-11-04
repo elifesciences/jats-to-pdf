@@ -1,0 +1,200 @@
+.article-flag-list {
+  display: flex;
+  justify-content: flex-end;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.article-flag-list__item {
+  margin: 0;
+  padding: 0;
+}
+
+.article-flag-list__item::after {
+  content: " | "; 
+  color: var(--color-secondary);
+}
+
+.article-flag-list__item:last-child::after {
+  content: none;
+}
+
+.article-flag__link {
+  text-decoration: none;
+}
+
+#header {
+  /* margin: auto; */
+  margin-left: var(--offset);
+  /* margin-top: calc((17px * 6.5) + 3px); */
+  max-width: 90%;
+  /* margin: auto; */
+}
+
+#header .title {
+  font-size: 2.3em;
+  line-height: 1.2;
+  padding-top: 0;
+}
+
+#header .copyrights {
+  padding-left: 0;
+  margin-left: 0;
+  list-style-type: none;
+  color: var(--color-sub);
+  font-family: var(--font-sans);
+  font-size: 0.9em;
+  font-weight: 300;
+}
+#header .copyrights li {
+  margin-bottom: 4px;
+}
+.descriptors__icon a {
+  padding-left: 3ch;
+}
+
+.descriptors__icon a::before {
+  position: absolute;
+  width: 2ch;
+  margin-left: -3ch;
+  margin-right: 2ch;
+  height: auto;
+  display: inline-block;
+}
+
+.descriptors__icon .hidden {
+  display: none;
+}
+
+.descriptors__icon--oa a::before {
+  content: url("../assets/oa.svg");
+}
+
+.descriptors__icon--cc a::before {
+  content: url("../assets/cc.svg");
+}
+
+.elife-intro img {
+  width: 100% !important;
+}
+
+.pagedjs_first_page #logo {
+  /*hide the logo on the first page*/
+  display: none;
+}
+
+.elife-intro {
+  margin-right: auto;
+  position: absolute;
+  top: 0px;
+  display: block;
+  width: 80px;
+  margin-bottom: 1em;
+}
+
+#sideSection {
+  /* background: red; */
+  /* font-size: ; */
+  font-family: var(--font-sans);
+  width: calc(var(--offset) - 5ch);
+
+  /* top: 200px; */
+  /* border-right: 1px solid red; */
+  /* margin-left: 0; */
+  /* float: left; */
+  position: absolute;
+  /* display: none; */
+  top: 10em;
+  left: calc(var(--offset) * -1);
+  font-size: 0.9em;
+}
+
+#sideSection h2 {
+  font-size: inherit;
+  line-height: inherit;
+  font-family: inherit;
+  color: var(--color-main);
+}
+
+#sideSection p {
+  hyphens: none;
+}
+
+#margin-notes {
+  font-family: var(--font-sans);
+  width: calc(var(--offset) - 5ch);
+  font-size: 0.8em;
+
+  position: absolute;
+  left: calc(var(--offset) * -1);
+  bottom: 0
+}
+
+#margin-notes h3 {
+  font-size: inherit;
+  line-height: inherit;
+  font-family: inherit;
+  color: var(--color-secondary);
+  margin-bottom: 0.5em;
+}
+
+#margin-notes p {
+  hyphens: none;
+}
+
+#margin-notes .copyright {
+  color: grey;
+}
+
+/* home page link to process */
+.article-status__heading {
+  margin-bottom: 0;
+}
+.article-status__link {
+  margin-top: 0.4em;
+  display: block;
+  /* display: none; */
+  /*hide the link to elife process in the home page*/
+}
+.article-status__link .prettified-symbol {
+  display: none;
+}
+.article-status__link .prettified-link {
+  content: attr(href);
+  display: block;
+  font-style: italic;
+  /* color: orange; */
+  display: none;
+}
+
+.modal-container,
+.review-timeline__link {
+  display: none;
+}
+
+#sideSection dd {
+  padding-left: 0;
+  margin-left: 0;
+  margin-bottom: 17px;
+}
+
+#sideSection dt {
+  /* margin-top: 17px; */
+  font-weight: 800;
+}
+
+#sideSection dd {
+  /* margin-bottom: 0; */
+}
+
+#sideSection time {
+  /* margin-right: .8ch; */
+}
+
+.probablyHeading {
+  break-after: avoid;
+}
+.probablyHeading + .probablyHeading {
+  /* break-after: unset; */
+}

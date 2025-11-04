@@ -1,0 +1,57 @@
+.authors-list {
+  font-size: 10px;
+  font-weight: 600;
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  margin-top: 17px;
+  font-family: var(--font-sans);
+}
+
+.authors-list__item {
+  display: inline;
+}
+.authors-list__item a {
+  white-space: nowrap;
+}
+
+.authors-list__item .email-icon {
+  line-height: 1;
+  width: 15px;
+  height: 12px;
+  display: inline-block;
+  margin: 0 0 0 4px;
+  margin: -7px 0 0 4px;
+}
+.authors-list__item .email-icon::before {
+  line-height: 0;
+  content: url("../assets/email.svg");
+}
+
+.authors-list__item:not(:first-child):before {
+  content: ", ";
+}
+
+/*affiliations*/
+.institutions-list {
+  margin: 0;
+  padding: 0;
+  line-height: 18px;
+  font-size: 10px;
+  list-style-type: none;
+  margin-top: 5px;
+  font-family: var(--font-sans);
+}
+.institutions-list__item {
+  display: inline;
+}
+
+.institutions-list__item:not(:first-child):before {
+  content: " • ";
+}
+
+/*adress*/
+.institution__address {
+  display: inline;
+  font-style: inherit;
+}

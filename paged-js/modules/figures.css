@@ -1,0 +1,188 @@
+figure {
+  --offset: -180px;
+  width: calc(100% + (var(--offset) * -1));
+  display: grid; /* not used anymore */
+  gap: 20px 3ch;
+  grid-template-columns: [image-start] 2fr [ image-end caption-start] 1fr [caption-end];
+  break-inside: avoid;
+  font-family: var(--font-sans);
+  font-size: 12px;
+  padding: 12px 0 12px 4ch;
+  margin: 12px 0 12px calc(var(--offset));
+  align-items: center;
+}
+figure + p {
+  margin-top: 20px;
+}
+label {
+  font-weight: 300;
+  font-size: 10px;
+  color: var(--color-elife-blue);
+  font-family: var(--font-sans);
+  display: block;
+  margin-bottom: 12px;
+  margin-top: 0;
+}
+figcaption p {
+  font-size: 12px;
+  line-height: 18px;
+  hyphens: auto;
+}
+figure figcaption {
+  grid-column: caption;
+}
+
+figcaption p {
+  margin-top: 0;
+}
+figure img {
+  max-height: 450px;
+  max-width: 450px;
+  margin-bottom: 12px;
+}
+
+/* img + figcaption, */
+ label {
+  break-after: avoid;
+}
+figcaption label + h1,
+figcaption label + h2,
+figcaption label + h3,
+figcaption h1 + p,
+figcaption h2 + p,
+figcaption h3 + p {
+  break-before: avoid;
+}
+figure h2,
+figure h3 {
+  font-size: 16px;
+  font-family: var(--font-sans);
+  line-height: 20px;
+  margin-bottom: 12px;
+  margin-top: 10px;
+  font-weight: 600;
+  max-width: unset;
+}
+
+ label {
+  margin-top: 0;
+}
+
+/* #references, */
+/* figure, */
+/* figure + h1, */
+/* figure + h2, */
+/* figure + h3, */
+/* figure + h4, */
+/* figure + h5, */
+/* figure + h6, */
+/* figure + p { */
+/*   clear: both; */
+/* } */
+
+figcaption h2 + p,
+figcaption h1 + p,
+figcaption label + h1,
+figcaption label + h2,
+figcaption label + p {
+  break-before: avoid;
+}
+figure:first-child {
+  margin-top: 0;
+}
+
+/* fig-square, fig-landscape, fig-portrait */
+figure.fig-portrait,
+figure.fig-square {
+  display: block;
+}
+
+figure.fig-portrait .portrait,
+figure.fig-square .square {
+  float: left;
+  margin-right: 24px;
+  margin-bottom: 24px;
+  max-width: 450px;
+}
+
+/* fig-landscape */
+figure.fig-landscape {
+  display: block;
+  margin-left: auto;
+  padding: 12px 0 12px;
+  margin-bottom: 0;
+}
+
+figure.fig-landscape .landscape {
+  float: none;
+  max-width: 100%;
+  width: calc(100% + var(--offset));
+  margin-bottom: 24px;
+}
+
+figure.fig-landscape figcaption {
+  width: calc(100% + var(--offset));
+}
+
+figure.fig-landscape label {
+  margin-right: 2ch;
+}
+
+.fig-portrait .portrait {
+  place-self: start end;
+}
+
+figure:has(img + img) {
+  --offset: 0;
+  padding: 0 !important;
+}
+
+/* remove not() after formula class comes in */
+figure.figure:has(img + img) img:not(p img) {
+  float: none !important;
+  display: block;
+  margin-left: 0 !important;
+  margin-right: auto !important;
+  max-height: 900px !important;
+  max-width: 100%;
+  margin-top: 16px;
+}
+
+/* figures - table, algorithm */
+figure.imageAlgorithm,
+figure.imageTable {
+  display: block;
+  padding-left: 0;
+  padding-right: 0;
+  margin-left: auto;
+  margin-right: auto;
+  break-inside: auto;
+  max-width: 100%;
+}
+
+.imageAlgorithm img,
+.imageTable img {
+  max-width: 100%;
+  object-fit: scale-down;
+  max-height: calc(
+    var(--pagedjs-height) - var(--pagedjs-margin-bottom) -
+      var(--pagedjs-margin-top) - 200px
+  );
+}
+.imageAlgorithm img + img,
+.imageTable img + img {
+  margin-top: 0;
+}
+.imageAlgorithm img:not(:last-of-type),
+.imageTable img:not(:last-of-type) {
+  margin-bottom: 0;
+}
+.imageAlgorithm figcaption,
+.imageTable figcaption {
+  width: 100%;
+  break-after: avoid;
+}
+.imageAlgorithm:has(img + img),
+.imageTable:has(img + img) {
+  break-inside: unset;
+}

@@ -1,0 +1,38 @@
+.assessment {
+  margin-top: 17px;
+  margin-bottom: 17px;
+  padding: 0.8em 4ch 1em 4ch;
+  background: var(--color-sub-light);
+}
+
+.assessment {
+  line-height: 22px;
+  break-inside: avoid;
+}
+.assessment p {
+  /* color: var(--color-main); */
+  font-family: var(--font-sans);
+  line-height:17px;
+  /* font-size: 16px; */
+  /* padding-top: 0 !important; */
+}
+
+.assessment .review-content-items {
+  display: none;
+}
+
+.assessment h2 {
+  margin-top: 13px;
+  color: var(--color-main);
+  margin-bottom: 0;
+  font-size: 13px;
+  margin: 0;
+}
+
+.assessment:first-child {
+  margin-top: 0;
+}
+
+.assessment h2 + p {
+  padding-top: 0 !important;
+}

@@ -1,0 +1,71 @@
+.author-list__authors {
+}
+.author-list__author {
+  margin-bottom: 17px;
+}
+
+.author-list__authors {
+  list-style-type: none;
+  padding: 0;
+  font-family: var(--font-sans) !important;
+}
+.author-list__authors li {
+  margin-bottom: 16px;
+}
+.author-list__author_name {
+  font-size: 13px;
+  font-weight: 600;
+  margin-right: 2ch;
+  margin-bottom: 2px;
+}
+
+.author-list__email .author-list__email--heading {
+  display: inline;
+  font-size: 12px;
+}
+
+/*editors*/
+
+.editors-and-reviewers__list {
+  font-family: var(--font-sans);
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.editors-and-reviewers__list li {
+  margin-bottom: 17px;
+}
+
+.editors-and-reviewers__person-role {
+  color: var(--color-elife-grey);
+}
+
+.editors-and-reviewers__person-name {
+  font-weight: 600;
+}
+
+/* reviews */
+.author-response__body blockquote {
+  font-family: var(--font-sans);
+  border-left: 1px solid var(--color-sub);
+  margin-left: 0;
+  padding-left: 3ch;
+  font-style: italic;
+}
+
+.author-response__body blockquote em {
+  font-style: normal;
+}
+
+.author-response__body blockquote h3 {
+  font-family:var(--font-sans);
+}
+
+.editors-and-reviewers__person {
+  break-inside: avoid;
+}
+
+.sendtolink {
+  display: none;
+}
