@@ -1,0 +1,9 @@
+/node_modules
+.DS_Store
+.vscode
+.idea
+.env
+.env.local
+/xsl/jats-to-html.sef.json
+output.html
+final-document.pdf
