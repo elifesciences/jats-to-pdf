@@ -188,8 +188,7 @@
         </div>
     </xsl:template>
     
-    <!-- To do: Add <a href="#x965164623" class="authors-link"> within <li>?
-         To do: Handle group authors? -->
+    <!-- To do: Handle group authors? -->
     <xsl:template mode="authors-in-header" match="article-meta/contrib-group[1]">
         <div class="authors">
             <ol class="authors-list authors-list--expanded" aria-label="Authors of this article">
@@ -224,7 +223,6 @@
                                         </xsl:for-each>
                                     </xsl:if>
                                     <xsl:if test="email or xref[@ref-type='corresp']">
-                                        <!-- html diff: <span class="visuallyhidden"> author has email address</span>  -->
                                         <span class="email-icon"/>
                                     </xsl:if>
                                 </span>
@@ -266,7 +264,7 @@
                         <p>
                             <xsl:apply-templates select="./name[1]"/>
                             <xsl:text> </xsl:text>
-                            <!-- To do: add icon for autneticated orcids -->
+                            <!-- To do: add icon for authenticated orcids -->
                             <a>
                                 <xsl:attribute name="href">
                                     <xsl:value-of select="contrib-id[@contrib-id-type='orcid'][1]"/>
@@ -557,6 +555,10 @@
     <xsl:template match="sec[not(@sec-type='additional-information')] | statement | glossary | boxed-text">
         <section>
             <xsl:apply-templates select="@id|*"/>
+            <!-- section only contains figures or tables -->
+            <xsl:if test="(fig or table-wrap) and not(sec or glossary or boxed-text or p or list or def-list or code or preformat or disp-formula)">
+                
+            </xsl:if>
         </section>
     </xsl:template>
     
@@ -877,7 +879,6 @@
         </span>
     </xsl:template>
     
-    <!-- html diff: truncate after 10 authors here | display all in html -->
     <xsl:template match="mixed-citation/person-group">
         <xsl:variable name="ref-list-class" select="if (@person-group-type='editor') then 'reference__editors_list' 
             else 'reference__authors_list'"/>
@@ -974,20 +975,50 @@
         <xsl:apply-templates select="*"/>
     </xsl:template>
     
+    <!-- For supplementary figures options are:
+        1. to treat them as inline figures (movedfig)
+        2. Add a <div class="pagebreak"></div> (but this will potentially leave a large gap after the heading) 
+        3. Add a link to them online?? -->
     <xsl:template match="fig|table-wrap[graphic or alternatives/graphic]">
-        <!-- html diff: don't contain figure within <div class="figure-container"> -->
-        <figure class="figure">
-            <xsl:apply-templates select="@id"/>
-            <xsl:apply-templates select="caption"/>
-            <xsl:for-each select="descendant::graphic">
-                <xsl:variable name="image-uri" select="concat(
-                    $iiif-base-uri,
-                    ./@xlink:href,
-                    '/full/max/0/default.jpg'
-                    )"/>
-                <img class="child-of-figure imageonly" loading="lazy" src="{$image-uri}" alt=""/>
-            </xsl:for-each>
-        </figure>
+        <xsl:choose>
+            <xsl:when test="label">
+                <figure class="figure tofill">
+                    <xsl:apply-templates select="@id"/>
+                    <xsl:apply-templates select="caption"/>
+                    <xsl:if test="not(caption)">
+                        <figcaption class="figure__caption">
+                            <h3>
+                                <span class="label figure-name">
+                                    <xsl:apply-templates select="label"/>
+                                </span>
+                            </h3>
+                        </figcaption>
+                    </xsl:if>
+                    <xsl:for-each select="descendant::graphic">
+                        <xsl:variable name="image-uri" select="concat(
+                            $iiif-base-uri,
+                            ./@xlink:href,
+                            '/full/max/0/default.jpg'
+                            )"/>
+                        <img class="child-of-figure imageonly" loading="lazy" src="{$image-uri}" alt=""/>
+                    </xsl:for-each>
+                </figure>
+            </xsl:when>
+            <xsl:otherwise>
+                <p class="figure movedfig">
+                    <xsl:apply-templates select="@id"/>
+                    <xsl:apply-templates select="caption/*|permissions|attrib"/>
+                    <xsl:for-each select="descendant::graphic">
+                        <xsl:variable name="image-uri" select="concat(
+                            $iiif-base-uri,
+                            ./@xlink:href,
+                            '/full/max/0/default.jpg'
+                            )"/>
+                        <img class="child-of-figure imageonly" loading="lazy" src="{$image-uri}" alt=""/>
+                    </xsl:for-each>
+                </p>
+            </xsl:otherwise>
+        </xsl:choose>
     </xsl:template>
     
     <xsl:template match="fig/label|table-wrap[graphic or alternatives/graphic]/label">
@@ -1175,7 +1206,6 @@
         <xsl:apply-templates select="p/node()"/>
     </xsl:template>
     
-    <!-- To do: add support/styling for blockquote? -->
     <xsl:template match="disp-quote">
         <blockquote>
             <xsl:apply-templates select="*"/>

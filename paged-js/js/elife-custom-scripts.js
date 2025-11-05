@@ -5,39 +5,8 @@ class elifeBuild extends Paged.Handler {
   }
 
   beforeParsed(content) {
-    /* change lowercase phi to uppercase phi
-    ["p", "span", "em", "i"].forEach((tag) => {
-      content.querySelectorAll(tag).forEach((el) => {
-        el.childNodes.forEach((node) => {
-          if (
-            node.nodeType === Node.TEXT_NODE &&
-            node.nodeValue.includes("ϕ")
-          ) {
-            const parts = node.nodeValue.split("ϕ");
-
-            parts.forEach((part, i) => {
-              if (part) {
-                el.insertBefore(document.createTextNode(part), node);
-              }
-              if (i < parts.length - 1) {
-                const span = document.createElement("span");
-                span.className = "fix-phi";
-                span.textContent = "ϕ";
-                el.insertBefore(span, node);
-              }
-            });
-
-            el.removeChild(node);
-          }
-        });
-      });
-    });*/
 
     guessSupp(content);
-
-    //check the igures and mark them
-    // check will page will be set as full page
-    tagFigures(content);
 
     // to divide figure in block
     dispatchFigure(content);
@@ -137,19 +106,6 @@ function addIDtoEachElement(content) {
       }
     });
   });
-}
-
-/*========================== 
-         addLogoWithLink
-    ========================== */
-
-function addLogoWithLink(content) {
-  const elem = `
-    <a href="https://elifesciences.org/" class="linkElife">
-      <img src="https://elifesciences.org/assets/patterns/img/patterns/organisms/elife-logo-xs.fd623d00.svg" alt='Elife' />
-    </a> `;
-
-  content.querySelector("div").insertAdjacentHTML("afterbegin", elem);
 }
 
 // no hyphens between page
@@ -1118,49 +1074,6 @@ function guessSupp(content, index) {
       section.classList.add("surelySupp");
     }
   });
-}
-
-function tagFigures(content) {
-  // check will page will be set as full page
-  content.querySelectorAll("figure").forEach((fig) => {
-    if (!fig.querySelector("label")) {
-      const p = document.createElement("p");
-
-      // make a paragraph with the image if it has no label because it means it doesnt need to be set differently
-      p.innerHTML = fig.innerHTML;
-      p.id = fig.id;
-      p.classList = fig.classList;
-      p.classList.add("movedfig");
-      fig.insertAdjacentElement("beforebegin", p);
-
-      // remove the figure
-      fig.remove();
-      return;
-    }
-
-    // add the element to fill to the figures
-    fig.classList.add("tofill");
-  });
-
-  // USE THIS WHEN YOU DON'T WANT TO USE NOT-TO-FILL
-  // const figuresToSeparate = ["figs1"];
-
-  // figuresToSeparate.forEach((figId) => {
-  //   const fig = content.querySelector(`#${figId}`);
-  //   if (fig) {
-  //     fig.classList.add("enlarge-manually");
-
-  //     const caption = fig.querySelector("figcaption");
-  //     if (caption) {
-  //       const clone = caption.cloneNode(true);
-  //       clone.classList.add("separated-caption");
-  //       clone.setAttribute("data-for", figId);
-
-  //       fig.parentNode.insertBefore(clone, fig.nextSibling);
-  //       caption.remove();
-  //     }
-  //   }
-  // });
 }
 
 function tagImgInFigures(content) {
