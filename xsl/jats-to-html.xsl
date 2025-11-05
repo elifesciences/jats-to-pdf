@@ -982,7 +982,9 @@
     <xsl:template match="fig|table-wrap[graphic or alternatives/graphic]">
         <xsl:choose>
             <xsl:when test="label">
-                <figure class="figure tofill">
+                <xsl:variable name="class" select="if ((count(graphic) = 1) and self::fig) then 'figure has-boundary tofill'
+                    else 'figure tofill'"/>
+                <figure class="{$class}">
                     <xsl:apply-templates select="@id"/>
                     <xsl:apply-templates select="caption"/>
                     <xsl:if test="not(caption)">
@@ -1029,6 +1031,13 @@
     
     <xsl:template match="fig/caption|table-wrap[graphic or alternatives/graphic]/caption">
         <figcaption class="figure__caption">
+            <xsl:if test="not(title) and parent::*/label">
+                <h3>
+                    <span class="label figure-name">
+                        <xsl:apply-templates select="parent::*/label"/>
+                    </span>
+                </h3>
+            </xsl:if>
             <xsl:apply-templates select="*|parent::*/permissions|parent::*/attrib"/>
         </figcaption>
     </xsl:template>

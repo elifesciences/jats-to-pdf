@@ -127,6 +127,10 @@ p > img {
   display: block;
 }
 
+.has-boundary img{
+  border: 1px solid var(--color-elife-grey);
+}
+
 /*testing padding-bottom*/
 .pagedjs_pagedjs-filler_page figure + figure {
   padding-top: 3em;
