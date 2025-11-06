@@ -80,17 +80,36 @@
 }
 
 .pagedjs_first_page #logo {
-  /*hide the logo on the first page*/
+  /*hide the logo section on the first page*/
   display: none;
 }
 
-.elife-intro {
+.elife-intro  a.logo {
   margin-right: auto;
   position: absolute;
   top: 0px;
   display: block;
   width: 80px;
   margin-bottom: 1em;
+}
+
+.elife-intro.separator {
+    padding: 0 5px; 
+    font-weight: 900;
+}
+
+.header-icon.oa-icon::before {
+    content: url('../assets/oa.svg');
+    display: block;
+    width: 20px;
+    height: 20px;
+}
+
+.header-icon.cc-icon::before {
+    content: url('../assets/cc.svg');
+    display: block;
+    width: 20px;
+    height: 20px;
 }
 
 #sideSection {

@@ -89,6 +89,22 @@
                         class="site-header__logo" style="color:transparent" src="https://elifesciences.org/assets/patterns/img/patterns/organisms/elife-logo-xs.fd623d00.svg"/>
     </xsl:variable>
     
+    <xsl:variable name="first-page-banner">
+        <div id="first-page-links" class="elife-intro">
+            <a class="logo" href="https://elifesciences.org/">
+                <xsl:copy-of select="$elife-logo"/>
+            </a>
+            <!-- To do: add cc and oa icons and inject into pagedjs_margin-top-right
+                <template id="header-icons-template">
+                <div id="right-header-links">
+                    <a href="https://en.wikipedia.org/wiki/Open_access" target="_blank" class="header-icon oa-icon"></a>
+                    <span class="separator">|</span>
+                    <a href="https://creativecommons.org/" target="_blank" class="header-icon cc-icon"></a>
+                </div>
+            </template>-->
+        </div>
+    </xsl:variable>
+    
     <xsl:template match="/">
         <html>
             <xsl:copy-of select="$html-head"/>
@@ -102,6 +118,7 @@
     
     <xsl:template match="article">
         <article>
+            <xsl:copy-of select="$first-page-banner"/>
             <xsl:copy-of select="$logo-section"/>
             <xsl:call-template name="aside"/>
             <xsl:call-template name="header"/>

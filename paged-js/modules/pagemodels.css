@@ -11,12 +11,9 @@
     size: letter;
     margin: 75px 50px 52px 50px;
 
-    @top-left-corner {
-      /* background-image: url(https://elifesciences.org/assets/patterns/img/patterns/organisms/elife-logo-xs.fd623d00.svg); */
+   @top-left-corner {
       content: "";
       display: block;
-      /* background-repeat: no-repeat; */
-      /* background-size: contain; */
       width: 100%;
       height: 100%;
       border: none;
