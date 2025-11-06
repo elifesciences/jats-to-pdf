@@ -11,9 +11,6 @@ class elifeBuild extends Paged.Handler {
     // to divide figure in block
     dispatchFigure(content);
 
-    // add logo with link to the header
-    addLogoWithLink(content);
-
     //tag figure
     tagImgInFigures(content);
 
@@ -215,26 +212,6 @@ class pushThings extends Paged.Handler {
 }
 
 Paged.registerHandlers(pushThings);
-
-class urlSwitcher extends Paged.Handler {
-  constructor(chunker, polisher, caller) {
-    super(chunker, polisher, caller);
-  }
-
-  beforeParsed(content) {
-    const imageUrl = document.body.id;
-    content.querySelectorAll("img").forEach((img) => {
-      img.src =
-        "/images/" +
-        imageUrl +
-        "/" +
-        img.src.split("/")[img.src.split("/").length - 1];
-    });
-    // find a place to put the content, i would say after the index
-  }
-}
-
-// Paged.registerHandlers(urlSwitcher);
 
 class CSStoClass extends Paged.Handler {
   constructor(chunker, polisher, caller) {
@@ -717,18 +694,6 @@ function isLocalLink(link) {
 
   // Compare the hostnames
   return linkHostname === currentHostname;
-}
-
-/*========================== 
-         addLogoWithLink
-    ==========================*/
-function addLogoWithLink(content) {
-  const elem = `
-    <a class="logo elife-intro linkElife" href="https://elifesciences.org/">
-      <img src="https://elifesciences.org/assets/patterns/img/patterns/organisms/elife-logo-xs.fd623d00.svg" alt='Elife' />
-    </a> `;
-
-  content.querySelector("article").insertAdjacentHTML("afterbegin", elem);
 }
 
 class fixMarginTop extends Paged.Handler {
