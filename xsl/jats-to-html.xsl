@@ -569,14 +569,9 @@
     </xsl:template>
     
     <!-- To do: add support/styling for boxed-text -->
-    <xsl:template match="sec[not(@sec-type='additional-information')] | statement | glossary | boxed-text | app">
+    <xsl:template match="sec[not(@sec-type=('additional-information','supplementary'))] | statement | glossary | boxed-text | app">
         <section>
             <xsl:apply-templates select="@id|*[name()!='label']"/>
-            <!-- To do: This 'fixes' sections only containing figures or tables
-                    but is there a more elegant solution? -->
-            <xsl:if test="(fig or table-wrap) and not(sec or glossary or boxed-text or p or list or def-list or code or preformat or disp-formula)">
-                <div class="pagebreak"/>
-            </xsl:if>
         </section>
     </xsl:template>
     
@@ -592,6 +587,27 @@
                 </xsl:if>
             </xsl:if>
             <xsl:apply-templates mode="authors-in-back" select="ancestor::article//article-meta/contrib-group[1][contrib[@contrib-type='author' and contrib-id[@contrib-id-type='orcid']]]"/>
+        </section>
+    </xsl:template>
+    
+    <!-- This sec-type is for sections containing only figures and tables
+        The first image is treated as anchored/inline, and the rest are floats. 
+        This improves the flow of text.
+    -->
+    <xsl:template match="sec[@sec-type='supplementary']">
+        <section>
+            <xsl:choose>
+                <!-- for sections mistagged with this sec-type, treat as a normal section -->
+                <xsl:when test="*[not(name()=('label','title','fig','table-wrap'))]">
+                    <xsl:apply-templates select="@id|*[name()!='label']"/>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:apply-templates select="@id|title"/>
+                    <xsl:apply-templates mode="anchor" select="*[not(name()=('label','title'))][1]"/>
+                    <xsl:apply-templates mode="float" select="*[not(name()=('label','title'))][position() gt 1]"/>
+                    <div class="pagebreak"/>
+                </xsl:otherwise>
+            </xsl:choose>
         </section>
     </xsl:template>
     
@@ -1032,54 +1048,62 @@
         <xsl:apply-templates select="*"/>
     </xsl:template>
     
-    <!-- For supplementary figures options are:
-        1. to treat them as inline figures (movedfig)
-        2. Add a <div class="pagebreak"></div> (but this will potentially leave a large gap after the heading) 
-        3. Add a link to them online?? 
-    Gone with option 2 for now (see sec[not(@sec-type='additional-information')] template)...
-    -->
     <xsl:template match="fig|table-wrap[graphic or alternatives/graphic]">
         <xsl:choose>
-            <xsl:when test="label">
-                <figure class="figure tofill">
-                    <xsl:apply-templates select="@id"/>
-                    <xsl:apply-templates select="caption"/>
-                    <xsl:if test="not(caption)">
-                        <figcaption class="figure__caption">
-                            <h3>
-                                <span class="label figure-name">
-                                    <xsl:apply-templates select="label"/>
-                                </span>
-                            </h3>
-                        </figcaption>
-                    </xsl:if>
-                    <xsl:for-each select="descendant::graphic">
-                        <xsl:variable name="class" select="if (ancestor::fig) then 'child-of-figure has-boundary imageonly'
-                            else 'child-of-figure imageonly'"/>
-                        <xsl:variable name="image-uri" select="concat(
-                            $iiif-base-uri,
-                            ./@xlink:href,
-                            '/full/max/0/default.jpg'
-                            )"/>
-                        <img class="{$class}" loading="lazy" src="{$image-uri}" alt=""/>
-                    </xsl:for-each>
-                </figure>
+            <xsl:when test="label and @position='float'">
+                <xsl:apply-templates mode="float" select="self::*"/>
             </xsl:when>
+            <!-- treat unlablled figures/tables as if they were anchored -->
             <xsl:otherwise>
-                <p class="figure movedfig">
-                    <xsl:apply-templates select="@id"/>
-                    <xsl:apply-templates select="caption/*|permissions|attrib"/>
-                    <xsl:for-each select="descendant::graphic">
-                        <xsl:variable name="image-uri" select="concat(
-                            $iiif-base-uri,
-                            ./@xlink:href,
-                            '/full/max/0/default.jpg'
-                            )"/>
-                        <img class="child-of-figure imageonly" loading="lazy" src="{$image-uri}" alt=""/>
-                    </xsl:for-each>
-                </p>
+                <xsl:apply-templates mode="anchor" select="self::*"/>
             </xsl:otherwise>
         </xsl:choose>
+    </xsl:template>
+    
+    <!-- position='float' => A floating image that is placed on it's own page -->
+    <xsl:template mode="float" match="fig|table-wrap[graphic or alternatives/graphic]">
+        <figure class="figure tofill">
+            <xsl:apply-templates select="@id"/>
+            <xsl:apply-templates select="caption"/>
+            <xsl:if test="not(caption)">
+                <figcaption class="figure__caption">
+                    <h3>
+                        <span class="label figure-name">
+                            <xsl:apply-templates select="label"/>
+                        </span>
+                    </h3>
+                </figcaption>
+            </xsl:if>
+            <xsl:for-each select="descendant::graphic">
+                <xsl:variable name="class" select="if (ancestor::fig) then 'child-of-figure has-boundary imageonly'
+                    else 'child-of-figure imageonly'"/>
+                <xsl:variable name="image-uri" select="concat(
+                    $iiif-base-uri,
+                    ./@xlink:href,
+                    '/full/max/0/default.jpg'
+                    )"/>
+                <img class="{$class}" loading="lazy" src="{$image-uri}" alt=""/>
+            </xsl:for-each>
+        </figure>
+    </xsl:template>
+    
+    <!-- position='anchor' => An inline image that is placed in the flow of text -->
+    <xsl:template mode="anchor" match="fig|table-wrap[graphic or alternatives/graphic]">
+        <div class="fig-group">
+            <p class="figure movedfig">
+                <xsl:apply-templates select="@id"/>
+                <xsl:for-each select="descendant::graphic">
+                    <xsl:variable name="image-uri" select="concat(
+                        $iiif-base-uri,
+                        ./@xlink:href,
+                        '/full/max/0/default.jpg'
+                        )"/>
+                    <img class="child-of-figure imageonly" loading="lazy" src="{$image-uri}" alt=""/>
+                </xsl:for-each>
+            </p>
+            <xsl:apply-templates mode="inline" select="caption"/>
+            <xsl:apply-templates select="permissions|attrib"/>
+        </div>
     </xsl:template>
     
     <xsl:template match="fig/label|table-wrap[graphic or alternatives/graphic]/label">
@@ -1099,6 +1123,24 @@
             </xsl:if>
             <xsl:apply-templates select="*|parent::*/permissions|parent::*/attrib"/>
         </figcaption>
+    </xsl:template>
+    
+    <!-- How to treat captions for anchored/inline figures -->
+    <xsl:template mode="inline" match="fig/caption|table-wrap[graphic or alternatives/graphic]/caption">
+        <p class="figure__caption">
+            <xsl:if test="parent::*/label">
+                <span class="label figure-name">
+                    <xsl:apply-templates select="parent::*/label"/>
+                </span>
+            </xsl:if>
+            <xsl:if test="title">
+                <strong>
+                    <xsl:apply-templates select="title/node()"/>
+                </strong>
+                <xsl:text> </xsl:text>
+            </xsl:if>
+            <xsl:apply-templates select="p/node()"/>
+        </p>
     </xsl:template>
     
     <xsl:template match="supplementary-material">

@@ -135,6 +135,10 @@ p {
     border-top: 0 !important;
 }
 
+.fig-group {
+    break-inside: avoid;
+}
+
 .descriptors__icon--cc a {
     border-bottom: 0;
     color: inherit;
