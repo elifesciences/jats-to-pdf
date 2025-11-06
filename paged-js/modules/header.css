@@ -84,6 +84,11 @@
   display: none;
 }
 
+.pagedjs_first_page .article-flag-list {
+  /*hide the MSAs on the first page*/
+  display: none;
+}
+
 .elife-intro  a.logo {
   margin-right: auto;
   position: absolute;
