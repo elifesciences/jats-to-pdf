@@ -146,7 +146,6 @@
     </xsl:template>
     
     <xsl:template match="article-categories">
-        <!-- To do: add MSAs to top of every page except first
             <ul class="article-flag-list">
             <xsl:for-each select="./subj-group[@subj-group-type='heading']">
                 <xsl:variable name="msa-url" select="concat(
@@ -159,7 +158,7 @@
                     </a>
                 </li>
             </xsl:for-each>
-        </ul>-->
+        </ul>
     </xsl:template>
     
     <xsl:template match="article-meta/title-group/article-title">

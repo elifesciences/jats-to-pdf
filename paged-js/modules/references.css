@@ -13,6 +13,8 @@
 }
 .reference-list li {
   margin-bottom: 5px;
+  hyphens: manual;
+  word-break: normal;
 }
 
 .reference__label {

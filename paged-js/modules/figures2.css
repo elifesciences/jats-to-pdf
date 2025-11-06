@@ -79,11 +79,6 @@ nav {
   position: fill-page;
 }
 
-figure {
-  /* margin-top:17px; */
-  /* margin-bottom:17px; */
-}
-
 figcaption h3 {
   margin: 5px 0;
 }
@@ -145,10 +140,6 @@ img {
   );
 }
 
-figcaption {
-  /* min-height: 10em; */
-}
-
 .internalfig {
   margin-bottom: 17px;
 }
@@ -175,10 +166,6 @@ figcaption {
   align-items: center;
   justify-content: center;
   /* gap: 2em; */
-}
-
-p img {
-  /* width: auto !important; */
 }
 
 .pagedjs_pagedjs-filler_page figure {
@@ -261,18 +248,8 @@ figure figcaption {
   margin-right: 1ch;
 }
 
-/*image in link in author response*/
-
-img.child-of-a {
-  /* min-width: 20%; */
-}
-
 figure h3 {
   break-after: normal;
-}
-
-.imageonly.fig-landscape img {
-  /* max-width: 80% !important; */
 }
 
 figcaption img {
@@ -285,8 +262,6 @@ figcaption img {
 
 .insidetext {
   display: inline !important;
-
-  /* max-width: 100% !important; */
 }
 
 /*image in figure but too small for their own page.*/

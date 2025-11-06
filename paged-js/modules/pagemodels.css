@@ -50,6 +50,37 @@
   .runninghead .counter::after {
     content: counter(page) " of " counter(pages);
   }
+
+  .article-flag-list {
+    position: fixed;
+    top: 32px;
+    right: 50px;
+    left: auto;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    list-style: none; 
+    padding: 0;
+    margin: 0;    
+    z-index: 1000;
+    font-size: 10px;
+  }
+  .article-flag-list__item {
+    margin-left: 0 !important;
+    padding-right: 0 !important;
+  }
+  .article-flag-list__item:not(:last-child)::after {
+    content: "|";
+    display: inline-block;
+    padding: 0 5px;
+    margin: 0;
+    color: var(--color-elife-grey);
+  }
+  .article-flag__link {
+    color: var(--color-elife-blue); 
+    text-decoration: none;
+    white-space: nowrap;
+    }
 }
 
 /* baseline  */

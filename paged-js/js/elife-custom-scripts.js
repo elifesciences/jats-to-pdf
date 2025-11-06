@@ -16,22 +16,6 @@ class elifeBuild extends Paged.Handler {
 
     // add id to anything to fix things
     addIDtoEachElement(content);
-
-    // attempt to fix when there is text between figures   title between figures
-    let supfigures = content
-      .querySelector(
-        "#supplemental-figures , #figure-supplements, [id*=supplem]"
-      )
-      ?.querySelectorAll("figure");
-    supfigures?.forEach((sup) => {
-      if (
-        !sup.nextElementSibling ||
-        (sup.nextElementSibling && sup.nextElementSibling.tagName != "FIGURE")
-      ) {
-        sup.classList.add("last-figure");
-        sup.insertAdjacentHTML("afterend", `<div class="pagebreak"></div>`);
-      }
-    });
   }
 
   afterRendered(pages) {
