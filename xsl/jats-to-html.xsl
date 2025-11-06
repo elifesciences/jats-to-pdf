@@ -569,19 +569,20 @@
     </xsl:template>
     
     <!-- To do: add support/styling for boxed-text -->
-    <xsl:template match="sec[not(@sec-type='additional-information')] | statement | glossary | boxed-text">
+    <xsl:template match="sec[not(@sec-type='additional-information')] | statement | glossary | boxed-text | app">
         <section>
-            <xsl:apply-templates select="@id|*"/>
-            <!-- section only contains figures or tables -->
+            <xsl:apply-templates select="@id|*[name()!='label']"/>
+            <!-- To do: This 'fixes' sections only containing figures or tables
+                    but is there a more elegant solution? -->
             <xsl:if test="(fig or table-wrap) and not(sec or glossary or boxed-text or p or list or def-list or code or preformat or disp-formula)">
-                
+                <div class="pagebreak"/>
             </xsl:if>
         </section>
     </xsl:template>
     
     <xsl:template match="sec[@sec-type='additional-information']">
         <section>
-            <xsl:apply-templates select="@id|*"/>
+            <xsl:apply-templates select="@id|*[name()!='label']"/>
             <xsl:if test="ancestor::article//article-meta[funding-group or related-object]">
                 <xsl:apply-templates select="ancestor::article//article-meta/funding-group"/>
                 <xsl:if test="ancestor::article//article-meta/related-object[@xlink:href!='' and @document-id-type='clinical-trial-number']">
@@ -594,11 +595,24 @@
         </section>
     </xsl:template>
     
+    <xsl:template match="app-group">
+        <xsl:apply-templates select="*"/>
+    </xsl:template>
+    
     <xsl:template match="title">
         <xsl:variable name="h1-parents" select="('abstract','ref-list','app','ack')"/>
         <xsl:choose>
+            <xsl:when test="parent::*[name()=$h1-parents] or parent::glossary[parent::back or parent::body] or parent::boxed-text[parent::back or parent::body] or parent::statement[parent::back or parent::body]">
+                <h1 class="heading-1">
+                    <xsl:if test="preceding-sibling::label">
+                        <xsl:value-of select="preceding-sibling::label"/>
+                        <xsl:text> </xsl:text>
+                    </xsl:if>
+                    <xsl:apply-templates select="node()"/>
+                </h1>
+            </xsl:when>
             <xsl:when test="parent::sec or parent::glossary[parent::sec] or parent::boxed-text[parent::sec] or parent::statement[parent::sec]">
-                <xsl:variable name="sec-depth" select="count(ancestor::sec) + count(ancestor::glossary) + count(ancestor::boxed-text) + count(ancestor::statement)"/>
+                <xsl:variable name="sec-depth" select="count(ancestor::sec) + count(ancestor::app) + count(ancestor::glossary) + count(ancestor::boxed-text) + count(ancestor::statement)"/>
                 <xsl:variable name="heading-level">
                     <xsl:value-of select="min((6,$sec-depth))"/>
                 </xsl:variable>
@@ -607,20 +621,11 @@
                         <xsl:value-of select="concat('heading-',$heading-level)"/>
                     </xsl:attribute>
                     <xsl:if test="preceding-sibling::label">
-                        <xsl:value-of select="label"/>
+                        <xsl:value-of select="preceding-sibling::label"/>
                         <xsl:text> </xsl:text>
                     </xsl:if>
                     <xsl:apply-templates select="node()"/>
                 </xsl:element>
-            </xsl:when>
-            <xsl:when test="parent::*[name()=$h1-parents] or parent::glossary[parent::back or parent::body] or parent::boxed-text[parent::back or parent::body] or parent::statement[parent::back or parent::body]">
-                <h1 class="heading-1">
-                    <xsl:if test="preceding-sibling::label">
-                        <xsl:value-of select="label"/>
-                        <xsl:text> </xsl:text>
-                    </xsl:if>
-                    <xsl:apply-templates select="node()"/>
-                </h1>
             </xsl:when>
             <xsl:when test="parent::caption">
                 <h3>
@@ -668,7 +673,7 @@
                 </xsl:if>
                 <xsl:value-of select="fpage"/>
                 <xsl:if test="fpage and lpage">
-                    <xsl:text>–</xsl:text>
+                    <xsl:text>&#x2011;</xsl:text>
                 </xsl:if>
                 <xsl:value-of select="lpage"/>
                 <xsl:if test="elocation-id and not(fpage)">
@@ -677,7 +682,14 @@
             </span>
         </xsl:if>
         <span class="reference__doi">
-            <xsl:apply-templates select="pub-id|ext-link"/>
+            <xsl:choose>
+                <xsl:when test="pub-id[@pub-id-type='doi']">
+                    <xsl:apply-templates select="pub-id"/>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:apply-templates select="pub-id|ext-link"/>
+                </xsl:otherwise>
+            </xsl:choose>
         </span>
     </xsl:template>
     
@@ -746,11 +758,11 @@
                     <xsl:text>. </xsl:text>
                 </xsl:if>
                 <xsl:if test="fpage">
-                    <xsl:text>pp. </xsl:text>
+                    <xsl:text>pp.&#xA0;</xsl:text>
                     <xsl:value-of select="fpage"/>
                 </xsl:if>
                 <xsl:if test="fpage and lpage">
-                    <xsl:text>–</xsl:text>
+                    <xsl:text>&#x2011;</xsl:text>
                     <xsl:value-of select="lpage"/>
                 </xsl:if>
                 <xsl:if test="elocation-id and not(fpage)">
@@ -759,7 +771,14 @@
             </span>
         </xsl:if>
         <span class="reference__doi">
-            <xsl:apply-templates select="pub-id|ext-link"/>
+            <xsl:choose>
+                <xsl:when test="pub-id[@pub-id-type='doi']">
+                    <xsl:apply-templates select="pub-id"/>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:apply-templates select="pub-id|ext-link"/>
+                </xsl:otherwise>
+            </xsl:choose>
         </span>
     </xsl:template>
     
@@ -808,7 +827,14 @@
             </span>
         </xsl:if>
         <span class="reference__doi">
-            <xsl:apply-templates select="pub-id|ext-link"/>
+            <xsl:choose>
+                <xsl:when test="pub-id[@pub-id-type='doi']">
+                    <xsl:apply-templates select="pub-id"/>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:apply-templates select="pub-id|ext-link"/>
+                </xsl:otherwise>
+            </xsl:choose>
         </span>
     </xsl:template>
     
@@ -836,7 +862,14 @@
             </span>
         </xsl:if>
         <span class="reference__doi">
-            <xsl:apply-templates select="pub-id|ext-link"/>
+            <xsl:choose>
+                <xsl:when test="pub-id[@pub-id-type='doi']">
+                    <xsl:apply-templates select="pub-id"/>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:apply-templates select="pub-id|ext-link"/>
+                </xsl:otherwise>
+            </xsl:choose>
         </span>
     </xsl:template>
     
@@ -892,7 +925,14 @@
             </span>
         </xsl:if>
         <span class="reference__doi">
-            <xsl:apply-templates select="pub-id|ext-link"/>
+            <xsl:choose>
+                <xsl:when test="pub-id[@pub-id-type='doi']">
+                    <xsl:apply-templates select="pub-id"/>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:apply-templates select="pub-id|ext-link"/>
+                </xsl:otherwise>
+            </xsl:choose>
         </span>
     </xsl:template>
     
@@ -995,7 +1035,9 @@
     <!-- For supplementary figures options are:
         1. to treat them as inline figures (movedfig)
         2. Add a <div class="pagebreak"></div> (but this will potentially leave a large gap after the heading) 
-        3. Add a link to them online?? -->
+        3. Add a link to them online?? 
+    Gone with option 2 for now (see sec[not(@sec-type='additional-information')] template)...
+    -->
     <xsl:template match="fig|table-wrap[graphic or alternatives/graphic]">
         <xsl:choose>
             <xsl:when test="label">
