@@ -982,9 +982,7 @@
     <xsl:template match="fig|table-wrap[graphic or alternatives/graphic]">
         <xsl:choose>
             <xsl:when test="label">
-                <xsl:variable name="class" select="if ((count(graphic) = 1) and self::fig) then 'figure has-boundary tofill'
-                    else 'figure tofill'"/>
-                <figure class="{$class}">
+                <figure class="figure tofill">
                     <xsl:apply-templates select="@id"/>
                     <xsl:apply-templates select="caption"/>
                     <xsl:if test="not(caption)">
@@ -997,12 +995,14 @@
                         </figcaption>
                     </xsl:if>
                     <xsl:for-each select="descendant::graphic">
+                        <xsl:variable name="class" select="if (ancestor::fig) then 'child-of-figure has-boundary imageonly'
+                            else 'child-of-figure imageonly'"/>
                         <xsl:variable name="image-uri" select="concat(
                             $iiif-base-uri,
                             ./@xlink:href,
                             '/full/max/0/default.jpg'
                             )"/>
-                        <img class="child-of-figure imageonly" loading="lazy" src="{$image-uri}" alt=""/>
+                        <img class="{$class}" loading="lazy" src="{$image-uri}" alt=""/>
                     </xsl:for-each>
                 </figure>
             </xsl:when>

@@ -105,7 +105,7 @@
   /* float: left; */
   position: absolute;
   /* display: none; */
-  top: 10em;
+  top: 5em;
   left: calc(var(--offset) * -1);
   font-size: 0.9em;
 }

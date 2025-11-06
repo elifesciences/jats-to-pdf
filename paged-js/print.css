@@ -53,11 +53,6 @@ figure+figure {
     margin-top: 34px;
 }
 
-/* // to fix some automatic placement */
-/*  figure { */
-/*   position: fill-page ; */
-/* } */
-
 /* // tring to fix some title on the top of the page problem  */
 
 [data-split-from] :is(h2, h3):first-child {
@@ -127,26 +122,6 @@ ol>li {
     display: none;
 }
 
-/* .surelySupp { */
-/* page: supp; */
-/* margin-left: calc(var(--offset) * -1); */
-/* } */
-
-/* @page supp { */
-/*   background: white; */
-/*   margin: 20mm; */
-/* } */
-
-/* .surelySupp .figure { */
-/* break-after: page; */
-/* color: red; */
-/* } */
-
-/* .surelySupp img { */
-/*   max-height: 700px; */
-/*   display: block; */
-/* } */
-
 p {
     widows: 2;
     orphans: 2;
@@ -157,53 +132,9 @@ p {
     position: fill-page;
 }
 
-/* .surelySupp .figure { */
-/*   max-width: 80%; */
-/*   break-inside: avoid; */
-/*   margin: auto; */
-/*   margin-bottom: 2em; */
-/* } */
-/**/
-/* .surelySupp :is(h1, h2) { */
-/*   margin-bottom: 2em; */
-/*   margin-left: var(--offset); */
-/* } */
-/**/
-/* .surelySupp .figure + .figure { */
-/*   margin-top: 1em; */
-/*   border-top: 5px solid var(--color-main); */
-/*   padding-top: 1em; */
-/* } */
-
 .figure[data-split-from] {
     border-top: 0 !important;
 }
-
-/* .tofill { */
-/*   position: fill-page; */
-/* } */
-
-/* .surelySupp .figure { */
-/*   max-width: 80%; */
-/*   break-inside: avoid; */
-/*   margin: auto; */
-/*   margin-bottom: 2em; */
-/* } */
-/**/
-/* .surelySupp :is(h1, h2) { */
-/*   margin-bottom: 2em; */
-/*   margin-left: var(--offset); */
-/* } */
-/**/
-/* .surelySupp .figure + .figure { */
-/*   margin-top: 1em; */
-/*   border-top: 5px solid var(--color-main); */
-/*   padding-top: 1em; */
-/* } */
-/**/
-/* .figure[data-split-from] { */
-/*   border-top: 0 !important; */
-/* } */
 
 .descriptors__icon--cc a {
     border-bottom: 0;
