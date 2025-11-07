@@ -121,8 +121,7 @@ p {
     orphans: 2;
 }
 
-.tofill,
-.surelySupp figure {
+.tofill, figure {
     position: fill-page;
 }
 

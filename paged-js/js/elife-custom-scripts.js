@@ -6,8 +6,6 @@ class elifeBuild extends Paged.Handler {
 
   beforeParsed(content) {
 
-    guessSupp(content);
-
     // to divide figure in block
     dispatchFigure(content);
 
@@ -667,19 +665,6 @@ function getRatioClass(ratio) {
   if (ratio < 1.39 || ratio > 0.95) return "square";
 }
 
-function isLocalLink(link) {
-  // Create an anchor element
-  const anchor = document.createElement("a");
-  anchor.href = link;
-
-  // Get the hostnames of the link and current page
-  const linkHostname = anchor.hostname;
-  const currentHostname = window.location.hostname;
-
-  // Compare the hostnames
-  return linkHostname === currentHostname;
-}
-
 class fixMarginTop extends Paged.Handler {
   constructor(chunker, polisher, caller) {
     super(chunker, polisher, caller);
@@ -839,16 +824,6 @@ async function addWidthHeightToImg(parsed) {
   });
 }
 
-// get the content for the reviews
-function getReviewsContent(content) {
-  let reviews = "";
-
-  content.querySelectorAll(".review-content").forEach((review) => {
-    reviews += review.outerHTML;
-  });
-  return reviews;
-}
-
 /*break after*/
 // check if the element has a break after avoid and move it on next page
 class avoidBreakAfter extends Paged.Handler {
@@ -934,97 +909,6 @@ class avoidBreakAfter extends Paged.Handler {
 }
 Paged.registerHandlers(avoidBreakAfter);
 
-function markImages(content) {
-  content.querySelectorAll("img").forEach((img) => {
-    // Check if the element has a parent
-    img.classList.add(`child-of-${img.parentElement?.tagName.toLowerCase()}`);
-
-    if (img.parentElement.tagName == "P") {
-      // Get the parent of the element
-      const parent = img.parentElement;
-
-      // Check if the element is the only child of its parent
-      if (parent.childElementCount == 1 && parent.textContent.length < 33) {
-        parent.classList.add("imageonly");
-      } else {
-        img.classList.add("insidetext");
-      }
-    }
-  });
-}
-
-function getHighestResImg(element) {
-  if (element.getAttribute("srcset")) {
-    return element
-      .getAttribute("srcset")
-      .split(",")
-      .reduce(
-        (acc, item) => {
-          let [url, width] = item.trim().split(" ");
-          width = parseInt(width);
-          if (width > acc.width) return { width, url };
-          return acc;
-        },
-        { width: 0, url: "" }
-      ).url;
-  }
-
-  return element.getAttribute("src");
-}
-
-// guess the reference supplementary figuresXCV
-function guessSupp(content, index) {
-  const sections = content.querySelectorAll("article section");
-
-  sections.forEach((section) => {
-    let sectionScore = 0;
-
-    // check the id of the section
-    if (section.id.includes("figure")) {
-      sectionScore += 100;
-    }
-
-    // if section has a title that includes Supplementay figures
-    let title = section.querySelector("h1");
-
-    if (
-      title?.textContent.includes("Supplementary") ||
-      title?.textContent.includes("supplementary") ||
-      title?.textContent.includes("figures") ||
-      title?.textContent.includes("Figures")
-    ) {
-      sectionScore += 100;
-    }
-
-    // if section has figures only or figures or more than 90% of the content figures, it score 100. (+ 20 pt if figure id ends with s\d)
-    // console.log("children", section.children.length)
-    let children = section.children;
-    let childrenFigure = section.querySelectorAll("figure");
-    if (childrenFigure.length / children.length > 0.9) {
-      sectionScore = sectionScore + 300;
-    }
-
-    // checking figures
-    section.querySelectorAll("figure").forEach((fig) => {
-      // if figure id contains s1 or s2 (typically for supplementary figures)
-      const pattern = /s\d+$/;
-      if (pattern.test(fig.id)) {
-        sectionScore = sectionScore + 20;
-      }
-    });
-
-    section.dataset.suppSection = sectionScore;
-
-    if (
-      section.dataset.suppSection >
-      section?.previousElementSibling?.dataset.suppSection
-    ) {
-      section.previousElementSibling.classList.remove("surelySupp");
-      section.classList.add("surelySupp");
-    }
-  });
-}
-
 function tagImgInFigures(content) {
   const figures = content.querySelectorAll("figure");
   figures.forEach((figure) => {
@@ -1065,11 +949,5 @@ function tagImgInFigures(content) {
 
     // if it’s a continued element, don’t show its name
     if (figure.querySelector(".ctn")) return;
-
-    // figure.insertAdjacentHTML(
-    //   "afterend",
-    //   `<p class="sendtolink">See ${figure
-    //     .querySelector("h3").innerHTML}</p>`
-    // );
   });
 }
