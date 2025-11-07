@@ -1,9 +1,5 @@
 /*references*/
 
-.reference-section {
-  /* margin-left: 5ch; */
-}
-
 .reference-list {
   list-style-type: none;
   font-family: var(--font-sans);
@@ -11,6 +7,7 @@
   margin-bottom: 17px;
   /* break-inside: avoid; */
 }
+
 .reference-list li {
   margin-bottom: 5px;
   hyphens: manual;
@@ -29,38 +26,45 @@
   list-style: none;
   padding: 0;
 }
+
 .reference__authors_list:after {
   content: " ";
 }
+
+.reference__author:first-child {
+  font-weight: 600;
+  color: var(--color-elife-grey);
+}
+
 .reference__author {
   display: inline;
 }
+
 .reference__author:not(:first-child):before {
   content: ", ";
-  display: inline;
-  /* margin-left: -0.33ch; */
 }
-/* addd .reference span to make it more specific than [class*='reference__author']:not(:first-child) */
+
 .reference__authors_list_suffix:before {
   content: "(";
 }
+
 .reference__authors_list_suffix:after {
   content: ") ";
 }
-.reference__title {
-  font-weight: 600;
-}
+
 .reference__title:after {
   content: " ";
 }
+
 .reference__doi {
   margin-left: 1ch;
-  /* display: block; */
 }
+
 .reference__doi_link {
   color: var(--color-elife-blue);
   font-weight: 500;
 }
+
 .reference__label::after {
   content: " ";
 }
@@ -73,7 +77,6 @@
   content: " | ";
 }
 
-
 /* #article-content { */
 /*   break-after: page; */
 /* } */
@@ -84,6 +87,7 @@
   margin: 0;
   display: inline;
 }
+
 .reference__editors_list > li {
   display: inline;
 }

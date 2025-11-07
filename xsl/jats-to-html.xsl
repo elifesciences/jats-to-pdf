@@ -9,7 +9,7 @@
     exclude-result-prefixes="xs xsi xlink mml ali e"
     version="3.0">
     
-    <xsl:output method="html" indent="yes"/>
+    <xsl:output method="html" indent="no"/>
     
     <xsl:template match="@*|node()">
         <xsl:copy copy-namespaces="no">
@@ -1026,17 +1026,11 @@
             else 'reference__authors_list'"/>
         <xsl:choose>
             <xsl:when test="count(*) gt 10">
-                <ol>
-                    <xsl:attribute name="class" select="$ref-list-class"/>
-                    <xsl:apply-templates select="*[position() lt 11]"/>
-                </ol>
+                <ol><xsl:attribute name="class" select="$ref-list-class"/><xsl:apply-templates select="*[position() lt 11]"/></ol>
                 <em> et al.</em>
                 </xsl:when>
             <xsl:otherwise>
-                <ol>
-                    <xsl:attribute name="class" select="$ref-list-class"/>
-                    <xsl:apply-templates select="*"/>
-                </ol>
+                <ol><xsl:attribute name="class" select="$ref-list-class"/><xsl:apply-templates select="*"/></ol>
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>
@@ -1074,6 +1068,9 @@
     <xsl:template match="mixed-citation/article-title | mixed-citation[@publication-type=('book','other')]/chapter-title | mixed-citation[@publication-type=('report','thesis')]/source">
         <span class="reference__title">
             <xsl:apply-templates select="node()"/>
+            <xsl:if test="not(matches(.,'\.\s*$'))">
+                <xsl:text>.</xsl:text>
+            </xsl:if>
         </span>
     </xsl:template>
     
