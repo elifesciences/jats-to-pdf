@@ -312,7 +312,7 @@
                             <xsl:choose>
                                 <xsl:when test="@fn-type='coi-statement'">
                                     <strong>Competing interests:</strong>
-                                    <xsl:value-of select="replace(./p[1],'^[Cc]ompeting [Ii]nterests:','')"/>
+                                    <xsl:value-of select="replace(./p[1],'^[Cc]ompeting [Ii]nterests?( [Ss]tatement)?:','')"/>
                                 </xsl:when>
                                 <xsl:otherwise>
                                     <xsl:apply-templates select="./p/node()"/>
@@ -1049,7 +1049,7 @@
     
     <xsl:template match="fig|table-wrap[graphic or alternatives/graphic]">
         <xsl:choose>
-            <xsl:when test="label and @position='float'">
+            <xsl:when test="label and @position='float' and not(ancestor::sub-article)">
                 <xsl:apply-templates mode="float" select="self::*"/>
             </xsl:when>
             <!-- treat unlablled figures/tables as if they were anchored -->

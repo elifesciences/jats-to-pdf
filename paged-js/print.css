@@ -133,6 +133,12 @@ p {
     break-inside: avoid;
 }
 
+#peer-reviews .fig-group img {
+  min-height: 200px;
+  display: block;
+  margin: 0 auto;
+}
+
 .descriptors__icon--cc a {
     border-bottom: 0;
     color: inherit;
