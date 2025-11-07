@@ -36,10 +36,10 @@
 .institutions-list {
   margin: 0;
   padding: 0;
-  line-height: 18px;
+  line-height: 14px;
   font-size: 10px;
   list-style-type: none;
-  margin-top: 5px;
+  margin-top: 8px;
   font-family: var(--font-sans);
 }
 .institutions-list__item {
