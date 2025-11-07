@@ -283,11 +283,13 @@
                                     <xsl:apply-templates select="./name[1]"/>
                                 </strong>
                                 <xsl:text>: </xsl:text>
-                                <!-- To do: add icon for authenticated orcids -->
                                 <a>
                                     <xsl:attribute name="href">
                                         <xsl:value-of select="contrib-id[@contrib-id-type='orcid'][1]"/>
                                     </xsl:attribute>
+                                    <xsl:if test="contrib-id[@contrib-id-type='orcid'][1]/@authenticated='true'">
+                                        <span class="orcid-icon"/>
+                                    </xsl:if>
                                     <xsl:value-of select="contrib-id[@contrib-id-type='orcid'][1]"/>
                                 </a>
                             </p>

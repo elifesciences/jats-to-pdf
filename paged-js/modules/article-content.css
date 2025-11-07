@@ -80,3 +80,17 @@ h1 + h1 {
 .reference {
   break-inside:avoid;
 }
+
+.orcid-icon::before {
+  height: 10px;
+  width: 10px;
+  background-image: url("../assets/orcid.svg");
+  background-size: 10px 10px;
+  display: inline-block;
+  background-repeat: no-repeat;
+  content: "";
+}
+
+.orcid-icon::after {
+  content: " ";
+}
