@@ -239,7 +239,16 @@
                                         </xsl:for-each>
                                     </xsl:if>
                                     <xsl:if test="email or xref[@ref-type='corresp']">
-                                        <span class="email-icon"/>
+                                        <xsl:choose>
+                                            <xsl:when test="email">
+                                                <a href="{concat('mailto:',email[1])}">
+                                                    <span class="email-icon"/>
+                                                </a>
+                                            </xsl:when>
+                                            <xsl:otherwise>
+                                                <span class="email-icon"/>
+                                            </xsl:otherwise>
+                                        </xsl:choose>
                                     </xsl:if>
                                 </span>
                             </li>
