@@ -50,16 +50,6 @@ a[href*="#c"] {
   background-repeat: no-repeat;
 }
 
-/* how to remove the top space to the first element of the page?*/
-
-section[data-split-from]:first-child :is(h1, h2):first-child {
-  /* margin-top: 0; */
-  /* color: red; */
-}
-section#references h1 {
-  /* margin-top: 0; */
-}
-
 /* reviewers */
 
 blockquote ol {
