@@ -1321,10 +1321,19 @@
         </blockquote>
     </xsl:template>
     
-    <xsl:template match="preformat">
-        <code>
-            <xsl:apply-templates select="@id|node()"/>
-        </code>
+    <xsl:template match="preformat | code">
+        <xsl:choose>
+            <xsl:when test="parent::p or parent::td or parent::th">
+                <code>
+                    <xsl:apply-templates select="@id|node()"/>
+                </code>
+            </xsl:when>
+            <xsl:otherwise>
+                <pre>
+                    <xsl:apply-templates select="@id|node()"/>
+                </pre>
+            </xsl:otherwise>
+        </xsl:choose>
     </xsl:template>
     
     <xsl:template match="funding-group">
