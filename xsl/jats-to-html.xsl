@@ -272,54 +272,113 @@
     
     <!-- To do: add full support for group authors -->
     <xsl:template mode="authors-in-back" match="article-meta/contrib-group[1]">
-        <section id="orcids">
-            <h2 class="orcid-list__title">Author ORCID iDs</h2>
-            <ul class="orcid-list list-simple">
-                <xsl:for-each select="./contrib[@contrib-type='author' and name and contrib-id[@contrib-id-type='orcid']]">
-                    <li class="orcid-list-item">
-                        <p>
-                            <xsl:apply-templates select="./name[1]"/>
-                            <xsl:text> </xsl:text>
-                            <!-- To do: add icon for authenticated orcids -->
-                            <a>
-                                <xsl:attribute name="href">
+        <xsl:if test="contrib[@contrib-type='author' and contrib-id[@contrib-id-type='orcid']]">
+            <section id="orcids">
+                <h2 class="orcid-list__title">Author ORCID iDs</h2>
+                <ul class="orcid-list list-simple">
+                    <xsl:for-each select="./contrib[@contrib-type='author' and name and contrib-id[@contrib-id-type='orcid']]">
+                        <li class="orcid-list-item">
+                            <p>
+                                <strong>
+                                    <xsl:apply-templates select="./name[1]"/>
+                                </strong>
+                                <xsl:text>: </xsl:text>
+                                <!-- To do: add icon for authenticated orcids -->
+                                <a>
+                                    <xsl:attribute name="href">
+                                        <xsl:value-of select="contrib-id[@contrib-id-type='orcid'][1]"/>
+                                    </xsl:attribute>
                                     <xsl:value-of select="contrib-id[@contrib-id-type='orcid'][1]"/>
-                                </xsl:attribute>
-                                <xsl:value-of select="contrib-id[@contrib-id-type='orcid'][1]"/>
-                            </a>
-                        </p>
-                    </li>
-                </xsl:for-each>
-            </ul>
-        </section>
+                                </a>
+                            </p>
+                        </li>
+                    </xsl:for-each>
+                </ul>
+            </section>
+        </xsl:if>
+        <xsl:if test="$author-notes-max-exceeded">
+            <section id="author-notes-expanded">
+                <h2 class="author-notes-expanded__title">Author notes</h2>
+                <ul class="author-notes-expanded-list list-simple">
+                    <xsl:for-each select="parent::article-meta/author-notes/fn">
+                        <xsl:variable name="id" select="@id"/>
+                        <xsl:variable name="author-contribs" select="ancestor::article-meta/contrib-group[1]/contrib[@contrib-type='author' and xref[@rid=$id]]"/>
+                        <li class="author-notes-expanded-list-item">
+                            <p>
+                                <xsl:if test="$author-contribs">
+                                    <strong>
+                                        <xsl:for-each select="$author-contribs">
+                                            <xsl:apply-templates select="./name[1]"/>
+                                            <xsl:choose>
+                                                <xsl:when test="position() = last()">
+                                                    <xsl:text>:</xsl:text>
+                                                </xsl:when>
+                                                <xsl:otherwise>
+                                                    <xsl:text>, </xsl:text>
+                                                </xsl:otherwise>
+                                            </xsl:choose>
+                                        </xsl:for-each>
+                                    </strong>
+                                    <xsl:text> </xsl:text>
+                                    <xsl:apply-templates select="./p/node()"/>
+                                </xsl:if>
+                            </p>
+                        </li>
+                    </xsl:for-each>
+                </ul>
+            </section>
+        </xsl:if>
     </xsl:template>
     
-    <!-- To do: handle particularly long notes -->
+    <!-- handle particularly long notes -->
+    <xsl:variable name="author-notes-length" select="sum(/article//article-meta/author-notes/fn/string-length(normalize-space(.)))" as="xs:integer"/>
+    <xsl:variable name="author-notes-limit" select="400" as="xs:integer"/>
+    <xsl:variable name="author-notes-max-exceeded" select="$author-notes-length gt $author-notes-limit" as="xs:boolean"/>
+    
     <xsl:template match="article-meta/author-notes">
         <xsl:choose>
             <xsl:when test="fn">
                 <div class="author-notes">
-                    <xsl:for-each select="fn">
-                        <p class="author-notes__list_item">
-                            <xsl:if test="label">
+                    <xsl:variable name="fn-string-length" select="sum(./fn/string-length(normalize-space(.)))"/>
+                    <xsl:choose>
+                        <xsl:when test="$author-notes-max-exceeded">
+                            <p class="author-notes__list_item">
                                 <sup aria-hidden="true">
                                     <strong>
-                                        <xsl:value-of select="./label[1]"/>
+                                        <xsl:value-of select="string-join(distinct-values(fn/label),', ')"/>
                                     </strong>
                                 </sup>
-                                <xsl:text>&#xA0;</xsl:text>
-                            </xsl:if>
-                            <xsl:choose>
-                                <xsl:when test="@fn-type='coi-statement'">
-                                    <strong>Competing interests:</strong>
-                                    <xsl:value-of select="replace(./p[1],'^[Cc]ompeting [Ii]nterests?( [Ss]tatement)?:','')"/>
-                                </xsl:when>
-                                <xsl:otherwise>
-                                    <xsl:apply-templates select="./p/node()"/>
-                                </xsl:otherwise>
-                            </xsl:choose>
-                        </p>
-                    </xsl:for-each>
+                                <xsl:if test="fn/label">
+                                    <xsl:text>&#xA0;</xsl:text>
+                                </xsl:if>
+                                <xsl:text>See </xsl:text>
+                                <a href="#author-notes-expanded">Author notes</a>
+                            </p>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:for-each select="fn">
+                                <p class="author-notes__list_item">
+                                    <xsl:if test="label">
+                                        <sup aria-hidden="true">
+                                            <strong>
+                                                <xsl:value-of select="./label[1]"/>
+                                            </strong>
+                                        </sup>
+                                        <xsl:text>&#xA0;</xsl:text>
+                                    </xsl:if>
+                                    <xsl:choose>
+                                        <xsl:when test="@fn-type='coi-statement'">
+                                            <strong>Competing interests:</strong>
+                                            <xsl:value-of select="replace(./p[1],'^[Cc]ompeting [Ii]nterests?( [Ss]tatement)?:','')"/>
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <xsl:apply-templates select="./p/node()"/>
+                                        </xsl:otherwise>
+                                    </xsl:choose>
+                                </p>
+                            </xsl:for-each>
+                        </xsl:otherwise>
+                    </xsl:choose>
                     <xsl:if test="preceding-sibling::contrib-group/contrib[@contrib-type='author' and @corresp='yes' and email]">
                         <p>
                             <strong>For correspondence:</strong>
@@ -540,7 +599,7 @@
     
     <xsl:template match="article/back">
         <xsl:apply-templates select="* except ref-list"/>
-        <xsl:if test="not(sec[@sec-type='additional-information']) and (ancestor::article//article-meta[funding-group or related-object] or ancestor::article//article-meta/contrib-group[1][contrib[@contrib-type='author' and contrib-id[@contrib-id-type='orcid']]])">
+        <xsl:if test="not(sec[@sec-type='additional-information']) and ($author-notes-max-exceeded or ancestor::article//article-meta[funding-group or related-object] or ancestor::article//article-meta/contrib-group[1][contrib[@contrib-type='author' and contrib-id[@contrib-id-type='orcid']]])">
             <section id="additional-info">
                 <h1>Additional information</h1>
                 <xsl:apply-templates select="ancestor::article//article-meta/funding-group"/>
@@ -549,7 +608,7 @@
                         <xsl:apply-templates select="ancestor::article//article-meta/related-object"/>
                     </section>
                 </xsl:if>
-                <xsl:apply-templates mode="authors-in-back" select="ancestor::article//article-meta/contrib-group[1][contrib[@contrib-type='author' and contrib-id[@contrib-id-type='orcid']]]"/>
+                <xsl:apply-templates mode="authors-in-back" select="ancestor::article//article-meta/contrib-group[1]"/>
             </section>
         </xsl:if>
         <!-- To do: Accommodate multiple ref lists? -->
