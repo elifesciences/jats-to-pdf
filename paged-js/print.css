@@ -78,11 +78,10 @@ figure+figure {
 }
 
 /* //fixing weird list issue when the list is made of an image (dang, why do we do that?)*/
-
 ol {
     /* break-before:unset; */
     display: block;
-    margin-top: 2em;
+    /* margin-top: 2em; */
 }
 
 ol>li {
@@ -174,16 +173,6 @@ p {
     page-break-inside: avoid;
 }
 
-#references-title {
-    break-before: page;
-}
-
-
-li .probablyHeading {
-    break-after: unset;
-    /* display: none; */
-}
-
 .descriptors__identifiers {
     list-style-type: none;
     padding: 0;
@@ -193,14 +182,6 @@ li .probablyHeading {
 
 .pagebreak {
     break-before: page;
-}
-
-.terms-container {
-    display: none;
-}
-
-.assessment__fixed_text {
-    display: none;
 }
 
 #authors ul {
