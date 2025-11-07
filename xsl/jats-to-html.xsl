@@ -525,9 +525,9 @@
     </xsl:template>
     
     <xsl:template name="main">
-        <xsl:apply-templates select="./sub-article[@article-type='editor-report']"/>
-        <xsl:apply-templates select=".//article-meta/abstract"/>
         <section id="article-content">
+            <xsl:apply-templates select="./sub-article[@article-type='editor-report']"/>
+            <xsl:apply-templates select=".//article-meta/abstract"/>
             <xsl:apply-templates select="body|back"/>
         </section>
         <section id="peer-reviews">

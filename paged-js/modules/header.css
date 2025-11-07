@@ -38,18 +38,6 @@
   padding-top: 0;
 }
 
-#header .copyrights {
-  padding-left: 0;
-  margin-left: 0;
-  list-style-type: none;
-  color: var(--color-sub);
-  font-family: var(--font-sans);
-  font-size: 0.9em;
-  font-weight: 300;
-}
-#header .copyrights li {
-  margin-bottom: 4px;
-}
 .descriptors__icon a {
   padding-left: 3ch;
 }

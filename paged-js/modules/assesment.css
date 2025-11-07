@@ -26,10 +26,6 @@
   font-size: 13px;
 }
 
-.assessment:first-child {
-  margin-top: 0;
-}
-
 .assessment h2 + p {
   padding-top: 0 !important;
 }
