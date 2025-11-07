@@ -73,10 +73,6 @@ blockquote ol {
   /* color: orange; */
 }
 
-section h1 {
-  margin-top: 34px;
-}
-
 h1 + h1 {
   margin-top: -.5em;
 }

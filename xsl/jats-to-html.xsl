@@ -480,13 +480,13 @@
             <xsl:attribute name="class">
                 <xsl:value-of select="$class"/>
             </xsl:attribute>
+            <h2>
+                <xsl:apply-templates select="./front-stub//article-title/node()"/>
+            </h2>
             <div>
                 <xsl:attribute name="class">
                     <xsl:value-of select="concat($class,'__body')"/>
                 </xsl:attribute>
-                <h2>
-                    <xsl:apply-templates select="./front-stub//article-title/node()"/>
-                </h2>
                 <xsl:apply-templates select="./body"/>
             </div>
             <div class="descriptors">

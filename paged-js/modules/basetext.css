@@ -71,7 +71,7 @@ h6 {
 
 h1 {
   font-size: 20px;
-  margin-top: 20px;
+  margin-top: 26px;
   margin-bottom: 6px;
   line-height: 28px;
   color: var(--color-main);
@@ -93,12 +93,11 @@ h3 {
   margin-top: 12px;
   margin-bottom: 6px;
   font-size: 14px;
-  font-family: var(--font-serif);
   color: var(--color-body);
 }
 
 h4 {
-  font-size: 8px;
+  font-size: 12px;
   margin-top: 8px;
   margin-bottom: 6px;
 }
@@ -112,6 +111,19 @@ h5 {
 h1 + h2 {
   margin-top: 12px;
 }
+
+h1 + section > h2:first-child {
+  margin-top: 4px;
+}
+
+h2 + section > h3:first-child {
+  margin-top: 4px;
+}
+
+h3 + section > h4:first-child {
+  margin-top: 4px;
+}
+
 p + h2 {
   margin-top: 12px;
 }
