@@ -3,11 +3,11 @@
     size: letter;
     margin: 75px 50px 52px 50px;
 
-   @top-left {
+    @top-left {
       content: element(logo);
       text-align: left;
     }
-    
+
     @top-right {
       content: "";
     }
@@ -32,7 +32,7 @@
   }
 
   #logo img {
-    width: 100% !important; 
+    width: 100% !important;
     height: 100% !important;
     display: block;
   }
@@ -47,10 +47,10 @@
     right: auto;
   }
 
-  #right-header-links > a, 
-  #right-header-links > span {
+  #right-header-links>a,
+  #right-header-links>span {
     display: inline-block;
-    margin-left: 5px; 
+    margin-left: 5px;
     vertical-align: middle;
   }
 
@@ -73,9 +73,11 @@
   .runninghead a {
     color: var(--color-elife-blue);
   }
+
   .runninghead .counter {
     margin-left: auto;
   }
+
   .runninghead .counter::after {
     content: counter(page) " of " counter(pages);
   }
@@ -88,16 +90,18 @@
     display: flex;
     align-items: center;
     gap: 5px;
-    list-style: none; 
+    list-style: none;
     padding: 0;
-    margin: 0;    
+    margin: 0;
     z-index: 1000;
     font-size: 10px;
   }
+
   .article-flag-list__item {
     margin-left: 0 !important;
     padding-right: 0 !important;
   }
+
   .article-flag-list__item:not(:last-child)::after {
     content: "|";
     display: inline-block;
@@ -105,28 +109,27 @@
     margin: 0;
     color: var(--color-elife-grey);
   }
+
   .article-flag__link {
-    color: var(--color-elife-blue); 
+    color: var(--color-elife-blue);
     text-decoration: none;
     white-space: nowrap;
-    }
+  }
 }
 
 /* baseline  */
 
-@media screen, pagedjs-ignore {
+@media screen,
+pagedjs-ignore {
   .pagedjs_area {
     --pagedjs-baseline-offset-color: red;
     --pagedjs-baseline-color: transparent;
     --pagedjs-baseline-lineheight: 17px;
     --pagedjs-baseline-position: 13px;
-    background: linear-gradient(
-        transparent 0%,
+    background: linear-gradient(transparent 0%,
         transparent calc(var(--pagedjs-baseline-lineheight) - 1px),
-        var(--pagedjs-baseline-color)
-          calc(var(--pagedjs-baseline-lineheight) - 1px),
-        var(--pagedjs-baseline-color) var(--pagedjs-baseline-lineheight)
-      ),
+        var(--pagedjs-baseline-color) calc(var(--pagedjs-baseline-lineheight) - 1px),
+        var(--pagedjs-baseline-color) var(--pagedjs-baseline-lineheight)),
       transparent;
 
     background-size: 100% var(--pagedjs-baseline-lineheight);
@@ -139,8 +142,6 @@ article {
   --offset: 180px;
 }
 
-article > section {
+article>section {
   margin-left: var(--offset);
 }
-
-

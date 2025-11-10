@@ -25,11 +25,8 @@
 }
 
 #header {
-  /* margin: auto; */
   margin-left: var(--offset);
-  /* margin-top: calc((17px * 6.5) + 3px); */
   max-width: 90%;
-  /* margin: auto; */
 }
 
 #header .title {
@@ -75,18 +72,9 @@
 }
 
 #sideSection {
-  /* background: red; */
-  /* font-size: ; */
   font-family: var(--font-sans);
   width: calc(var(--offset) - 5ch);
-
-  /* top: 200px; */
-  /* border-right: 1px solid red; */
-  /* margin-left: 0; */
-  /* float: left; */
   position: absolute;
-  /* display: none; */
-  top: 5em;
   left: calc(var(--offset) * -1);
   font-size: 0.9em;
 }
@@ -128,25 +116,13 @@
   color: grey;
 }
 
-/* home page link to process */
 .article-status__heading {
   margin-bottom: 0;
 }
+
 .article-status__link {
-  margin-top: 0.4em;
+  margin-top: 0;
   display: block;
-  /* display: none; */
-  /*hide the link to elife process in the home page*/
-}
-.article-status__link .prettified-symbol {
-  display: none;
-}
-.article-status__link .prettified-link {
-  content: attr(href);
-  display: block;
-  font-style: italic;
-  /* color: orange; */
-  display: none;
 }
 
 .modal-container,
@@ -161,21 +137,5 @@
 }
 
 #sideSection dt {
-  /* margin-top: 17px; */
   font-weight: 800;
-}
-
-#sideSection dd {
-  /* margin-bottom: 0; */
-}
-
-#sideSection time {
-  /* margin-right: .8ch; */
-}
-
-.probablyHeading {
-  break-after: avoid;
-}
-.probablyHeading + .probablyHeading {
-  /* break-after: unset; */
 }
