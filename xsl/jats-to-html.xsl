@@ -76,14 +76,6 @@
         </p>
     </xsl:variable>
     
-    <xsl:variable name="logo-section">
-        <section id="logo">
-            <a href="https://elifesciences.org/" class="linkElife">
-                <xsl:copy-of select="$elife-logo"/>
-            </a>
-        </section>
-    </xsl:variable>
-    
     <xsl:variable name="elife-logo">
         <img alt="eLife logo" loading="lazy" width="80" height="30" decoding="async" data-nimg="1" 
                         class="site-header__logo" style="color:transparent" src="https://elifesciences.org/assets/patterns/img/patterns/organisms/elife-logo-xs.fd623d00.svg"/>
@@ -91,7 +83,7 @@
     
     <xsl:variable name="first-page-banner">
         <div id="first-page-links" class="elife-intro">
-            <a class="logo" href="https://elifesciences.org/">
+            <a id="logo" href="https://elifesciences.org/">
                 <xsl:copy-of select="$elife-logo"/>
             </a> 
             <div id="right-header-links">
@@ -116,7 +108,6 @@
     <xsl:template match="article">
         <article>
             <xsl:copy-of select="$first-page-banner"/>
-            <xsl:copy-of select="$logo-section"/>
             <xsl:call-template name="aside"/>
             <xsl:call-template name="header"/>
             <xsl:call-template name="article-notes"/>

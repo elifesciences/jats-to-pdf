@@ -55,32 +55,9 @@
   display: none;
 }
 
-.elife-intro img {
-  width: 100% !important;
-}
-
-.pagedjs_first_page #logo {
-  /*hide the logo section on the first page*/
-  display: none;
-}
-
 .pagedjs_first_page .article-flag-list {
   /*hide the MSAs on the first page*/
   display: none;
-}
-
-.elife-intro a.logo {
-  margin-right: auto;
-  position: absolute;
-  top: 0px;
-  display: block;
-  width: 80px;
-  margin-bottom: 1em;
-}
-
-.elife-intro.separator {
-    padding: 0 5px; 
-    font-weight: 900;
 }
 
 .header-icon.oa-icon::before {
