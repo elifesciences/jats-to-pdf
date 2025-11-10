@@ -57,13 +57,6 @@ section a {
   color: var(--color-main);
 }
 
-/* Remove the margin-top if the page starts with a header */
-.pagedjs_page_content article > section:first-child > section:first-child > h1:first-child,
-.pagedjs_page_content article > section:first-child > section:first-child > section:first-child > h2:first-child,
-.pagedjs_page_content article > section:first-child > section:first-child > section:first-child > section:first-child > h3:first-child {
-  margin-top: 0 !important;
-}
-
 h1,
 h2,
 h3,
@@ -77,24 +70,13 @@ h6 {
   font-weight: 600;
 }
 
-/* Avoid orphaned headings */
-h1:only-child,
-h2:only-child,
-h3:only-child,
-h4:only-child,
-h5:only-child {
-  break-after: avoid; 
-  break-inside: avoid; 
-}
-
-/* Attempts avoiding orphaned h1s */
-h1 + section > h2:first-child {
-  break-before: avoid;
-}
-
-section:empty {
-  break-inside: avoid;
-}
+/* THIS removes the margin-top if the page starts with a header,
+    however it also creates page breaks between headings
+.pagedjs_page_content article > section:first-child > section:first-child > h1:first-child,
+.pagedjs_page_content article > section:first-child > section:first-child > section:first-child > h2:first-child,
+.pagedjs_page_content article > section:first-child > section:first-child > section:first-child > section:first-child > h3:first-child {
+  margin-top: 0 !important;
+}*/
 
 h1 {
   font-size: 20px;
