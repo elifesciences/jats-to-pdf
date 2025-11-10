@@ -17,13 +17,14 @@ body {
   font-size: 1em;
 }
 
-#article-content p {
+#article-content p,
+#peer-reviews p {
   margin-bottom: 5px;
 }
 
 blockquote {
-  margin-top: 12px;
-  margin-bottom: 12px;
+  margin-top: 8px;
+  margin-bottom: 8px;
   border-left: 1px solid var(--color-sub);
   margin-left: 0;
   padding-left: 3ch;
@@ -64,60 +65,55 @@ h4,
 h5,
 h6 {
   font-family: var(--font-sans);
-  break-after: avoid;
+  break-after: avoid !important;
   break-inside: avoid;
   text-wrap: wrap;
   font-weight: 600;
 }
 
-/* removes the margin-top if the page starts with a header 
+/* removes the margin-top if the page starts with a header */
 .pagedjs_page_content article > section:first-child > section:first-child > h1:first-child,
 .pagedjs_page_content article > section:first-child > section:first-child > section:first-child > h2:first-child,
 .pagedjs_page_content article > section:first-child > section:first-child > section:first-child > section:first-child > h3:first-child {
   margin-top: 0 !important;
-}*/
+}
 
 h1 {
   font-size: 20px;
-  margin-top: 26px;
+  margin-top: 10px;
   margin-bottom: 6px;
   line-height: 28px;
   color: var(--color-main);
 }
 
 h1.title {
-  /*margin-top: 8px;*/
   color: var(--color-main);
 }
 
 h2 {
   font-size: 16px;
+  margin-top: 8px;
   margin-bottom: 6px;
-  margin-top: 16px;
   line-height: 24px;
 }
 
 h3 {
-  margin-top: 12px;
+  margin-top: 8px;
   margin-bottom: 6px;
   font-size: 14px;
   color: var(--color-body);
 }
 
 h4 {
-  font-size: 12px;
+  font-size: 6px;
   margin-top: 8px;
   margin-bottom: 6px;
 }
 
 h5 {
-  font-size: 11px;
+  font-size: 6px;
   margin-top: 8px;
   margin-bottom: 6px;
-}
-
-h1 + h2 {
-  margin-top: 12px;
 }
 
 h1 + section > h2:first-child {
@@ -130,10 +126,6 @@ h2 + section > h3:first-child {
 
 h3 + section > h4:first-child {
   margin-top: 4px;
-}
-
-p + h2 {
-  margin-top: 12px;
 }
 
 h2 {
