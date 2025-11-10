@@ -93,15 +93,12 @@
         <div id="first-page-links" class="elife-intro">
             <a class="logo" href="https://elifesciences.org/">
                 <xsl:copy-of select="$elife-logo"/>
-            </a>
-            <!-- To do: add cc and oa icons and inject into pagedjs_margin-top-right
-                <template id="header-icons-template">
-                <div id="right-header-links">
-                    <a href="https://en.wikipedia.org/wiki/Open_access" target="_blank" class="header-icon oa-icon"></a>
-                    <span class="separator">|</span>
-                    <a href="https://creativecommons.org/" target="_blank" class="header-icon cc-icon"></a>
-                </div>
-            </template>-->
+            </a> 
+            <div id="right-header-links">
+                <a href="https://en.wikipedia.org/wiki/Open_access" target="_blank" class="header-icon oa-icon"></a>
+                <span class="separator">|</span>
+                <a href="https://creativecommons.org/" target="_blank" class="header-icon cc-icon"></a>
+            </div>
         </div>
     </xsl:variable>
     

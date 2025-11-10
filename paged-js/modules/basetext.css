@@ -70,8 +70,7 @@ h6 {
   font-weight: 600;
 }
 
-/* THIS removes the margin-top if the page starts with a header,
-    however it also creates page breaks between headings
+/* removes the margin-top if the page starts with a header 
 .pagedjs_page_content article > section:first-child > section:first-child > h1:first-child,
 .pagedjs_page_content article > section:first-child > section:first-child > section:first-child > h2:first-child,
 .pagedjs_page_content article > section:first-child > section:first-child > section:first-child > section:first-child > h3:first-child {

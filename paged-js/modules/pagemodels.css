@@ -13,17 +13,36 @@
 
    @top-left-corner {
       content: "";
-      display: block;
-      width: 100%;
-      height: 100%;
-      border: none;
-      width: 10ch;
-      top: 30px;
-      height: 36px;
-      position: relative;
-      margin-left: 30px;
+    }
+    
+    @top-right-corner {
+      content: "";
     }
   }
+
+  @page :first {
+    @top-right {
+      content: element(right-header-links);
+      text-align: right;
+    }
+  }
+
+  #right-header-links {
+    position: running(right-header-links);
+    display: block;
+    width: 100%;
+    text-align: right;
+    position: static;
+    top: auto;
+    right: auto;
+  }
+
+  #right-header-links > a, 
+  #right-header-links > span {
+    display: inline-block;
+    margin-left: 5px; 
+    vertical-align: middle;
+}
 
   .runninghead {
     font-family: var(--font-sans);

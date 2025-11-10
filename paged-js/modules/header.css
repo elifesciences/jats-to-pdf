@@ -55,14 +55,6 @@
   display: none;
 }
 
-.descriptors__icon--oa a::before {
-  content: url("../assets/oa.svg");
-}
-
-.descriptors__icon--cc a::before {
-  content: url("../assets/cc.svg");
-}
-
 .elife-intro img {
   width: 100% !important;
 }
@@ -77,7 +69,7 @@
   display: none;
 }
 
-.elife-intro  a.logo {
+.elife-intro a.logo {
   margin-right: auto;
   position: absolute;
   top: 0px;
