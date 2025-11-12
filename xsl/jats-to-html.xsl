@@ -1113,6 +1113,11 @@
     
     <xsl:template match="fig|table-wrap[graphic or alternatives/graphic]">
         <xsl:choose>
+            <!-- figures with this processing-instruction have full page images with captions
+                    that spill onto the next page -->
+            <xsl:when test="./preceding-sibling::node()[not(self::text())][1][self::processing-instruction() and normalize-space(.)='max']/name()='size'">
+                <xsl:apply-templates mode="full-page" select="self::*"/>
+            </xsl:when>
             <!-- figures with labels and position=float are given their own page -->
             <xsl:when test="label and @position='float' and not(ancestor::sub-article)">
                 <xsl:apply-templates mode="float" select="self::*"/>
@@ -1122,6 +1127,29 @@
                 <xsl:apply-templates mode="anchor" select="self::*"/>
             </xsl:otherwise>
         </xsl:choose>
+    </xsl:template>
+    
+    <!-- a full-page image with caption on the next page -->
+    <xsl:template mode="full-page" match="fig|table-wrap[graphic or alternatives/graphic]">
+        <figure class="figure" style="--not-to-fill: ok;">
+            <xsl:apply-templates select="@id"/>
+            <xsl:apply-templates select="caption">
+                <xsl:with-param name="page-break-before" select="true()"/>
+            </xsl:apply-templates>
+            <xsl:if test="not(caption)">
+                <figcaption class="figure__caption" style="break-before: page;">
+                    <h3>
+                        <span class="label figure-name">
+                            <xsl:apply-templates select="label"/>
+                        </span>
+                    </h3>
+                </figcaption>
+            </xsl:if>
+            <xsl:apply-templates select="descendant::graphic">
+                <xsl:with-param name="give-boundary" select="true()"/>
+                <xsl:with-param name="size" select="'max'"/>
+            </xsl:apply-templates>
+        </figure>
     </xsl:template>
     
     <!-- position='float' => A floating image that is placed on it's own page -->
@@ -1156,6 +1184,7 @@
     
     <xsl:template match="graphic[ancestor::fig or ancestor::table-wrap]">
         <xsl:param name="give-boundary" select="false()"/>
+        <xsl:param name="size" select="false()"/>
         <xsl:variable name="image-uri" select="concat(
             $iiif-base-uri,
             ./@xlink:href,
@@ -1164,7 +1193,15 @@
         <xsl:variable name="class" select="if (ancestor::fig) then 'child-of-figure has-boundary imageonly'
             else if ($give-boundary) then 'child-of-figure has-boundary imageonly'
             else 'child-of-figure imageonly'"/>
-        <img class="{$class}" loading="lazy" src="{$image-uri}" alt=""/>
+        <img class="{$class}" loading="lazy" src="{$image-uri}" alt="">
+            <xsl:if test="$size">
+                <!-- To do: populate these with other sizes? -->
+                <xsl:variable name="size-style-map" select="map{
+                    'max':'max-width: 120% !important; margin-left: -120px !important; max-height: unset !important; height: auto !important;'
+                    }"/>
+                <xsl:attribute name="style" select="$size-style-map($size)"/>
+            </xsl:if>
+        </img>
     </xsl:template>
     
     <xsl:template match="fig/label|table-wrap[graphic or alternatives/graphic]/label">
