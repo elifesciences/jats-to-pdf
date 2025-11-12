@@ -76,15 +76,11 @@
         </p>
     </xsl:variable>
     
-    <xsl:variable name="elife-logo">
-        <img alt="eLife logo" loading="lazy" width="80" height="30" decoding="async" data-nimg="1" 
-                        class="site-header__logo" style="color:transparent" src="https://elifesciences.org/assets/patterns/img/patterns/organisms/elife-logo-xs.fd623d00.svg"/>
-    </xsl:variable>
-    
     <xsl:variable name="first-page-banner">
         <div id="first-page-links" class="elife-intro">
             <a id="logo" href="https://elifesciences.org/">
-                <xsl:copy-of select="$elife-logo"/>
+                <img alt="eLife logo" loading="lazy" width="80" height="30" decoding="async" data-nimg="1" 
+                        class="site-header__logo" style="color:transparent" src="https://elifesciences.org/assets/patterns/img/patterns/organisms/elife-logo-xs.fd623d00.svg"/>
             </a> 
             <div id="right-header-links">
                 <a href="https://en.wikipedia.org/wiki/Open_access" target="_blank" class="header-icon oa-icon"></a>
@@ -94,12 +90,19 @@
         </div>
     </xsl:variable>
     
+    <xsl:variable name="page-templates">
+        <div id="page-templates">
+            <xsl:copy-of select="$runninghead"/>
+            <xsl:apply-templates select=".//article-meta/article-categories"/>
+            <xsl:copy-of select="$first-page-banner"/>
+        </div>
+    </xsl:variable>
+    
     <xsl:template match="/">
         <html>
             <xsl:copy-of select="$html-head"/>
             <body>
-                <xsl:copy-of select="$runninghead"/>
-                <xsl:apply-templates select=".//article-meta/article-categories"/>
+                <xsl:copy-of select="$page-templates"/>
                 <xsl:apply-templates select="/article"/>
             </body>
         </html>
@@ -107,7 +110,6 @@
     
     <xsl:template match="article">
         <article>
-            <xsl:copy-of select="$first-page-banner"/>
             <xsl:call-template name="aside"/>
             <xsl:call-template name="header"/>
             <xsl:call-template name="article-notes"/>
@@ -299,7 +301,7 @@
             <section id="author-notes-expanded">
                 <h2 class="author-notes-expanded__title">Author notes</h2>
                 <ul class="author-notes-expanded-list list-simple">
-                    <xsl:for-each select="parent::article-meta/author-notes/fn">
+                    <xsl:for-each select="parent::article-meta/author-notes/*[self::fn or self::corresp]">
                         <xsl:variable name="id" select="@id"/>
                         <xsl:variable name="author-contribs" select="ancestor::article-meta/contrib-group[1]/contrib[@contrib-type='author' and xref[@rid=$id]]"/>
                         <li class="author-notes-expanded-list-item">
@@ -319,8 +321,15 @@
                                         </xsl:for-each>
                                     </strong>
                                     <xsl:text> </xsl:text>
-                                    <xsl:apply-templates select="./p/node()"/>
                                 </xsl:if>
+                                <xsl:choose>
+                                    <xsl:when test="name()='fn'">
+                                        <xsl:apply-templates select="./p/node()"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <xsl:apply-templates select="./node()[not(self::label)]"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </p>
                         </li>
                     </xsl:for-each>
@@ -1104,6 +1113,7 @@
     
     <xsl:template match="fig|table-wrap[graphic or alternatives/graphic]">
         <xsl:choose>
+            <!-- figures with labels and position=float are given their own page -->
             <xsl:when test="label and @position='float' and not(ancestor::sub-article)">
                 <xsl:apply-templates mode="float" select="self::*"/>
             </xsl:when>
@@ -1128,16 +1138,7 @@
                     </h3>
                 </figcaption>
             </xsl:if>
-            <xsl:for-each select="descendant::graphic">
-                <xsl:variable name="class" select="if (ancestor::fig) then 'child-of-figure has-boundary imageonly'
-                    else 'child-of-figure imageonly'"/>
-                <xsl:variable name="image-uri" select="concat(
-                    $iiif-base-uri,
-                    ./@xlink:href,
-                    '/full/max/0/default.jpg'
-                    )"/>
-                <img class="{$class}" loading="lazy" src="{$image-uri}" alt=""/>
-            </xsl:for-each>
+            <xsl:apply-templates select="descendant::graphic"/>
         </figure>
     </xsl:template>
     
@@ -1146,18 +1147,24 @@
         <div class="fig-group">
             <p class="figure movedfig">
                 <xsl:apply-templates select="@id"/>
-                <xsl:for-each select="descendant::graphic">
-                    <xsl:variable name="image-uri" select="concat(
-                        $iiif-base-uri,
-                        ./@xlink:href,
-                        '/full/max/0/default.jpg'
-                        )"/>
-                    <img class="child-of-figure imageonly" loading="lazy" src="{$image-uri}" alt=""/>
-                </xsl:for-each>
+                <xsl:apply-templates select="descendant::graphic"/>
             </p>
             <xsl:apply-templates mode="inline" select="caption"/>
             <xsl:apply-templates select="permissions|attrib"/>
         </div>
+    </xsl:template>
+    
+    <xsl:template match="graphic[ancestor::fig or ancestor::table-wrap]">
+        <xsl:param name="give-boundary" select="false()"/>
+        <xsl:variable name="image-uri" select="concat(
+            $iiif-base-uri,
+            ./@xlink:href,
+            '/full/max/0/default.jpg'
+            )"/>
+        <xsl:variable name="class" select="if (ancestor::fig) then 'child-of-figure has-boundary imageonly'
+            else if ($give-boundary) then 'child-of-figure has-boundary imageonly'
+            else 'child-of-figure imageonly'"/>
+        <img class="{$class}" loading="lazy" src="{$image-uri}" alt=""/>
     </xsl:template>
     
     <xsl:template match="fig/label|table-wrap[graphic or alternatives/graphic]/label">
@@ -1167,7 +1174,11 @@
     </xsl:template>
     
     <xsl:template match="fig/caption|table-wrap[graphic or alternatives/graphic]/caption">
+        <xsl:param name="page-break-before" select="false()"/>
         <figcaption class="figure__caption">
+            <xsl:if test="$page-break-before">
+                <xsl:attribute name="style" select="'break-before: page;'"/>
+            </xsl:if>
             <xsl:if test="not(title) and parent::*/label">
                 <h3>
                     <span class="label figure-name">
@@ -1264,38 +1275,36 @@
         <xsl:choose>
             <xsl:when test="not(parent::p)">
                 <p>
-                    <xsl:for-each select="descendant::graphic">
-                        <xsl:variable name="image-uri" select="concat(
-                            $iiif-base-uri,
-                            ./@xlink:href,
-                            '/full/max/0/default.jpg'
-                            )"/>
-                        <img class="child-of-p imageonly disp-formula" loading="lazy" src="{$image-uri}" alt=""/>
-                    </xsl:for-each>
+                    <xsl:apply-templates select="descendant::graphic"/>
                 </p>
             </xsl:when>
             <xsl:otherwise>
-                <xsl:for-each select="descendant::graphic">
-                        <xsl:variable name="image-uri" select="concat(
-                            $iiif-base-uri,
-                            ./@xlink:href,
-                            '/full/max/0/default.jpg'
-                            )"/>
-                        <img class="child-of-p imageonly disp-formula" loading="lazy" src="{$image-uri}" alt=""/>
-                    </xsl:for-each>
+                <xsl:apply-templates select="descendant::graphic"/>
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>
     
     <xsl:template match="inline-formula[inline-graphic or alternatives/inline-graphic]">
-        <xsl:for-each select="descendant::inline-graphic">
-            <xsl:variable name="image-uri" select="concat(
-                $iiif-base-uri,
-                ./@xlink:href,
-                '/full/max/0/default.jpg'
-                )"/>
-            <img class="child-of-p insidetext" loading="lazy" src="{$image-uri}" alt=""/>
-        </xsl:for-each>
+        <xsl:apply-templates select="descendant::inline-graphic"/>
+    </xsl:template>
+    
+    <xsl:template match="graphic[ancestor::disp-formula] | inline-graphic[ancestor::inline-formula]">
+        <xsl:variable name="image-uri" select="concat(
+            $iiif-base-uri,
+            ./@xlink:href,
+            '/full/max/0/default.jpg'
+            )"/>
+        <xsl:variable name="formula-type-class" select="if (ancestor::disp-formula) then 'imageonly disp-formula'
+                                                        else 'insidetext'"/>
+        <!-- Resizing the image: Introduce a class based on a processing-instruction -->
+        <xsl:variable name="size-pi" select="if (./preceding-sibling::node()[not(self::text())][1][self::processing-instruction()]/name()='size')
+                then concat('formula-max-',preceding-sibling::processing-instruction()[1])
+            else ''"/>
+        <xsl:variable name="class" select="string-join(
+            ('child-of-p',
+            $formula-type-class,
+            $size-pi),' ')"/>
+        <img class="{$class}" loading="lazy" src="{$image-uri}" alt=""/>
     </xsl:template>
     
     <xsl:template match="list">
@@ -1536,6 +1545,12 @@
         </xsl:choose>
     </xsl:template>
     
+    <xsl:template match="email">
+        <xsl:call-template name="add-icon">
+            <xsl:with-param name="elem" select="."/>
+        </xsl:call-template>
+    </xsl:template>
+    
     <!-- This adds an icon next to certain links (i.e. those with long embedded text or 
         that are likely to span multiple lines in article body content) -->
     <xsl:template name="add-icon">
@@ -1571,6 +1586,14 @@
                 <span class="{concat('fakelink ',$class)}">
                     <span class="fakelink-text"><xsl:apply-templates select="$elem/node()"/></span>
                     <a class="fake-icon" href="{concat('#',$elem/@rid)}">
+                        <span class="fakelink-icon">&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;</span>
+                    </a>
+                </span>
+            </xsl:when>
+            <xsl:when test="$elem/name()='email'">
+                <span class="fakelink linktoext">
+                    <span class="fakelink-text"><xsl:apply-templates select="$elem/node()"/></span>
+                    <a class="fake-icon" href="{concat('mailto:',$elem/data())}">
                         <span class="fakelink-icon">&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;</span>
                     </a>
                 </span>
