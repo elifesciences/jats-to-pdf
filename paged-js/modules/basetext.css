@@ -105,14 +105,14 @@ h3 {
 }
 
 h4 {
-  font-size: 6px;
-  margin-top: 8px;
+  font-size: 12px;
+  margin-top: 6px;
   margin-bottom: 6px;
 }
 
 h5 {
-  font-size: 6px;
-  margin-top: 8px;
+  font-size: 11px;
+  margin-top: 6px;
   margin-bottom: 6px;
 }
 
@@ -128,16 +128,15 @@ h3 + section > h4:first-child {
   margin-top: 4px;
 }
 
-h2 {
-  margin-bottom: 0;
-}
 #article-content > ol {
   list-style-position: oustide;
   padding: 0;
 }
+
 #article-content > ol li {
   margin-bottom: 1em;
 }
+
 #article-content ol ol {
   list-style-position: oustide;
   margin: 0;
