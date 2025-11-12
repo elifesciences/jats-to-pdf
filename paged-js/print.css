@@ -129,7 +129,7 @@ p {
     border-top: 0 !important;
 }
 
-.fig-group {
+.fig-group:has(img:only-of-type) {
     break-inside: avoid;
 }
 
