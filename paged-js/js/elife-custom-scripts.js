@@ -20,7 +20,9 @@ class elifeBuild extends Paged.Handler {
     // add the running head
     let runninghead = document.querySelector(".runninghead");
     // add the MSAs
-    let msas = document.querySelector(".article-flag-list")
+    let msas = document.querySelector(".article-flag-list");
+    // add the logo
+    let logo = document.getElementById("logo");
     document
       .querySelectorAll(".pagedjs_pagedjs-filler_page")
       .forEach((page) => {
@@ -32,7 +34,15 @@ class elifeBuild extends Paged.Handler {
         if (msas) {
           page
             .querySelector(".pagedjs_pagebox")
-            .insertAdjacentText("afterbegin", msas.cloneNode(true));
+            .insertAdjacentElement("afterbegin", msas.cloneNode(true));
+        }
+        let marginForLogo = page.querySelector(".pagedjs_margin-top-left > .pagedjs_margin-content");
+        let marginBox = page.querySelector(".pagedjs_margin-top-left");
+        if (logo && marginForLogo) {
+          marginForLogo.insertAdjacentElement("afterbegin", logo.cloneNode(true));
+          if (marginBox) {
+            marginBox.classList.add("hasContent");
+            }  
         }
       });
   }
