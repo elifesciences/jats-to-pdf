@@ -15,12 +15,19 @@ body {
     --font-family-secondary: '__Noto_Serif_288e51', '__Noto_Serif_Fallback_288e51', serif;
 }
 
+
 .disp-formula {
     display: block;
     margin-top: 10px;
     margin-bottom: 10px;
     width: auto;
-    height: 10rem;
+    height: 3rem;
+    max-height: 90% !important;
+}
+
+.inline-formula {
+    height: 1.25rem;
+    max-height: 90% !important;
 }
 
 .fix-phi {
@@ -169,14 +176,6 @@ p {
     margin-top: 0;
     font-family: var(--font-sans);
     margin-bottom: 2em;
-}
-
-#references-wrapper {
-    /* break-before: page; */
-    display: flex;
-    flex-direction: column;
-    break-inside: avoid;
-    page-break-inside: avoid;
 }
 
 .descriptors__identifiers {
