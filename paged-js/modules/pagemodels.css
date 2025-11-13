@@ -37,6 +37,12 @@
     display: block;
   }
 
+  .pagedjs_margin-top-left .pagedjs_margin-content #logo {
+    position: absolute !important;
+    top: 12px; 
+    left: 15px;
+  }
+
   #right-header-links {
     position: running(right-header-links);
     display: block;

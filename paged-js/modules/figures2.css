@@ -286,7 +286,7 @@ figure:not(.tofill) figcaption {
 
 /*weird thing: a missing images*/
 
-.figure:not(.tofill) .probablyMath {
+.figure:not(.tofill)  {
   max-width: 100% !important;
   max-height: unset;
   width: auto !important;
@@ -331,19 +331,15 @@ figure:not(.tofill) figcaption {
   max-width: 10%;
 }
 
-li .imageonly .probablymath {
+li .imageonly  {
   max-width: unset !important;
   margin: 0;
 }
 
 /*insided probably math */
 
-.insidetext.probablyMath {
+.insidetext {
   margin: 2px;
-  width: auto;
-}
-
-.probablyMath {
   width: auto;
 }
 
@@ -352,60 +348,60 @@ li .imageonly .probablymath {
 }
 
 /* // when the math is inside text */
-.probablyMath.formula-max-10 {
+.formula-max-10 {
   height: calc(1 * var(--math-unit));
 }
-.probablyMath.formula-max-20 {
+.formula-max-20 {
   height: calc(1.3 * var(--math-unit));
 }
 
-.probablyMath.formula-max-40 {height: calc(1.5 * var(--math-unit))}
+.formula-max-40 {height: calc(1.5 * var(--math-unit))}
 
-.probablyMath.formula-max-60 { height: calc(2 * var(--math-unit)); }
-.probablyMath.formula-max-80 { height: calc(var(--math-unit) * 2); }
-.probablyMath.formula-max-100 { height: calc(var(--math-unit) * 3); }
-.probablyMath.formula-max-120 { height: calc(var(--math-unit) * 3.3); }
-.probablyMath.formula-max-140 {
+.formula-max-60 { height: calc(2 * var(--math-unit)); }
+.formula-max-80 { height: calc(var(--math-unit) * 2); }
+.formula-max-100 { height: calc(var(--math-unit) * 3); }
+.formula-max-120 { height: calc(var(--math-unit) * 3.3); }
+.formula-max-140 {
   height: calc(var(--math-unit) * 4.5);
 }
-.probablyMath.formula-max-160 {
+.formula-max-160 {
   height: calc(var(--math-unit) * 5);
 }
-.probablyMath.formula-max-180 {
+.formula-max-180 {
   height: calc(var(--math-unit) * 5.5);
 }
-.probablyMath.formula-max-200 {
+.formula-max-200 {
   height: calc(var(--math-unit) * 6);
 }
 
-.probablyMath.formula-max-220 {
+.formula-max-220 {
   height: calc(var(--math-unit) * 6.5);
 }
-.probablyMath.formula-max-240 {
+.formula-max-240 {
   height: calc(var(--math-unit) * 7);
 }
-.probablyMath.formula-max-260 {
+.formula-max-260 {
   height: calc(var(--math-unit) * 7.5);
 }
-.probablyMath.formula-max-280 {
+.formula-max-280 {
   height: calc(var(--math-unit) * 8);
 }
-.probablyMath.formula-max-300 {
+.formula-max-300 {
   height: calc(var(--math-unit) * 8.5);
 }
-.probablyMath.formula-max-320 {
+.formula-max-320 {
   height: calc(var(--math-unit) * 9);
 }
-.probablyMath.formula-max-340 {
+.formula-max-340 {
   height: calc(var(--math-unit) * 9.5);
 }
-.probablyMath.formula-max-360 {
+.formula-max-360 {
   height: calc(var(--math-unit) * 10);
 }
-.probablyMath.formula-max-380 {
+.formula-max-380 {
   height: calc(var(--math-unit) * 10.5);
 }
-.probablyMath.formula-max-400 {
+.formula-max-400 {
   height: calc(var(--math-unit) * 11);
 }
 
@@ -415,72 +411,72 @@ li .imageonly .probablymath {
   /* --math-unit: 10px; */
 }
 
-.insidetext.probablyMath.formula-max-10 {
+.insidetext.formula-max-10 {
   height: calc(1 * var(--math-unit));
 }
-.insidetext.probablyMath.formula-max-20 {
+.insidetext.formula-max-20 {
   height: calc(1 * var(--math-unit));
 }
-.insidetext.probablyMath.formula-max-40 {
+.insidetext.formula-max-40 {
   height: calc(1 * var(--math-unit));
 }
-.insidetext.probablyMath.formula-max-60 {
+.insidetext.formula-max-60 {
   height: calc(1.5 * var(--math-unit));
 }
-.insidetext.probablyMath.formula-max-80 {
+.insidetext.formula-max-80 {
   height: calc(var(--math-unit) * 3);
 }
-.insidetext.probablyMath.formula-max-100 {
+.insidetext.formula-max-100 {
   height: calc(var(--math-unit) * 3.5);
 }
-.insidetext.probablyMath.formula-max-120 {
+.insidetext.formula-max-120 {
   height: calc(var(--math-unit) * 4);
 }
-.insidetext.probablyMath.formula-max-140 {
+.insidetext.formula-max-140 {
   height: calc(var(--math-unit) * 4.5);
 }
-.insidetext.probablyMath.formula-max-160 {
+.insidetext.formula-max-160 {
   height: calc(var(--math-unit) * 5);
 }
-.insidetext.probablyMath.formula-max-180 {
+.insidetext.formula-max-180 {
   height: calc(var(--math-unit) * 5.5);
 }
-.insidetext.probablyMath.formula-max-200 {
+.insidetext.formula-max-200 {
   height: calc(var(--math-unit) * 6);
 }
 
-.insidetext.probablyMath.formula-max-220 {
+.insidetext.formula-max-220 {
   height: calc(var(--math-unit) * 6.5);
 }
-.insidetext.probablyMath.formula-max-240 {
+.insidetext.formula-max-240 {
   height: calc(var(--math-unit) * 7);
 }
-.insidetext.probablyMath.formula-max-260 {
+.insidetext.formula-max-260 {
   height: calc(var(--math-unit) * 7.5);
 }
-.insidetext.probablyMath.formula-max-280 {
+.insidetext.formula-max-280 {
   height: calc(var(--math-unit) * 8);
 }
-.insidetext.probablyMath.formula-max-300 {
+.insidetext.formula-max-300 {
   height: calc(var(--math-unit) * 8.5);
 }
-.insidetext.probablyMath.formula-max-320 {
+.insidetext.formula-max-320 {
   height: calc(var(--math-unit) * 9);
 }
-.insidetext.probablyMath.formula-max-340 {
+.insidetext.formula-max-340 {
   height: calc(var(--math-unit) * 9.5);
 }
-.insidetext.probablyMath.formula-max-360 {
+.insidetext.formula-max-360 {
   height: calc(var(--math-unit) * 10);
 }
-.insidetext.probablyMath.formula-max-380 {
+.insidetext.formula-max-380 {
   height: calc(var(--math-unit) * 10.5);
 }
-.insidetext.probablyMath.formula-max-400 {
+.insidetext.formula-max-400 {
   height: calc(var(--math-unit) * 11);
 }
 
-.probablyMath:not(.insidetext) {
+:not(.insidetext) {
   /*to test*/
   /* border: 2px solid red; */
   /* outline: 2px solid rgb(21, 184, 121); */
@@ -540,11 +536,11 @@ h1 + h1 {
   break-after: page;
 }
 
-figure > .probablyMath {
+figure >  {
   height: auto !important;
 }
 
-.review-content .probablyMath {
+.review-content  {
   height: unset !important;
   width: unset !important;
 }
