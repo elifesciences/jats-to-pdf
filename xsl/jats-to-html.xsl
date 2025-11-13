@@ -108,7 +108,7 @@
         </style>
     </xsl:template>
     
-    <!-- Generate custom css for resizing images -->
+    <!-- Generate custom css for resizing figure images -->
     <xsl:template match="processing-instruction('fig-size')">
         <xsl:variable name="size-style-map" select="map{
                     'max':'max-width: 120% !important; margin-left: -120px !important; max-height: unset !important; height: auto !important;'
@@ -1170,6 +1170,13 @@
                 <xsl:apply-templates select="descendant::graphic"/>
             </p>
             <xsl:apply-templates mode="inline" select="caption"/>
+            <xsl:if test="label and not(caption)">
+                <p class="figure__caption">
+                    <span class="label figure-name">
+                        <xsl:apply-templates select="label"/>
+                    </span>
+                </p>
+            </xsl:if>
             <xsl:apply-templates select="permissions|attrib"/>
         </div>
     </xsl:template>
