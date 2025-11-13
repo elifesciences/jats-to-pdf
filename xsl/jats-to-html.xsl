@@ -82,7 +82,7 @@
     <xsl:variable name="first-page-banner">
         <div id="first-page-links" class="elife-intro">
             <a id="logo" href="https://elifesciences.org/">
-                <img alt="eLife logo" loading="lazy" width="80" height="30" decoding="async" data-nimg="1" 
+                <img alt="eLife logo" loading="eager" width="80" height="30" decoding="async" data-nimg="1" 
                         class="site-header__logo" style="color:transparent" src="https://elifesciences.org/assets/patterns/img/patterns/organisms/elife-logo-xs.fd623d00.svg"/>
             </a> 
             <div id="right-header-links">
@@ -1191,7 +1191,7 @@
         <xsl:variable name="class" select="if (ancestor::fig) then 'child-of-figure has-boundary imageonly'
             else if ($give-boundary) then 'child-of-figure has-boundary imageonly'
             else 'child-of-figure imageonly'"/>
-        <img class="{$class}" loading="lazy" src="{$image-uri}" alt=""/>
+        <img class="{$class}" loading="eager" src="{$image-uri}" alt=""/>
     </xsl:template>
     
     <xsl:template match="fig/label|table-wrap[graphic or alternatives/graphic]/label">
@@ -1331,7 +1331,7 @@
             ('child-of-p',
             $formula-type-class,
             $size-pi),' ')"/>
-        <img class="{$class}" loading="lazy" src="{$image-uri}" alt=""/>
+        <img class="{$class}" loading="eager" src="{$image-uri}" alt=""/>
     </xsl:template>
     
     <xsl:template match="list">
