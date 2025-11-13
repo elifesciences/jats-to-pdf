@@ -650,18 +650,21 @@
     
     <xsl:template match="ack">
         <section id="acknowledgements">
-            <xsl:apply-templates select="*"/>
+            <xsl:apply-templates select="*[name()!='label']"/>
         </section>
     </xsl:template>
     
+    <!-- Ignore secs marked as web-only -->
+    <xsl:template match="sec[@specific-use='web-only'] "/>
+    
     <!-- To do: add support/styling for boxed-text -->
-    <xsl:template match="sec[not(@sec-type=('additional-information','supplementary'))] | statement | glossary | boxed-text | app">
+    <xsl:template match="sec[not(@sec-type=('additional-information','supplementary')) and not(@specific-use='web-only')] | statement | glossary | boxed-text | app">
         <section>
             <xsl:apply-templates select="@id|*[name()!='label']"/>
         </section>
     </xsl:template>
     
-    <xsl:template match="sec[@sec-type='additional-information']">
+    <xsl:template match="sec[@sec-type='additional-information' and not(@specific-use='web-only')]">
         <section>
             <xsl:apply-templates select="@id|*[name()!='label']"/>
             <xsl:if test="ancestor::article//article-meta[funding-group or related-object]">
@@ -680,7 +683,7 @@
         The first image is treated as anchored/inline, and the rest are floats. 
         This improves the flow of text.
     -->
-    <xsl:template match="sec[@sec-type='supplementary']">
+    <xsl:template match="sec[@sec-type='supplementary' and not(@specific-use='web-only')]">
         <section>
             <xsl:choose>
                 <!-- for sections mistagged with this sec-type, treat as a normal section -->
