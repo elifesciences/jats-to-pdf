@@ -12,9 +12,14 @@
     <xsl:output method="html" indent="no"/>
     
     <xsl:template match="@*|node()">
-        <xsl:copy copy-namespaces="no">
-            <xsl:apply-templates select="node()"/>
-        </xsl:copy>
+        <xsl:choose>
+            <xsl:when test="self::processing-instruction()"/>
+            <xsl:otherwise>
+                <xsl:copy copy-namespaces="no">
+                    <xsl:apply-templates select="node()"/>
+                </xsl:copy>
+            </xsl:otherwise>
+        </xsl:choose>
     </xsl:template>
     
     <xsl:variable name="html-head">
@@ -104,18 +109,25 @@
     <!-- Introduces procedural styling into the CSS cascade -->
     <xsl:template name="inject-styling">
         <style media="print">
-            <xsl:apply-templates select="descendant::processing-instruction()"/>
+            <xsl:apply-templates mode="inject-styling" select="descendant::processing-instruction()"/>
         </style>
     </xsl:template>
     
     <!-- Generate custom css for resizing figure images -->
-    <xsl:template match="processing-instruction('fig-size')">
+    <xsl:template mode="inject-styling" match="processing-instruction('fig-size')">
         <xsl:variable name="size-style-map" select="map{
                     'max':'max-width: 120% !important; margin-left: -120px !important; max-height: unset !important; height: auto !important;'
                     }"/>
         <xsl:variable name="fig-id" select="following-sibling::fig[1]/@id"/>
         <xsl:value-of select="'#'||$fig-id||' {--not-to-fill: ok; break-before: page;} 
             #'||$fig-id||' img {'||$size-style-map(.)||'}'"/>
+    </xsl:template>
+    
+    <xsl:template mode="inject-styling" match="processing-instruction('math-size')">
+        <xsl:variable name="id" select="following-sibling::*[name()=('disp-formula','inline-formula')][1]/@id"/>
+        <xsl:if test="$id!=''">
+            <xsl:value-of select="'#'||$id||' {height: '||.||'rem !important}'"/>
+        </xsl:if>
     </xsl:template>
     
     <xsl:template match="/">
@@ -650,18 +662,21 @@
     
     <xsl:template match="ack">
         <section id="acknowledgements">
-            <xsl:apply-templates select="*"/>
+            <xsl:apply-templates select="*[name()!='label']"/>
         </section>
     </xsl:template>
     
+    <!-- Ignore secs marked as web-only -->
+    <xsl:template match="sec[@specific-use='web-only'] "/>
+    
     <!-- To do: add support/styling for boxed-text -->
-    <xsl:template match="sec[not(@sec-type=('additional-information','supplementary'))] | statement | glossary | boxed-text | app">
+    <xsl:template match="sec[not(@sec-type=('additional-information','supplementary')) and not(@specific-use='web-only')] | statement | glossary | boxed-text | app">
         <section>
             <xsl:apply-templates select="@id|*[name()!='label']"/>
         </section>
     </xsl:template>
     
-    <xsl:template match="sec[@sec-type='additional-information']">
+    <xsl:template match="sec[@sec-type='additional-information' and not(@specific-use='web-only')]">
         <section>
             <xsl:apply-templates select="@id|*[name()!='label']"/>
             <xsl:if test="ancestor::article//article-meta[funding-group or related-object]">
@@ -680,7 +695,7 @@
         The first image is treated as anchored/inline, and the rest are floats. 
         This improves the flow of text.
     -->
-    <xsl:template match="sec[@sec-type='supplementary']">
+    <xsl:template match="sec[@sec-type='supplementary' and not(@specific-use='web-only')]">
         <section>
             <xsl:choose>
                 <!-- for sections mistagged with this sec-type, treat as a normal section -->
@@ -1201,11 +1216,7 @@
     </xsl:template>
     
     <xsl:template match="fig/caption|table-wrap[graphic or alternatives/graphic]/caption">
-        <xsl:param name="page-break-before" select="false()"/>
         <figcaption class="figure__caption">
-            <xsl:if test="$page-break-before">
-                <xsl:attribute name="style" select="'break-before: page;'"/>
-            </xsl:if>
             <xsl:if test="not(title) and parent::*/label">
                 <h3>
                     <span class="label figure-name">
@@ -1322,16 +1333,15 @@
             '/full/max/0/default.jpg'
             )"/>
         <xsl:variable name="formula-type-class" select="if (ancestor::disp-formula) then 'imageonly disp-formula'
-                                                        else 'insidetext'"/>
-        <!-- Resizing the image: Introduce a class based on a processing-instruction -->
-        <xsl:variable name="size-pi" select="if (./preceding-sibling::node()[not(self::text())][1][self::processing-instruction()]/name()='size')
-                then concat('formula-max-',preceding-sibling::processing-instruction()[1])
-            else ''"/>
+                                                        else 'insidetext inline-formula'"/>
         <xsl:variable name="class" select="string-join(
             ('child-of-p',
-            $formula-type-class,
-            $size-pi),' ')"/>
-        <img class="{$class}" loading="eager" src="{$image-uri}" alt=""/>
+            $formula-type-class),' ')"/>
+        <img class="{$class}" loading="eager" src="{$image-uri}" alt="">
+            <xsl:if test="ancestor::*[name()=('disp-formula','inline-formula')]/@id">
+                <xsl:attribute name="id" select="ancestor::*[name()=('disp-formula','inline-formula')]/@id"/>
+            </xsl:if>
+        </img>
     </xsl:template>
     
     <xsl:template match="list">
