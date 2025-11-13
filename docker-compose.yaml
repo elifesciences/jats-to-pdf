@@ -5,8 +5,12 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      shm_size: 1gb
     ports:
       - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - CHROME_PATH=/usr/bin/chromium
     restart: always
     logging:
       driver: "json-file"
