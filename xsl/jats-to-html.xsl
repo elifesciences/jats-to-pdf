@@ -1705,7 +1705,7 @@
           </xsl:when>
           <!-- when there's one first author -->
           <xsl:otherwise>
-            <xsl:value-of select="concat(e:get-surname($contrib-group/contrib[@contrib-type='author'][1]),' et al')"/>
+            <xsl:value-of select="concat(e:get-surname($contrib-group/contrib[@contrib-type='author'][1]),' et al.')"/>
           </xsl:otherwise>
         </xsl:choose>
       </xsl:otherwise>
