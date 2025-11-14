@@ -1,188 +1,459 @@
+/*elife logo*/
+.elife-intro img {
+  max-width: unset !important;
+  height: unset !important;
+}
+
 figure {
-  --offset: -180px;
-  width: calc(100% + (var(--offset) * -1));
-  display: grid; /* not used anymore */
-  gap: 20px 3ch;
-  grid-template-columns: [image-start] 2fr [ image-end caption-start] 1fr [caption-end];
-  break-inside: avoid;
+  padding: 0;
+  margin: 0;
+  --offset: 200px;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  vertical-align: middle;
+  margin: 0;
+}
+
+figcaption {
   font-family: var(--font-sans);
-  font-size: 12px;
-  padding: 12px 0 12px 4ch;
-  margin: 12px 0 12px calc(var(--offset));
-  align-items: center;
-}
-figure + p {
-  margin-top: 20px;
-}
-label {
-  font-weight: 300;
   font-size: 10px;
-  color: var(--color-elife-blue);
-  font-family: var(--font-sans);
+  line-height: 1.2;
+}
+
+/* when list in caption */
+figcaption ul {
+  padding-left: 2ch;
+}
+
+.tofill figcaption :is(h2, h3, h4) {
+  column-span: all;
+}
+
+figcaption p {
+  margin: 5px 0;
+}
+
+.fig-group {
+    margin-top: 30px;
+    margin-bottom: 20px;
+}
+
+.fig-group:has(img:only-of-type) {
+    break-inside: avoid;
+}
+
+.statement .fig-group {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+#peer-reviews .fig-group img {
+  min-height: 200px;
   display: block;
-  margin-bottom: 12px;
-  margin-top: 0;
-}
-figcaption p {
-  font-size: 12px;
-  line-height: 18px;
-  hyphens: auto;
-}
-figure figcaption {
-  grid-column: caption;
+  margin: 0 auto;
 }
 
-figcaption p {
-  margin-top: 0;
-}
-figure img {
-  max-height: 450px;
-  max-width: 450px;
-  margin-bottom: 12px;
+/*hide this one day*/
+.colBlock,
+.tabbed-navigation,
+nav {
+  display: none;
 }
 
-/* img + figcaption, */
- label {
-  break-after: avoid;
+.setBottom .pagedjs_page_content {
+  /* background: lightgrey; */
+  display: flex;
+  flex-direction: column;
+  /* flex-direction: column-reverse; */
+  flex: 2 1;
 }
-figcaption label + h1,
-figcaption label + h2,
-figcaption label + h3,
-figcaption h1 + p,
-figcaption h2 + p,
-figcaption h3 + p {
-  break-before: avoid;
+
+.pagedjs_pagedjs-filler_page .shortcaption figcaption {
+  column-count: 1;
+  /* max-width: 80ch; */
 }
-figure h2,
-figure h3 {
-  font-size: 16px;
+.pagedjs_pagedjs-filler_page .shortercaption figcaption {
+  column-count: 1;
+  /* max-width: 80ch; */
+}
+
+.tofill {
+  position: fill-page;
+}
+
+figcaption h3 {
+  margin: 5px 0;
+}
+
+figure .figure-name,
+label {
+  font-size: 1em;
+  color: var(--color-main);
   font-family: var(--font-sans);
-  line-height: 20px;
-  margin-bottom: 12px;
-  margin-top: 10px;
+  margin-right: 0.25ch;
+  font-size: 11px;
   font-weight: 600;
-  max-width: unset;
+}
+figure figcaption h3 {
+  font-size: 11px;
+  font-weight: 600;
 }
 
- label {
-  margin-top: 0;
-}
-
-/* #references, */
-/* figure, */
-/* figure + h1, */
-/* figure + h2, */
-/* figure + h3, */
-/* figure + h4, */
-/* figure + h5, */
-/* figure + h6, */
-/* figure + p { */
-/*   clear: both; */
-/* } */
-
-figcaption h2 + p,
-figcaption h1 + p,
-figcaption label + h1,
-figcaption label + h2,
-figcaption label + p {
-  break-before: avoid;
-}
-figure:first-child {
-  margin-top: 0;
-}
-
-/* fig-square, fig-landscape, fig-portrait */
-figure.fig-portrait,
-figure.fig-square {
-  display: block;
-}
-
-figure.fig-portrait .portrait,
-figure.fig-square .square {
-  float: left;
-  margin-right: 24px;
-  margin-bottom: 24px;
-  max-width: 450px;
-}
-
-/* fig-landscape */
-figure.fig-landscape {
-  display: block;
-  margin-left: auto;
-  padding: 12px 0 12px;
-  margin-bottom: 0;
-}
-
-figure.fig-landscape .landscape {
-  float: none;
-  max-width: 100%;
-  width: calc(100% + var(--offset));
-  margin-bottom: 24px;
-}
-
-figure.fig-landscape figcaption {
-  width: calc(100% + var(--offset));
-}
-
-figure.fig-landscape label {
-  margin-right: 2ch;
-}
-
-.fig-portrait .portrait {
-  place-self: start end;
-}
-
-figure:has(img + img) {
-  --offset: 0;
-  padding: 0 !important;
-}
-
-/* remove not() after formula class comes in */
-figure.figure:has(img + img) img:not(p img) {
-  float: none !important;
-  display: block;
-  margin-left: 0 !important;
-  margin-right: auto !important;
-  max-height: 900px !important;
-  max-width: 100%;
-  margin-top: 16px;
-}
-
-/* figures - table, algorithm */
-figure.imageAlgorithm,
-figure.imageTable {
-  display: block;
-  padding-left: 0;
-  padding-right: 0;
+img {
+  object-fit: contain;
+  margin-top: 15px;
+  margin-bottom: 17px;
   margin-left: auto;
   margin-right: auto;
-  break-inside: auto;
-  max-width: 100%;
 }
 
-.imageAlgorithm img,
-.imageTable img {
-  max-width: 100%;
-  object-fit: scale-down;
+p > img {
+  margin-top: 17px;
+  margin-bottom: 12px;
+}
+.tofill,
+.tofill img {
+  margin-top: 0 !important;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.tofill figure + figure img {
+  margin-top: 17px;
+  display: block;
+}
+
+.has-boundary {
+  border: 1px solid var(--color-elife-grey);
+  padding: 5px;
+  margin: 10px;
+}
+
+/*testing padding-bottom*/
+.pagedjs_pagedjs-filler_page figure + figure {
+  padding-top: 3em;
+}
+
+/* bigtables */
+img {
   max-height: calc(
-    var(--pagedjs-height) - var(--pagedjs-margin-bottom) -
-      var(--pagedjs-margin-top) - 200px
+    var(--pagedjs-height) - var(--pagedjs-margin-top) -
+      var(--pagedjs-margin-bottom)
   );
 }
-.imageAlgorithm img + img,
-.imageTable img + img {
+
+.internalfig {
+  margin-bottom: 17px;
+}
+
+.internalfig img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.finishes {
+  /* margin: auto; */
+  display: flex !important;
+  /* height: 100%; */
+  /* align-items: center; */
+  justify-content: center;
+  flex-direction: column-reverse;
+}
+
+.pagedjs_pagedjs-filler_page .pagedjs_page_content {
+  /*to add when pagedjs is finised*/
+  /* display: grid; */
+  /* flex-direction: row; */
+  align-items: center;
+  justify-content: center;
+  /* gap: 2em; */
+}
+
+.pagedjs_pagedjs-filler_page figure {
+  /* border: 1px solid var(--color-main); */
+  /* padding: 2em; */
+}
+figcaption h3 {
+  column-span: all;
+}
+
+figure figcaption {
+  /* columns: 3; */
+  gap: 0 5mm;
+  line-height: 15px;
+  /* max-width: 90%; */
+}
+
+.no-label {
+  padding: 0.5em 2ch;
+  margin-top: 34px;
+  margin-bottom: 34px;
+}
+
+.no-label img {
+  /* max-width: unset !important; */
+  display: block;
+  margin: auto;
+
+  /* width: 100%; */
+}
+
+.ctn {
+  font-size: 10px;
+  font-family: var(--font-sans);
+  font-weight: 300;
+}
+
+.continued {
+  /* text-align: center; */
+  padding-top: 17px;
+}
+
+.imageonly {
+  /* background: red; */
+  break-before: avoid;
+  margin: 0;
+  /* text-align: center; */
+}
+
+:not(li) .imageonly {
+  text-align: center;
+}
+
+.imageonly img {
+  margin: 0;
+}
+
+.sendtolink {
+  /* margin-bottom: 0 !important; */
+  font-family: var(--font-sans);
+  /* font-size: .8em; */
+  font-style: italic;
+  position: relative;
+  /* display: none; */
+}
+
+.sendtolink::before {
+  content: "*";
+  position: absolute;
+  left: -1.5ch;
+  color: var(--color-main);
+}
+
+.sendtolink :is(span, strong, .figure-name) {
+  font-size: 1em;
+  font-weight: 400;
+}
+
+.sendtolink .figure-name {
+  margin-right: 1ch;
+}
+
+figure h3 {
+  break-after: normal;
+}
+
+figcaption img {
+  height: 1.5em;
+  width:auto;
+  width: unset !important; 
+  max-width: unset !important;
+  display: inline;
+}
+
+.insidetext {
+  display: inline !important;
+}
+
+/*image in figure but too small for their own page.*/
+/* < 150px */
+
+figure:not(.tofill) {
+  display: block;
+  margin: 2em 1ch;
+}
+
+figure:not(.tofill) img {
   margin-top: 0;
 }
-.imageAlgorithm img:not(:last-of-type),
-.imageTable img:not(:last-of-type) {
+
+figure:not(.tofill) figcaption {
+  column-count: 1;
+}
+
+.figure-container figure {
+  break-inside: avoid;
+}
+
+/*weird thing: a missing images*/
+
+.figure:not(.tofill)  {
+  max-width: 100% !important;
+  max-height: unset;
+  width: auto !important;
+}
+
+.tofill img {
+  max-height: 800px;
+}
+
+/*for tables*/
+
+.tofill[id*="tbl"] img {
+  /* width: 80%; */
+}
+
+/* we use classes to automatically reduce image size based on what we found to have that image management*/
+.tofill .max-90 {
+  max-width: 90%;
+}
+.tofill .max-80 {
+  max-width: 80%;
+}
+.tofill .max-70 {
+  max-width: 70%;
+}
+.tofill .max-60 {
+  max-width: 60%;
+}
+.tofill .max-50 {
+  max-width: 50%;
+}
+.tofill .max-40 {
+  max-width: 40%;
+}
+.tofill .max-30 {
+  max-width: 30%;
+}
+.tofill .max-20 {
+  max-width: 20%;
+}
+.tofill .max-10 {
+  max-width: 10%;
+}
+
+li .imageonly  {
+  max-width: unset !important;
+  margin: 0;
+}
+
+/*
+ * ----------------------------------------
+ * (╯°□°)╯ 彡┻━┻ /
+ * * * * * I M A G E S   O F   M A T H S
+ * ----------------------------------------
+ */
+
+:root {
+  --math-unit: 16px;
+}
+
+/* display formulae */
+
+img.disp-formula {
+    display: block;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    width: auto;
+    height: 3rem;
+    max-height: 90% !important;
+}
+
+img.disp-formula.formula-max-10 {height: calc(var(--math-unit) * 1.3);}
+img.disp-formula.formula-max-20 {height: calc(var(--math-unit) 1.6);}
+img.disp-formula.formula-max-40 {height: calc(var(--math-unit) * 2);}
+img.disp-formula.formula-max-60 {height: calc(var(--math-unit) * 2);}
+img.disp-formula.formula-max-80 {height: calc(var(--math-unit) * 2);}
+img.disp-formula.formula-max-100 {height: calc(var(--math-unit) * 3);}
+img.disp-formula.formula-max-120 {height: calc(var(--math-unit) * 3.3);}
+img.disp-formula.formula-max-140 {height: calc(var(--math-unit) * 4.5);}
+img.disp-formula.formula-max-160 {height: calc(var(--math-unit) * 5);}
+img.disp-formula.formula-max-180 {height: calc(var(--math-unit) * 5.5);}
+img.disp-formula.formula-max-200 {height: calc(var(--math-unit) * 6);}
+img.disp-formula.formula-max-220 {height: calc(var(--math-unit) * 6.5);}
+img.disp-formula.formula-max-240 {height: calc(var(--math-unit) * 7);}
+img.disp-formula.formula-max-260 {height: calc(var(--math-unit) * 7.5);}
+img.disp-formula.formula-max-280 {height: calc(var(--math-unit) * 8);}
+img.disp-formula.formula-max-300 {height: calc(var(--math-unit) * 8.5);}
+img.disp-formula.formula-max-320 {height: calc(var(--math-unit) * 9);}
+img.disp-formula.formula-max-340 {height: calc(var(--math-unit) * 9.5);}
+img.disp-formula.formula-max-360 {height: calc(var(--math-unit) * 10);}
+img.disp-formula.formula-max-380 {height: calc(var(--math-unit) * 10.5);}
+img.disp-formula.formula-max-400 {height: calc(var(--math-unit) * 11);}
+
+/* inline-formulae */
+
+img.inline-formula {
+  margin: 2px;
+  height: 1.25rem;
+  width: auto;
+  display: inline !important;
+  max-height: 90% !important;
+}
+
+img.inline-formula.formula-max-10 {height: calc(var(--math-unit) * 1);}
+img.inline-formula.formula-max-20 {height: calc(var(--math-unit) * 1);}
+img.inline-formula.formula-max-40 {height: calc(var(--math-unit) * 1);}
+img.inline-formula.formula-max-60 {height: calc(var(--math-unit) * 1.5);}
+img.inline-formula.formula-max-80 {height: calc(var(--math-unit) * 3);}
+img.inline-formula.formula-max-100 {height: calc(var(--math-unit) * 3.5);}
+img.inline-formula.formula-max-120 {height: calc(var(--math-unit) * 4);}
+img.inline-formula.formula-max-140 {height: calc(var(--math-unit) * 4.5);}
+img.inline-formula.formula-max-160 {height: calc(var(--math-unit) * 5);}
+img.inline-formula.formula-max-180 {height: calc(var(--math-unit) * 5.5);}
+img.inline-formula.formula-max-200 {height: calc(var(--math-unit) * 6);}
+img.inline-formula.formula-max-220 {height: calc(var(--math-unit) * 6.5);}
+img.inline-formula.formula-max-240 {height: calc(var(--math-unit) * 7);}
+img.inline-formula.formula-max-260 {height: calc(var(--math-unit) * 7.5);}
+img.inline-formula.formula-max-280 {height: calc(var(--math-unit) * 8);}
+img.inline-formula.formula-max-300 {height: calc(var(--math-unit) * 8.5);}
+img.inline-formula.formula-max-320 {height: calc(var(--math-unit) * 9);}
+img.inline-formula.formula-max-340 {height: calc(var(--math-unit) * 9.5);}
+img.inline-formula.formula-max-360 {height: calc(var(--math-unit) * 10);}
+img.inline-formula.formula-max-380 {height: calc(var(--math-unit) * 10.5);}
+img.inline-formula.formula-max-400 {height: calc(var(--math-unit) * 11);}
+
+/*custom margins to reduce the max-width of all images*/
+.pagedjs_pagedjs-filler_page {
+  --pagedjs-margin-left: 30mm;
+  --pagedjs-margin-right: 30mm;
+}
+
+.tofill img {
+  display: block;
+}
+
+.page-grid .pagedjs_page_content {
+  display: grid;
+}
+
+.has-continued img {
   margin-bottom: 0;
 }
-.imageAlgorithm figcaption,
-.imageTable figcaption {
-  width: 100%;
-  break-after: avoid;
+
+[data-continued-from] img {
+  margin-bottom: 0;
 }
-.imageAlgorithm:has(img + img),
-.imageTable:has(img + img) {
-  break-inside: unset;
+
+p.movedfig img {
+  max-height: 700px;
+}
+
+.widowfix,
+.widowfix-fig {
+  display: block !important;
+  height: 0;
+  margin: 0;
+}
+.widowfix-fig {
+  display: block !important;
+}
+
+.review-content  {
+  height: unset !important;
+  width: unset !important;
 }

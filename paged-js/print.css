@@ -5,7 +5,7 @@
 @import url("./modules/header.css");
 @import url(./modules/authors-and-institutions.css);
 @import url(./modules/article-content.css);
-@import url(./modules/figures2.css);
+@import url(./modules/figures.css);
 @import url(./modules/assesment.css);
 @import url(./modules/references.css);
 @import url(./modules/timeline.css);
@@ -13,21 +13,6 @@
 body {
     --font-family-primary: '__Noto_Sans_d69442', '__Noto_Sans_Fallback_d69442', arial, helvetica, sans-serif;
     --font-family-secondary: '__Noto_Serif_288e51', '__Noto_Serif_Fallback_288e51', serif;
-}
-
-
-.disp-formula {
-    display: block;
-    margin-top: 10px;
-    margin-bottom: 10px;
-    width: auto;
-    height: 3rem;
-    max-height: 90% !important;
-}
-
-.inline-formula {
-    height: 1.25rem;
-    max-height: 90% !important;
 }
 
 .fix-phi {
@@ -53,12 +38,6 @@ body {
 
 figure+figure {
     margin-top: 34px;
-}
-
-/* // tring to fix some title on the top of the page problem  */
-
-[data-split-from] :is(h2, h3):first-child {
-    /* margin-top: 0; */
 }
 
 .img-in-link {
@@ -134,21 +113,6 @@ p {
 
 .figure[data-split-from] {
     border-top: 0 !important;
-}
-
-.fig-group {
-    margin-top: 30px;
-    margin-bottom: 20px;
-}
-
-.fig-group:has(img:only-of-type) {
-    break-inside: avoid;
-}
-
-#peer-reviews .fig-group img {
-  min-height: 200px;
-  display: block;
-  margin: 0 auto;
 }
 
 .descriptors__icon--cc a {

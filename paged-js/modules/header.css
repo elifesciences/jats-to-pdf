@@ -91,13 +91,8 @@
 }
 
 #margin-notes {
-  font-family: var(--font-sans);
-  width: calc(var(--offset) - 5ch);
+  margin-top: 20px;
   font-size: 0.8em;
-
-  position: absolute;
-  left: calc(var(--offset) * -1);
-  bottom: 0
 }
 
 #margin-notes h3 {
@@ -110,6 +105,8 @@
 
 #margin-notes p {
   hyphens: none;
+  margin-top: 5px;
+  margin-bottom: 5px;
 }
 
 #margin-notes .copyright {

@@ -116,11 +116,13 @@
     <!-- Generate custom css for resizing figure images -->
     <xsl:template mode="inject-styling" match="processing-instruction('fig-size')">
         <xsl:variable name="size-style-map" select="map{
-                    'max':'max-width: 120% !important; margin-left: -120px !important; max-height: unset !important; height: auto !important;'
+                    'max':'max-width: 120% !important; margin-left: -120px !important; max-height: unset !important; height: auto !important;',
+                    'half':'max-width: 90% !important; max-height: unset !important; height: auto !important; text-align: center !important;',
+                    'quarter':'max-width: 60% !important; max-height: unset !important; height: auto !important; text-align: center !important;'
                     }"/>
         <xsl:variable name="fig-id" select="following-sibling::fig[1]/@id"/>
         <xsl:value-of select="'#'||$fig-id||' {--not-to-fill: ok; break-before: page;} 
-            #'||$fig-id||' img {'||$size-style-map(.)||'}'"/>
+            #'||$fig-id||' > img {'||$size-style-map(.)||'}'"/>
     </xsl:template>
     
     <xsl:template mode="inject-styling" match="processing-instruction('math-size')">
@@ -144,7 +146,6 @@
         <article>
             <xsl:call-template name="aside"/>
             <xsl:call-template name="header"/>
-            <xsl:call-template name="article-notes"/>
             <xsl:call-template name="main"/>
         </article>
     </xsl:template>
@@ -371,7 +372,7 @@
     </xsl:template>
     
     <!-- handle particularly long notes -->
-    <xsl:variable name="author-notes-length" select="sum(/article//article-meta/author-notes/fn/string-length(normalize-space(.)))" as="xs:integer"/>
+    <xsl:variable name="author-notes-length" select="sum(/article//article-meta/author-notes/*[name()=('fn','corresp')]/string-length(normalize-space(.)))" as="xs:integer"/>
     <xsl:variable name="author-notes-limit" select="400" as="xs:integer"/>
     <xsl:variable name="author-notes-max-exceeded" select="$author-notes-length gt $author-notes-limit" as="xs:boolean"/>
     
@@ -496,6 +497,7 @@
                      </dl>
                  </div>
              </div>
+             <xsl:call-template name="article-notes"/>
          </section>
      </xsl:template>
     
@@ -669,8 +671,7 @@
     <!-- Ignore secs marked as web-only -->
     <xsl:template match="sec[@specific-use='web-only'] "/>
     
-    <!-- To do: add support/styling for boxed-text -->
-    <xsl:template match="sec[not(@sec-type=('additional-information','supplementary')) and not(@specific-use='web-only')] | statement | glossary | boxed-text | app">
+    <xsl:template match="sec[not(@sec-type=('additional-information','supplementary')) and not(@specific-use='web-only')] | glossary | app">
         <section>
             <xsl:apply-templates select="@id|*[name()!='label']"/>
         </section>
@@ -709,6 +710,46 @@
                     <div class="pagebreak"/>
                 </xsl:otherwise>
             </xsl:choose>
+        </section>
+    </xsl:template>
+    
+    <xsl:template match="statement">
+        <section class="statement">
+            <xsl:apply-templates select="@id"/>
+            <xsl:if test="label or title">
+                <h5>
+                    <xsl:if test="label">
+                        <label>
+                            <xsl:apply-templates select="label/node()"/>
+                            <xsl:if test="label[not(matches(.,'[\.:]\s*$'))]">
+                                <xsl:text>.</xsl:text>
+                            </xsl:if>
+                        </label>
+                    </xsl:if>
+                    <xsl:apply-templates select="title/node()"/>
+                </h5>
+            </xsl:if>
+            <xsl:apply-templates select="*[not(name()=('label','title'))]"/>
+        </section>
+    </xsl:template>
+    
+    <xsl:template match="boxed-text">
+        <section class="boxed-text">
+            <xsl:apply-templates select="@id"/>
+            <xsl:if test="label or caption/title">
+                <h5>
+                    <xsl:if test="label">
+                        <label>
+                            <xsl:apply-templates select="label/node()"/>
+                            <xsl:if test="label[not(matches(.,'[\.:]\s*$'))]">
+                                <xsl:text>.</xsl:text>
+                            </xsl:if>
+                        </label>
+                    </xsl:if>
+                    <xsl:apply-templates select="caption/title/node()"/>
+                </h5>
+            </xsl:if>
+            <xsl:apply-templates select="caption/p|*[not(name()=('label','caption'))]"/>
         </section>
     </xsl:template>
     
@@ -1703,7 +1744,7 @@
           </xsl:when>
           <!-- when there's one first author -->
           <xsl:otherwise>
-            <xsl:value-of select="concat(e:get-surname($contrib-group/contrib[@contrib-type='author'][1]),' et al')"/>
+            <xsl:value-of select="concat(e:get-surname($contrib-group/contrib[@contrib-type='author'][1]),' et al.')"/>
           </xsl:otherwise>
         </xsl:choose>
       </xsl:otherwise>
