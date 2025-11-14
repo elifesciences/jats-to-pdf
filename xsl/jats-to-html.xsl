@@ -122,7 +122,7 @@
                     }"/>
         <xsl:variable name="fig-id" select="following-sibling::fig[1]/@id"/>
         <xsl:value-of select="'#'||$fig-id||' {--not-to-fill: ok; break-before: page;} 
-            #'||$fig-id||' img {'||$size-style-map(.)||'}'"/>
+            #'||$fig-id||' > img {'||$size-style-map(.)||'}'"/>
     </xsl:template>
     
     <xsl:template mode="inject-styling" match="processing-instruction('math-size')">
