@@ -88,7 +88,8 @@ class fullpage extends Paged.Handler {
     await addWidthHeightToImg(parsed);
     await calculateDesiredWidthPercentages(parsed.querySelectorAll("img"));
 
-    // try to see if an image is less than 50 px ans assume it’s math
+    /* This is redundant now that we know which images are maths
+    try to see if an image is less than 50 px ans assume it’s math
     parsed.querySelectorAll("img").forEach((img) => {
       if (
         img.height &&
@@ -108,9 +109,9 @@ class fullpage extends Paged.Handler {
           // img.closest("figure").remove();
         }
       }
-    });
+    });*/
 
-    parsed.querySelectorAll(".probablyMath").forEach((img) => {
+    parsed.querySelectorAll(".disp-formula, .inline-formula").forEach((img) => {
       // if (img.closest("figure")) {
       //   return;
       // }

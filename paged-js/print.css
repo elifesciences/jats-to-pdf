@@ -15,21 +15,6 @@ body {
     --font-family-secondary: '__Noto_Serif_288e51', '__Noto_Serif_Fallback_288e51', serif;
 }
 
-
-.disp-formula {
-    display: block;
-    margin-top: 10px;
-    margin-bottom: 10px;
-    width: auto;
-    height: 3rem;
-    max-height: 90% !important;
-}
-
-.inline-formula {
-    height: 1.25rem;
-    max-height: 90% !important;
-}
-
 .fix-phi {
     font-family: 'NotoSerifForce';
     font-variant-ligatures: none;
