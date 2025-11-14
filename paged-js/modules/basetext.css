@@ -169,3 +169,10 @@ code, pre {
   word-wrap: break-word;
   white-space: pre-wrap;
 }
+
+.statement, .boxed-text {
+    margin-top: 20px;
+    margin-bottom: 15px;
+    border-left: 5px solid var(--color-elife-blue-light);
+    padding-left: 20px;
+}

@@ -36,6 +36,26 @@ figcaption p {
   margin: 5px 0;
 }
 
+.fig-group {
+    margin-top: 30px;
+    margin-bottom: 20px;
+}
+
+.fig-group:has(img:only-of-type) {
+    break-inside: avoid;
+}
+
+.statement .fig-group {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+#peer-reviews .fig-group img {
+  min-height: 200px;
+  display: block;
+  margin: 0 auto;
+}
+
 /*hide this one day*/
 .colBlock,
 .tabbed-navigation,

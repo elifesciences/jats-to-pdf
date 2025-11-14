@@ -671,8 +671,7 @@
     <!-- Ignore secs marked as web-only -->
     <xsl:template match="sec[@specific-use='web-only'] "/>
     
-    <!-- To do: add support/styling for boxed-text -->
-    <xsl:template match="sec[not(@sec-type=('additional-information','supplementary')) and not(@specific-use='web-only')] | glossary | boxed-text | app">
+    <xsl:template match="sec[not(@sec-type=('additional-information','supplementary')) and not(@specific-use='web-only')] | glossary | app">
         <section>
             <xsl:apply-templates select="@id|*[name()!='label']"/>
         </section>
@@ -715,7 +714,7 @@
     </xsl:template>
     
     <xsl:template match="statement">
-        <section class="algorithm">
+        <section class="statement">
             <xsl:apply-templates select="@id"/>
             <xsl:if test="label or title">
                 <h5>
@@ -731,6 +730,26 @@
                 </h5>
             </xsl:if>
             <xsl:apply-templates select="*[not(name()=('label','title'))]"/>
+        </section>
+    </xsl:template>
+    
+    <xsl:template match="boxed-text">
+        <section class="boxed-text">
+            <xsl:apply-templates select="@id"/>
+            <xsl:if test="label or caption/title">
+                <h5>
+                    <xsl:if test="label">
+                        <label>
+                            <xsl:apply-templates select="label/node()"/>
+                            <xsl:if test="label[not(matches(.,'[\.:]\s*$'))]">
+                                <xsl:text>.</xsl:text>
+                            </xsl:if>
+                        </label>
+                    </xsl:if>
+                    <xsl:apply-templates select="caption/title/node()"/>
+                </h5>
+            </xsl:if>
+            <xsl:apply-templates select="caption/p|*[not(name()=('label','caption'))]"/>
         </section>
     </xsl:template>
     
