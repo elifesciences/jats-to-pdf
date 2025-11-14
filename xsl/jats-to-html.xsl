@@ -146,7 +146,6 @@
         <article>
             <xsl:call-template name="aside"/>
             <xsl:call-template name="header"/>
-            <xsl:call-template name="article-notes"/>
             <xsl:call-template name="main"/>
         </article>
     </xsl:template>
@@ -373,7 +372,7 @@
     </xsl:template>
     
     <!-- handle particularly long notes -->
-    <xsl:variable name="author-notes-length" select="sum(/article//article-meta/author-notes/fn/string-length(normalize-space(.)))" as="xs:integer"/>
+    <xsl:variable name="author-notes-length" select="sum(/article//article-meta/author-notes/*[name()=('fn','corresp')]/string-length(normalize-space(.)))" as="xs:integer"/>
     <xsl:variable name="author-notes-limit" select="400" as="xs:integer"/>
     <xsl:variable name="author-notes-max-exceeded" select="$author-notes-length gt $author-notes-limit" as="xs:boolean"/>
     
@@ -498,6 +497,7 @@
                      </dl>
                  </div>
              </div>
+             <xsl:call-template name="article-notes"/>
          </section>
      </xsl:template>
     
