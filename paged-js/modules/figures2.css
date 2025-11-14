@@ -334,7 +334,7 @@ li .imageonly  {
 
 /* display formulae */
 
-.disp-formula {
+img.disp-formula {
     display: block;
     margin-top: 10px;
     margin-bottom: 10px;
@@ -343,31 +343,31 @@ li .imageonly  {
     max-height: 90% !important;
 }
 
-.disp-formula.formula-max-10 {height: calc(var(--math-unit) * 1.3);}
-.disp-formula.formula-max-20 {height: calc(var(--math-unit) 1.6);}
-.disp-formula.formula-max-40 {height: calc(var(--math-unit) * 2);}
-.disp-formula.formula-max-60 {height: calc(var(--math-unit) * 2);}
-.disp-formula.formula-max-80 {height: calc(var(--math-unit) * 2);}
-.disp-formula.formula-max-100 {height: calc(var(--math-unit) * 3);}
-.disp-formula.formula-max-120 {height: calc(var(--math-unit) * 3.3);}
-.disp-formula.formula-max-140 {height: calc(var(--math-unit) * 4.5);}
-.disp-formula.formula-max-160 {height: calc(var(--math-unit) * 5);}
-.disp-formula.formula-max-180 {height: calc(var(--math-unit) * 5.5);}
-.disp-formula.formula-max-200 {height: calc(var(--math-unit) * 6);}
-.disp-formula.formula-max-220 {height: calc(var(--math-unit) * 6.5);}
-.disp-formula.formula-max-240 {height: calc(var(--math-unit) * 7);}
-.disp-formula.formula-max-260 {height: calc(var(--math-unit) * 7.5);}
-.disp-formula.formula-max-280 {height: calc(var(--math-unit) * 8);}
-.disp-formula.formula-max-300 {height: calc(var(--math-unit) * 8.5);}
-.disp-formula.formula-max-320 {height: calc(var(--math-unit) * 9);}
-.disp-formula.formula-max-340 {height: calc(var(--math-unit) * 9.5);}
-.disp-formula.formula-max-360 {height: calc(var(--math-unit) * 10);}
-.disp-formula.formula-max-380 {height: calc(var(--math-unit) * 10.5);}
-.disp-formula.formula-max-400 {height: calc(var(--math-unit) * 11);}
+img.disp-formula.formula-max-10 {height: calc(var(--math-unit) * 1.3);}
+img.disp-formula.formula-max-20 {height: calc(var(--math-unit) 1.6);}
+img.disp-formula.formula-max-40 {height: calc(var(--math-unit) * 2);}
+img.disp-formula.formula-max-60 {height: calc(var(--math-unit) * 2);}
+img.disp-formula.formula-max-80 {height: calc(var(--math-unit) * 2);}
+img.disp-formula.formula-max-100 {height: calc(var(--math-unit) * 3);}
+img.disp-formula.formula-max-120 {height: calc(var(--math-unit) * 3.3);}
+img.disp-formula.formula-max-140 {height: calc(var(--math-unit) * 4.5);}
+img.disp-formula.formula-max-160 {height: calc(var(--math-unit) * 5);}
+img.disp-formula.formula-max-180 {height: calc(var(--math-unit) * 5.5);}
+img.disp-formula.formula-max-200 {height: calc(var(--math-unit) * 6);}
+img.disp-formula.formula-max-220 {height: calc(var(--math-unit) * 6.5);}
+img.disp-formula.formula-max-240 {height: calc(var(--math-unit) * 7);}
+img.disp-formula.formula-max-260 {height: calc(var(--math-unit) * 7.5);}
+img.disp-formula.formula-max-280 {height: calc(var(--math-unit) * 8);}
+img.disp-formula.formula-max-300 {height: calc(var(--math-unit) * 8.5);}
+img.disp-formula.formula-max-320 {height: calc(var(--math-unit) * 9);}
+img.disp-formula.formula-max-340 {height: calc(var(--math-unit) * 9.5);}
+img.disp-formula.formula-max-360 {height: calc(var(--math-unit) * 10);}
+img.disp-formula.formula-max-380 {height: calc(var(--math-unit) * 10.5);}
+img.disp-formula.formula-max-400 {height: calc(var(--math-unit) * 11);}
 
 /* inline-formulae */
 
-.inline-formula {
+img.inline-formula {
   margin: 2px;
   height: 1.25rem;
   width: auto;
@@ -375,27 +375,27 @@ li .imageonly  {
   max-height: 90% !important;
 }
 
-.inline-formula.formula-max-10 {height: calc(var(--math-unit) * 1);}
-.inline-formula.formula-max-20 {height: calc(var(--math-unit) * 1);}
-.inline-formula.formula-max-40 {height: calc(var(--math-unit) * 1);}
-.inline-formula.formula-max-60 {height: calc(var(--math-unit) * 1.5);}
-.inline-formula.formula-max-80 {height: calc(var(--math-unit) * 3);}
-.inline-formula.formula-max-100 {height: calc(var(--math-unit) * 3.5);}
-.inline-formula.formula-max-120 {height: calc(var(--math-unit) * 4);}
-.inline-formula.formula-max-140 {height: calc(var(--math-unit) * 4.5);}
-.inline-formula.formula-max-160 {height: calc(var(--math-unit) * 5);}
-.inline-formula.formula-max-180 {height: calc(var(--math-unit) * 5.5);}
-.inline-formula.formula-max-200 {height: calc(var(--math-unit) * 6);}
-.inline-formula.formula-max-220 {height: calc(var(--math-unit) * 6.5);}
-.inline-formula.formula-max-240 {height: calc(var(--math-unit) * 7);}
-.inline-formula.formula-max-260 {height: calc(var(--math-unit) * 7.5);}
-.inline-formula.formula-max-280 {height: calc(var(--math-unit) * 8);}
-.inline-formula.formula-max-300 {height: calc(var(--math-unit) * 8.5);}
-.inline-formula.formula-max-320 {height: calc(var(--math-unit) * 9);}
-.inline-formula.formula-max-340 {height: calc(var(--math-unit) * 9.5);}
-.inline-formula.formula-max-360 {height: calc(var(--math-unit) * 10);}
-.inline-formula.formula-max-380 {height: calc(var(--math-unit) * 10.5);}
-.inline-formula.formula-max-400 {height: calc(var(--math-unit) * 11);}
+img.inline-formula.formula-max-10 {height: calc(var(--math-unit) * 1);}
+img.inline-formula.formula-max-20 {height: calc(var(--math-unit) * 1);}
+img.inline-formula.formula-max-40 {height: calc(var(--math-unit) * 1);}
+img.inline-formula.formula-max-60 {height: calc(var(--math-unit) * 1.5);}
+img.inline-formula.formula-max-80 {height: calc(var(--math-unit) * 3);}
+img.inline-formula.formula-max-100 {height: calc(var(--math-unit) * 3.5);}
+img.inline-formula.formula-max-120 {height: calc(var(--math-unit) * 4);}
+img.inline-formula.formula-max-140 {height: calc(var(--math-unit) * 4.5);}
+img.inline-formula.formula-max-160 {height: calc(var(--math-unit) * 5);}
+img.inline-formula.formula-max-180 {height: calc(var(--math-unit) * 5.5);}
+img.inline-formula.formula-max-200 {height: calc(var(--math-unit) * 6);}
+img.inline-formula.formula-max-220 {height: calc(var(--math-unit) * 6.5);}
+img.inline-formula.formula-max-240 {height: calc(var(--math-unit) * 7);}
+img.inline-formula.formula-max-260 {height: calc(var(--math-unit) * 7.5);}
+img.inline-formula.formula-max-280 {height: calc(var(--math-unit) * 8);}
+img.inline-formula.formula-max-300 {height: calc(var(--math-unit) * 8.5);}
+img.inline-formula.formula-max-320 {height: calc(var(--math-unit) * 9);}
+img.inline-formula.formula-max-340 {height: calc(var(--math-unit) * 9.5);}
+img.inline-formula.formula-max-360 {height: calc(var(--math-unit) * 10);}
+img.inline-formula.formula-max-380 {height: calc(var(--math-unit) * 10.5);}
+img.inline-formula.formula-max-400 {height: calc(var(--math-unit) * 11);}
 
 /*custom margins to reduce the max-width of all images*/
 .pagedjs_pagedjs-filler_page {
