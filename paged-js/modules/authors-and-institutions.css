@@ -11,7 +11,8 @@
 .authors-list__item {
   display: inline;
 }
-.authors-list__item a {
+
+.authors-list__item span {
   white-space: nowrap;
 }
 
@@ -32,7 +33,6 @@
   content: ", ";
 }
 
-/*affiliations*/
 .institutions-list {
   margin: 0;
   padding: 0;
@@ -42,6 +42,7 @@
   margin-top: 8px;
   font-family: var(--font-sans);
 }
+
 .institutions-list__item {
   display: inline;
 }
@@ -50,7 +51,6 @@
   content: " • ";
 }
 
-/*adress*/
 .institution__address {
   display: inline;
   font-style: inherit;
