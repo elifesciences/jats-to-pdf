@@ -29,6 +29,7 @@
     position: static;
     top: auto;
     left: auto;
+    margin-left: 30px;
   }
 
   #logo img {

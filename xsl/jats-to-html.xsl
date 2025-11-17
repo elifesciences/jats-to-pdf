@@ -278,7 +278,7 @@
                         </xsl:when>
                         <xsl:otherwise>
                             <li class="authors-list__item">
-                                <span class="authors-link authors-email__link">
+                                <span class="authors-link">
                                     <xsl:apply-templates select="node()"/>
                                 </span>
                             </li>
@@ -377,10 +377,32 @@
     <xsl:variable name="author-notes-max-exceeded" select="$author-notes-length gt $author-notes-limit" as="xs:boolean"/>
     
     <xsl:template match="article-meta/author-notes">
-        <xsl:choose>
-            <xsl:when test="fn">
+        <xsl:if test="fn or corresp or preceding-sibling::contrib-group/contrib[@contrib-type='author' and @corresp='yes' and email]">
                 <div class="author-notes">
-                    <xsl:variable name="fn-string-length" select="sum(./fn/string-length(normalize-space(.)))"/>
+                    <xsl:if test="corresp or preceding-sibling::contrib-group/contrib[@contrib-type='author' and @corresp='yes' and email]">
+                        <p>
+                            <xsl:choose>
+                                <xsl:when test="preceding-sibling::contrib-group/contrib[@contrib-type='author' and @corresp='yes' and email]">
+                                    <strong class="email-icon">For correspondence:</strong>
+                                    <ul class="list-simple">
+                                        <xsl:for-each select="preceding-sibling::contrib-group/contrib[@contrib-type='author' and @corresp='yes']/email">
+                                            <li>
+                                                <a>
+                                                    <xsl:attribute name="href">
+                                                        <xsl:value-of select="concat('mailto:',.)"/>
+                                                    </xsl:attribute>
+                                                    <xsl:value-of select="."/>
+                                                </a>
+                                            </li>
+                                        </xsl:for-each>
+                                    </ul>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <xsl:apply-templates select="corresp/node()"/>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                        </p>
+                    </xsl:if>
                     <xsl:choose>
                         <xsl:when test="$author-notes-max-exceeded">
                             <p class="author-notes__list_item">
@@ -420,27 +442,8 @@
                             </xsl:for-each>
                         </xsl:otherwise>
                     </xsl:choose>
-                    <xsl:if test="preceding-sibling::contrib-group/contrib[@contrib-type='author' and @corresp='yes' and email]">
-                        <p>
-                            <strong>For correspondence:</strong>
-                            <xsl:text> </xsl:text>
-                            <xsl:for-each select="preceding-sibling::contrib-group/contrib[@contrib-type='author' and @corresp='yes']/email">
-                                <a>
-                                    <xsl:attribute name="href">
-                                        <xsl:value-of select="concat('mailto:',.)"/>
-                                    </xsl:attribute>
-                                    <xsl:value-of select="."/>
-                                </a>
-                                <xsl:if test="position() lt last()">
-                                    <xsl:text>; </xsl:text>
-                                </xsl:if>
-                            </xsl:for-each>
-                        </p>
-                    </xsl:if>
                 </div>
-            </xsl:when>
-            <xsl:otherwise/>
-        </xsl:choose>
+            </xsl:if>
     </xsl:template>
     
     <xsl:template name="get-name" match="name|string-name">

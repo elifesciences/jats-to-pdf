@@ -11,20 +11,22 @@
 .authors-list__item {
   display: inline;
 }
-.authors-list__item a {
+
+.authors-list__item span {
   white-space: nowrap;
 }
 
 .authors-list__item .email-icon {
   line-height: 1;
-  width: 15px;
-  height: 12px;
+  width: 12px;
+  height: 8px;
   display: inline-block;
   margin: 0 0 0 4px;
-  margin: -7px 0 0 4px;
+  margin: -7px 0 0 1px;
 }
 .authors-list__item .email-icon::before {
   line-height: 0;
+  vertical-align: 1px;
   content: url("../assets/email.svg");
 }
 
@@ -32,7 +34,6 @@
   content: ", ";
 }
 
-/*affiliations*/
 .institutions-list {
   margin: 0;
   padding: 0;
@@ -42,6 +43,7 @@
   margin-top: 8px;
   font-family: var(--font-sans);
 }
+
 .institutions-list__item {
   display: inline;
 }
@@ -50,7 +52,6 @@
   content: " • ";
 }
 
-/*adress*/
 .institution__address {
   display: inline;
   font-style: inherit;

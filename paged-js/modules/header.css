@@ -91,7 +91,6 @@
 }
 
 #margin-notes {
-  margin-top: 20px;
   font-size: 0.8em;
 }
 
@@ -109,8 +108,32 @@
   margin-bottom: 5px;
 }
 
+#margin-notes p:has(.email-icon) {
+  margin-bottom: 0;
+}
+
 #margin-notes .copyright {
   color: grey;
+}
+
+#margin-notes .email-icon::before {
+  content: "";
+  display: inline-block;
+  height: 9px;
+  width: 9px;
+  margin-right: 0.2em;
+  background-image: url("../assets/email.svg");
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.author-notes ul {
+  margin-top: 0;
+
+}
+
+.author-notes li a {
+  overflow-wrap: anywhere;
 }
 
 .article-status__heading {
