@@ -6,17 +6,20 @@ and runs a two-stage pipeline:
 to return a PDF
 */
 
-const express = require('express');
-const { exec } = require('child_process');
-const fs = require('fs');
-const path = require('path');
-const tmp = require('tmp');
-const SaxonJS = require('saxon-js');
+import express, { text as expressText } from 'express';
+import { exec } from 'child_process';
+import { fileURLToPath } from 'url';
+import fs from 'fs';
+import path from 'path';
+import tmp from 'tmp';
+import SaxonJS from 'saxon-js';
 
-const { text } = express;
 const { readFileSync, mkdirSync, existsSync, writeFileSync, createReadStream, unlinkSync } = fs;
 const { dirname, join } = path;
 const { fileSync } = tmp;
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const app = express();
 const port = 3000;
@@ -88,7 +91,7 @@ function compileXsl() {
  * @param {string} xslPath
  * @returns {Promise<string>}
  */
-function transfom(xmlContent) {
+function transform(xmlContent) {
     return new Promise((resolve, reject) => {
         try {
             const result = SaxonJS.transform({
@@ -150,7 +153,7 @@ function cleanupFiles(filesToClean) {
      });
 }
 
-app.use(text({ type: 'application/xml', limit: '5mb' }));
+app.use(expressText({ type: 'application/xml', limit: '5mb' }));
 
 app.post('/', async (req, res) => {
     if (!req.body) {
@@ -173,7 +176,7 @@ app.post('/', async (req, res) => {
         tempPDF = fileSync({ prefix: 'final-', postfix: '.pdf', keep: true }).name;
 
         console.log("Starting XSLT transformation...");
-        const htmlContent = await transfom(xmlContent, XSL_STYLESHEET);
+        const htmlContent = await transform(xmlContent, XSL_STYLESHEET);
         writeFileSync(tempHTML, htmlContent);
         console.log(`HTML written to ${tempHTML}`);
 
@@ -211,3 +214,5 @@ async function startServer() {
 }
 
 startServer();
+
+export { compileXsl, transform };
