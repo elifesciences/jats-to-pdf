@@ -108,6 +108,10 @@
   margin-bottom: 5px;
 }
 
+#margin-notes p:has(.email-icon) {
+  margin-bottom: 0;
+}
+
 #margin-notes .copyright {
   color: grey;
 }
@@ -121,6 +125,15 @@
   background-image: url("../assets/email.svg");
   background-size: contain;
   background-repeat: no-repeat;
+}
+
+.author-notes ul {
+  margin-top: 0;
+
+}
+
+.author-notes li a {
+  overflow-wrap: anywhere;
 }
 
 .article-status__heading {

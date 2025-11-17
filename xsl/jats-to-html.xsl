@@ -384,18 +384,18 @@
                             <xsl:choose>
                                 <xsl:when test="preceding-sibling::contrib-group/contrib[@contrib-type='author' and @corresp='yes' and email]">
                                     <strong class="email-icon">For correspondence:</strong>
-                                    <xsl:text> </xsl:text>
-                                    <xsl:for-each select="preceding-sibling::contrib-group/contrib[@contrib-type='author' and @corresp='yes']/email">
-                                        <a>
-                                            <xsl:attribute name="href">
-                                                <xsl:value-of select="concat('mailto:',.)"/>
-                                            </xsl:attribute>
-                                            <xsl:value-of select="."/>
-                                        </a>
-                                        <xsl:if test="position() lt last()">
-                                            <xsl:text>; </xsl:text>
-                                        </xsl:if>
-                                    </xsl:for-each>
+                                    <ul class="list-simple">
+                                        <xsl:for-each select="preceding-sibling::contrib-group/contrib[@contrib-type='author' and @corresp='yes']/email">
+                                            <li>
+                                                <a>
+                                                    <xsl:attribute name="href">
+                                                        <xsl:value-of select="concat('mailto:',.)"/>
+                                                    </xsl:attribute>
+                                                    <xsl:value-of select="."/>
+                                                </a>
+                                            </li>
+                                        </xsl:for-each>
+                                    </ul>
                                 </xsl:when>
                                 <xsl:otherwise>
                                     <xsl:apply-templates select="corresp/node()"/>
