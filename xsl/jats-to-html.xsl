@@ -575,6 +575,9 @@
     </xsl:template>
     
     <xsl:template match="sub-article[@article-type=('editor-report','referee-report','author-comment')]">
+        <xsl:if test="preceding-sibling::node()[not(self::text())][1]/name()='page-break'">
+            <div class="pagebreak"/>
+        </xsl:if>
         <xsl:variable name="id" select="if (@article-type='editor-report') then 'assessment'
             else if (@article-type='author-comment') then 'authorresponse'
             else 'reviews'"/>
