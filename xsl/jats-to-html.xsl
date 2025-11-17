@@ -90,7 +90,7 @@
     
     <xsl:variable name="first-page-banner">
         <div id="first-page-links" class="elife-intro">
-            <a id="logo" href="https://elifesciences.org/">
+            <a id="logo" href="https://elifesciences.org/?utm_source=pdf&amp;utm_medium=article-pdf&amp;utm_campaign=PDF_tracking">
                 <img alt="eLife logo" loading="eager" width="80" height="30" decoding="async" data-nimg="1" 
                         class="site-header__logo" style="color:transparent" src="https://elifesciences.org/assets/patterns/img/patterns/organisms/elife-logo-xs.fd623d00.svg"/>
             </a> 
