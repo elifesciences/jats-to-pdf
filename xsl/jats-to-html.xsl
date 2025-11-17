@@ -278,7 +278,7 @@
                         </xsl:when>
                         <xsl:otherwise>
                             <li class="authors-list__item">
-                                <span class="authors-link authors-email__link">
+                                <span class="authors-link">
                                     <xsl:apply-templates select="node()"/>
                                 </span>
                             </li>
