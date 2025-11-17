@@ -18,14 +18,15 @@
 
 .authors-list__item .email-icon {
   line-height: 1;
-  width: 15px;
-  height: 12px;
+  width: 12px;
+  height: 8px;
   display: inline-block;
   margin: 0 0 0 4px;
-  margin: -7px 0 0 4px;
+  margin: -7px 0 0 1px;
 }
 .authors-list__item .email-icon::before {
   line-height: 0;
+  vertical-align: 1px;
   content: url("../assets/email.svg");
 }
 
