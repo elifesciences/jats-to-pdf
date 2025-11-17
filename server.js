@@ -65,7 +65,7 @@ async function initializeAssets() {
     }
 }
 
-function compileXsl() {
+export async function compileXsl() {
     return new Promise((resolve, reject) => {
         const cliPath = join(__dirname, 'node_modules', '.bin', 'xslt3');
         const command = `${cliPath} -xsl:${XSL_STYLESHEET} -export:${COMPILED_SEF} -nogo`;
@@ -88,14 +88,14 @@ function compileXsl() {
 /**
  * Runs the XSL transformation to convert XML to HTML
  * @param {string} xmlContent
- * @param {string} xslPath
+ * @param {string} compiledStylesheet - A SEF JSON object
  * @returns {Promise<string>}
  */
-function transform(xmlContent) {
+export async function transform(xmlContent, compiledStylesheet) {
     return new Promise((resolve, reject) => {
         try {
             const result = SaxonJS.transform({
-                stylesheetInternal: COMPILED_STYLESHEET,
+                stylesheetInternal: compiledStylesheet,
                 sourceText: xmlContent,
                 destination: "serialized"
             }, "sync");
@@ -176,7 +176,7 @@ app.post('/', async (req, res) => {
         tempPDF = fileSync({ prefix: 'final-', postfix: '.pdf', keep: true }).name;
 
         console.log("Starting XSLT transformation...");
-        const htmlContent = await transform(xmlContent, XSL_STYLESHEET);
+        const htmlContent = await transform(xmlContent, COMPILED_STYLESHEET);
         writeFileSync(tempHTML, htmlContent);
         console.log(`HTML written to ${tempHTML}`);
 
@@ -201,18 +201,18 @@ app.post('/', async (req, res) => {
 });
 
 async function startServer() {
-    try {
-        await initializeAssets(); 
-        app.listen(port, () => {
-            console.log(`PDF Conversion Service listening on port ${port}`);
-            console.log(`POST XML to http://localhost:${port}/ to start conversion.`); 
-        });
-    } catch (error) {
-        console.error("Server failed to start:", error.message);
-        process.exit(1);
+    if (process.env.NODE_ENV !== 'test') {
+        try {
+            await initializeAssets(); 
+            app.listen(port, () => {
+                console.log(`PDF Conversion Service listening on port ${port}`);
+                console.log(`POST XML to http://localhost:${port}/ to start conversion.`); 
+            });
+        } catch (error) {
+            console.error("Server failed to start:", error.message);
+            process.exit(1);
+        }
     }
 }
 
 startServer();
-
-export { compileXsl, transform };
