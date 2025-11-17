@@ -13,7 +13,11 @@
     
     <xsl:template match="@*|node()">
         <xsl:choose>
-            <xsl:when test="self::processing-instruction()"/>
+            <xsl:when test="self::processing-instruction()">
+                <xsl:if test="name()='page-break'">
+                    <div class="pagebreak"/>
+                </xsl:if>
+            </xsl:when>
             <xsl:otherwise>
                 <xsl:copy copy-namespaces="no">
                     <xsl:apply-templates select="node()"/>
@@ -571,6 +575,9 @@
     </xsl:template>
     
     <xsl:template match="sub-article[@article-type=('editor-report','referee-report','author-comment')]">
+        <xsl:if test="preceding-sibling::node()[not(self::text())][1]/name()='page-break'">
+            <div class="pagebreak"/>
+        </xsl:if>
         <xsl:variable name="id" select="if (@article-type='editor-report') then 'assessment'
             else if (@article-type='author-comment') then 'authorresponse'
             else 'reviews'"/>
@@ -634,16 +641,16 @@
             <xsl:if test="not(./title) and not(@abstract-type)">
                 <h1>Abstract</h1>
             </xsl:if>
-            <xsl:apply-templates select="*"/>
+            <xsl:apply-templates select="* | processing-instruction('page-break')"/>
         </section>
     </xsl:template>
     
     <xsl:template match="article/body | sub-article/body">
-        <xsl:apply-templates select="*"/>
+        <xsl:apply-templates select="* | processing-instruction('page-break')"/>
     </xsl:template>
     
     <xsl:template match="article/back">
-        <xsl:apply-templates select="* except ref-list"/>
+        <xsl:apply-templates select="* except ref-list | processing-instruction('page-break')"/>
         <xsl:if test="not(sec[@sec-type='additional-information']) and ($author-notes-max-exceeded or ancestor::article//article-meta[funding-group or related-object] or ancestor::article//article-meta/contrib-group[1][contrib[@contrib-type='author' and contrib-id[@contrib-id-type='orcid']]])">
             <section id="additional-info">
                 <h1>Additional information</h1>
@@ -667,7 +674,7 @@
     
     <xsl:template match="ack">
         <section id="acknowledgements">
-            <xsl:apply-templates select="*[name()!='label']"/>
+            <xsl:apply-templates select="*[name()!='label'] | processing-instruction('page-break')"/>
         </section>
     </xsl:template>
     
@@ -676,13 +683,13 @@
     
     <xsl:template match="sec[not(@sec-type=('additional-information','supplementary')) and not(@specific-use='web-only')] | glossary | app">
         <section>
-            <xsl:apply-templates select="@id|*[name()!='label']"/>
+            <xsl:apply-templates select="@id|*[name()!='label'] | processing-instruction('page-break')"/>
         </section>
     </xsl:template>
     
     <xsl:template match="sec[@sec-type='additional-information' and not(@specific-use='web-only')]">
         <section>
-            <xsl:apply-templates select="@id|*[name()!='label']"/>
+            <xsl:apply-templates select="@id|*[name()!='label'] | processing-instruction('page-break')"/>
             <xsl:if test="ancestor::article//article-meta[funding-group or related-object]">
                 <xsl:apply-templates select="ancestor::article//article-meta/funding-group"/>
                 <xsl:if test="ancestor::article//article-meta/related-object[@xlink:href!='' and @document-id-type='clinical-trial-number']">
@@ -704,12 +711,12 @@
             <xsl:choose>
                 <!-- for sections mistagged with this sec-type, treat as a normal section -->
                 <xsl:when test="*[not(name()=('label','title','fig','table-wrap'))]">
-                    <xsl:apply-templates select="@id|*[name()!='label']"/>
+                    <xsl:apply-templates select="@id|*[name()!='label'] | processing-instruction('page-break')"/>
                 </xsl:when>
                 <xsl:otherwise>
                     <xsl:apply-templates select="@id|title"/>
                     <xsl:apply-templates mode="anchor" select="*[not(name()=('label','title'))][1]"/>
-                    <xsl:apply-templates mode="float" select="*[not(name()=('label','title'))][position() gt 1]"/>
+                    <xsl:apply-templates mode="float" select="*[not(name()=('label','title'))][position() gt 1] | processing-instruction('page-break')"/>
                     <div class="pagebreak"/>
                 </xsl:otherwise>
             </xsl:choose>
@@ -732,7 +739,7 @@
                     <xsl:apply-templates select="title/node()"/>
                 </h5>
             </xsl:if>
-            <xsl:apply-templates select="*[not(name()=('label','title'))]"/>
+            <xsl:apply-templates select="*[not(name()=('label','title'))] | processing-instruction('page-break')"/>
         </section>
     </xsl:template>
     
@@ -752,12 +759,12 @@
                     <xsl:apply-templates select="caption/title/node()"/>
                 </h5>
             </xsl:if>
-            <xsl:apply-templates select="caption/p|*[not(name()=('label','caption'))]"/>
+            <xsl:apply-templates select="caption/p|*[not(name()=('label','caption'))] | processing-instruction('page-break')"/>
         </section>
     </xsl:template>
     
     <xsl:template match="app-group">
-        <xsl:apply-templates select="*"/>
+        <xsl:apply-templates select="* | processing-instruction('page-break')"/>
     </xsl:template>
     
     <xsl:template match="title">
