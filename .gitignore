@@ -7,3 +7,4 @@
 /xsl/jats-to-html.sef.json
 output.html
 final-document.pdf
+*.actual.html
