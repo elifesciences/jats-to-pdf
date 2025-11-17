@@ -383,7 +383,7 @@
                         <p>
                             <xsl:choose>
                                 <xsl:when test="preceding-sibling::contrib-group/contrib[@contrib-type='author' and @corresp='yes' and email]">
-                                    <strong>For correspondence:</strong>
+                                    <strong class="email-icon">For correspondence:</strong>
                                     <xsl:text> </xsl:text>
                                     <xsl:for-each select="preceding-sibling::contrib-group/contrib[@contrib-type='author' and @corresp='yes']/email">
                                         <a>

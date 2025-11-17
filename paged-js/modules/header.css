@@ -112,6 +112,17 @@
   color: grey;
 }
 
+#margin-notes .email-icon::before {
+  content: "";
+  display: inline-block;
+  height: 9px;
+  width: 9px;
+  margin-right: 0.2em;
+  background-image: url("../assets/email.svg");
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
 .article-status__heading {
   margin-bottom: 0;
 }
