@@ -566,18 +566,15 @@
         <section id="article-content">
             <xsl:apply-templates select="./sub-article[@article-type='editor-report']"/>
             <xsl:apply-templates select=".//article-meta/abstract"/>
-            <xsl:apply-templates select="body|back"/>
+            <xsl:apply-templates select="body | back | processing-instruction('page-break')[not(preceding::sub-article[@article-type=('referee-report','author-comment')])]"/>
         </section>
         <section id="peer-reviews">
             <h1>Peer reviews</h1>
-            <xsl:apply-templates select="./sub-article[@article-type=('referee-report','author-comment')]"/>
+            <xsl:apply-templates select="./sub-article[@article-type=('referee-report','author-comment')] | processing-instruction('page-break')[preceding::sub-article[@article-type=('referee-report','author-comment')]]"/>
         </section>
     </xsl:template>
     
     <xsl:template match="sub-article[@article-type=('editor-report','referee-report','author-comment')]">
-        <xsl:if test="preceding-sibling::node()[not(self::text())][1]/name()='page-break'">
-            <div class="pagebreak"/>
-        </xsl:if>
         <xsl:variable name="id" select="if (@article-type='editor-report') then 'assessment'
             else if (@article-type='author-comment') then 'authorresponse'
             else 'reviews'"/>
