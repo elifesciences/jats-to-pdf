@@ -88,7 +88,7 @@ function compileXsl() {
  * @param {string} xslPath
  * @returns {Promise<string>}
  */
-function transfom(xmlContent) {
+function transform(xmlContent) {
     return new Promise((resolve, reject) => {
         try {
             const result = SaxonJS.transform({
@@ -173,7 +173,7 @@ app.post('/', async (req, res) => {
         tempPDF = fileSync({ prefix: 'final-', postfix: '.pdf', keep: true }).name;
 
         console.log("Starting XSLT transformation...");
-        const htmlContent = await transfom(xmlContent, XSL_STYLESHEET);
+        const htmlContent = await transform(xmlContent, XSL_STYLESHEET);
         writeFileSync(tempHTML, htmlContent);
         console.log(`HTML written to ${tempHTML}`);
 
