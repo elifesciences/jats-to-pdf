@@ -402,7 +402,8 @@
                                     </ul>
                                 </xsl:when>
                                 <xsl:otherwise>
-                                    <xsl:apply-templates select="corresp/node()"/>
+                                    <span class="email-icon"/>
+                                    <xsl:apply-templates select="corresp/node()[name()!='label']"/>
                                 </xsl:otherwise>
                             </xsl:choose>
                         </p>
@@ -575,16 +576,18 @@
     </xsl:template>
     
     <xsl:template match="sub-article[@article-type=('editor-report','referee-report','author-comment')]">
-        <xsl:variable name="id" select="if (@article-type='editor-report') then 'assessment'
-            else if (@article-type='author-comment') then 'authorresponse'
-            else 'reviews'"/>
         <xsl:variable name="class" select="if (@article-type='editor-report') then 'assessment'
             else if (@article-type='author-comment') then 'author-response'
             else 'review-content'"/>
         <section>
-            <xsl:attribute name="id">
-                <xsl:value-of select="$id"/>
-            </xsl:attribute>
+            <xsl:apply-templates select="@id"/>
+            <xsl:if test="not(@id)">
+                <xsl:attribute name="id">
+                    <xsl:value-of select="concat('sub-article','-',
+                        count(parent::article/sub-article)-count(following-sibling::sub-article)
+                        )"/>
+                </xsl:attribute>
+            </xsl:if>
             <xsl:attribute name="class">
                 <xsl:value-of select="$class"/>
             </xsl:attribute>
@@ -634,7 +637,12 @@
     </xsl:template>
     
     <xsl:template match="article-meta/abstract">
-        <section id="abstract" class="abstract">
+        <section class="abstract">
+            <xsl:apply-templates select="@id"/>
+            <xsl:if test="not(@id)">
+                <xsl:variable name="abstract-index" select="count(parent::article-meta/abstract) - count(following-sibling::abstract)"/>
+                <xsl:attribute name="id" select="concat('abstract-',$abstract-index)"/>
+            </xsl:if>
             <xsl:if test="not(./title) and not(@abstract-type)">
                 <h1>Abstract</h1>
             </xsl:if>
@@ -1197,7 +1205,7 @@
     <xsl:template match="fig|table-wrap[graphic or alternatives/graphic]">
         <xsl:choose>
             <!-- figures with labels and position=float are given their own page -->
-            <xsl:when test="label and @position='float' and not(ancestor::sub-article) and not(ancestor::app)">
+            <xsl:when test="label and @position='float' and not(ancestor::sub-article) and not(ancestor::app) and not(ancestor::abstract)">
                 <xsl:apply-templates mode="float" select="self::*"/>
             </xsl:when>
             <!-- treat unlablled figures/tables as if they were anchored -->
