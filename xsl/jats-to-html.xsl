@@ -634,7 +634,12 @@
     </xsl:template>
     
     <xsl:template match="article-meta/abstract">
-        <section id="abstract" class="abstract">
+        <section class="abstract">
+            <xsl:apply-templates select="@id"/>
+            <xsl:if test="not(@id)">
+                <xsl:variable name="abstract-index" select="count(parent::article-meta/abstract) - count(following-sibling::abstract)"/>
+                <xsl:attribute name="id" select="concat('abstract-',$abstract-index)"/>
+            </xsl:if>
             <xsl:if test="not(./title) and not(@abstract-type)">
                 <h1>Abstract</h1>
             </xsl:if>
