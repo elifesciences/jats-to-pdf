@@ -1205,7 +1205,7 @@
     <xsl:template match="fig|table-wrap[graphic or alternatives/graphic]">
         <xsl:choose>
             <!-- figures with labels and position=float are given their own page -->
-            <xsl:when test="label and @position='float' and not(ancestor::sub-article) and not(ancestor::app)">
+            <xsl:when test="label and @position='float' and not(ancestor::sub-article) and not(ancestor::app) and not(ancestor::abstract)">
                 <xsl:apply-templates mode="float" select="self::*"/>
             </xsl:when>
             <!-- treat unlablled figures/tables as if they were anchored -->

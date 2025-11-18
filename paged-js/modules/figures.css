@@ -1,9 +1,3 @@
-/*elife logo*/
-.elife-intro img {
-  max-width: unset !important;
-  height: unset !important;
-}
-
 figure {
   padding: 0;
   margin: 0;
@@ -43,6 +37,10 @@ figcaption p {
 
 .fig-group:has(img:only-of-type) {
     break-inside: avoid;
+}
+
+.abstract .fig-group {
+  margin-top: 10px;
 }
 
 .statement .fig-group {
