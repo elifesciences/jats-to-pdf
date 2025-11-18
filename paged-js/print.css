@@ -128,13 +128,7 @@ p {
     display: inline;
 }
 
-/*
-  DONT FORGET   --not-to-fill: ok;
-*/
-
-/*doi  identifier in response*/
-
-#reviews .descriptors__identifiers {
+.review-content .descriptors__identifiers {
     list-style-type: none;
     padding-left: 0;
     margin-top: 0;

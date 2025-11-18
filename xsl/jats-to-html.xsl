@@ -576,16 +576,18 @@
     </xsl:template>
     
     <xsl:template match="sub-article[@article-type=('editor-report','referee-report','author-comment')]">
-        <xsl:variable name="id" select="if (@article-type='editor-report') then 'assessment'
-            else if (@article-type='author-comment') then 'authorresponse'
-            else 'reviews'"/>
         <xsl:variable name="class" select="if (@article-type='editor-report') then 'assessment'
             else if (@article-type='author-comment') then 'author-response'
             else 'review-content'"/>
         <section>
-            <xsl:attribute name="id">
-                <xsl:value-of select="$id"/>
-            </xsl:attribute>
+            <xsl:apply-templates select="@id"/>
+            <xsl:if test="not(@id)">
+                <xsl:attribute name="id">
+                    <xsl:value-of select="concat('sub-article','-',
+                        count(parent::article/sub-article)-count(following-sibling::sub-article)
+                        )"/>
+                </xsl:attribute>
+            </xsl:if>
             <xsl:attribute name="class">
                 <xsl:value-of select="$class"/>
             </xsl:attribute>
