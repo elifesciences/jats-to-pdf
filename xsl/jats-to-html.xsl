@@ -402,7 +402,8 @@
                                     </ul>
                                 </xsl:when>
                                 <xsl:otherwise>
-                                    <xsl:apply-templates select="corresp/node()"/>
+                                    <span class="email-icon"/>
+                                    <xsl:apply-templates select="corresp/node()[name()!='label']"/>
                                 </xsl:otherwise>
                             </xsl:choose>
                         </p>
