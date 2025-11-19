@@ -1222,7 +1222,9 @@
     
     <!-- position='float' => A floating image that is placed on it's own page -->
     <xsl:template mode="float" match="fig|table-wrap[graphic or alternatives/graphic]">
-        <figure class="figure tofill">
+        <xsl:variable name="class" select="if (self::table-wrap) then 'table tofill'
+            else 'figure tofill'"/>
+        <figure class="{$class}">
             <xsl:apply-templates select="@id"/>
             <xsl:apply-templates select="caption"/>
             <xsl:if test="not(caption)">
@@ -1241,7 +1243,9 @@
     <!-- position='anchor' => An inline image that is placed in the flow of text -->
     <xsl:template mode="anchor" match="fig|table-wrap[graphic or alternatives/graphic]">
         <div class="fig-group">
-            <p class="figure movedfig">
+            <xsl:variable name="class" select="if (self::table-wrap) then 'table movedfig'
+            else 'figure movedfig'"/>
+            <p class="{$class}">
                 <xsl:apply-templates select="@id"/>
                 <xsl:apply-templates select="descendant::graphic"/>
             </p>

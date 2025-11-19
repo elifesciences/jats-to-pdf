@@ -54,6 +54,10 @@ figcaption p {
   margin: 0 auto;
 }
 
+.fig-group p.table {
+  break-inside: avoid;
+}
+
 /*hide this one day*/
 .colBlock,
 .tabbed-navigation,
@@ -289,7 +293,7 @@ figure:not(.tofill) figcaption {
 
 /*weird thing: a missing images*/
 
-.figure:not(.tofill)  {
+.figure:not(.tofill), figure.table:not(.tofill) {
   max-width: 100% !important;
   max-height: unset;
   width: auto !important;
@@ -437,7 +441,7 @@ img.inline-formula.formula-max-400 {height: calc(var(--math-unit) * 11);}
   margin-bottom: 0;
 }
 
-p.movedfig img {
+p.movedfig:not(.table) img {
   max-height: 700px;
 }
 
