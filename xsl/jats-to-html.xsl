@@ -126,13 +126,13 @@
                     }"/>
         <xsl:variable name="fig-id" select="following-sibling::fig[1]/@id"/>
         <xsl:value-of select="'#'||$fig-id||' {--not-to-fill: ok; break-before: page;} 
-            #'||$fig-id||' > img {'||$size-style-map(.)||'}'"/>
+            #'||$fig-id||' > img {'||$size-style-map(normalize-space(.))||'}'"/>
     </xsl:template>
     
     <xsl:template mode="inject-styling" match="processing-instruction('math-size')">
         <xsl:variable name="id" select="following-sibling::*[name()=('disp-formula','inline-formula')][1]/@id"/>
         <xsl:if test="$id!=''">
-            <xsl:value-of select="'#'||$id||' {height: '||.||'rem !important}'"/>
+            <xsl:value-of select="'#'||$id||' {height: '||normalize-space(.)||'rem !important}'"/>
         </xsl:if>
     </xsl:template>
     
