@@ -6,7 +6,7 @@ WORKDIR /usr/src/app
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
     PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium \
     CHROME_PATH=/usr/bin/chromium \
-    CHROME_ARGS="--no-sandbox --disable-gpu"
+    CHROME_ARGS="--disable-gpu"
 COPY package*.json ./
 RUN npm ci --only=production
 COPY --chown=node:node . .
