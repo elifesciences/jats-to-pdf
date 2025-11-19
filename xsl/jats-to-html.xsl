@@ -233,9 +233,10 @@
     
     <!-- To do: Handle group authors? -->
     <xsl:template mode="authors-in-header" match="article-meta/contrib-group[1]">
+        <xsl:variable name="has-multiple-affiliations" select="count(aff) gt 1" as="xs:boolean"/>
         <div class="authors">
             <ol class="authors-list authors-list--expanded" aria-label="Authors of this article">
-                <xsl:variable name="note-types" select="('aff','author-notes','fn','author-note','equal')"/>
+                <xsl:variable name="note-types" select="('author-notes','fn','author-note','equal')"/>
                 <xsl:for-each select="./contrib[@contrib-type='author']|./on-behalf-of">
                     <xsl:variable name="author-link-class" select="if (./email or ./xref[@ref-type='corresp']) then 'authors-link authors-email__link' 
                         else 'authors-link'"/>
@@ -256,7 +257,9 @@
                                         <xsl:otherwise/>
                                     </xsl:choose>
                                     <xsl:if test="xref">
-                                        <xsl:for-each select="xref[@ref-type=$note-types]">
+                                        <xsl:variable name="xrefs-to-add" select="if ($has-multiple-affiliations) then ($note-types,'aff')
+                                            else $note-types"/>
+                                        <xsl:for-each select="xref[@ref-type=$xrefs-to-add]">
                                             <sup>
                                                 <xsl:value-of select="."/>
                                                 <xsl:if test="position() lt last()">
@@ -296,9 +299,11 @@
                 <xsl:for-each select="aff">
                     <!-- To do: account for NOT mixed-content -->
                     <li class="institutions-list__item">
-                        <sup>
-                            <xsl:value-of select="./label[1]"/>
-                        </sup>
+                        <xsl:if test="$has-multiple-affiliations">
+                            <sup>
+                                <xsl:value-of select="./label[1]"/>
+                            </sup>
+                        </xsl:if>
                         <xsl:apply-templates select="descendant::*[not(local-name()=('label','institution-id','institution-wrap','named-content'))]|text()"/>
                     </li>    
                 </xsl:for-each>
