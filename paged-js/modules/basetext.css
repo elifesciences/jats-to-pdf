@@ -71,6 +71,12 @@ h6 {
   font-weight: 600;
 }
 
+/* Avoid orphaned headings at the end of pages */
+h1 + *, h2 + *, h3 + * {
+  break-before: avoid;
+  page-break-before: avoid;
+}
+
 /* removes the margin-top if the page starts with a header */
 .pagedjs_page_content article > section:first-child > section:first-child > h1:first-child,
 .pagedjs_page_content article > section:first-child > section:first-child > section:first-child > h2:first-child,
