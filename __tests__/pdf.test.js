@@ -75,7 +75,7 @@ describe('PDF generation tests (pagedjs HTML output)', () => {
               fs.unlinkSync(actualHtmlPath)
             } catch (err) {}
         } catch (err) {
-            console.log(`Test failed`);
+            console.log(`Test failed. Generated file located at: ${actualHtmlPath}`);
             throw err;
         } finally {
             try {
