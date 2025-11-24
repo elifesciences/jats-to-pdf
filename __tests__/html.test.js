@@ -1,38 +1,19 @@
-import { TIMEOUT, PROJECT_ROOT, TEST_CASE_DIR, TEST_CASES } from './test-config.js';
+import { TIMEOUT, PROJECT_ROOT, TEST_CASE_DIR, TEST_CASES, createToMatchHtml } from './test-config.js';
 import { compileXsl, xslTransform } from '../server.js';
 import fs from 'fs';
 import path from 'path';
-import { diff } from 'jest-diff';
 import pretty from 'pretty';
 
 const COMPILED_SEF = path.join(PROJECT_ROOT, 'xsl', 'jats-to-html.sef.json');
 let COMPILED_STYLESHEET = null;
 
-function normalizeHtml(html) {
+function normalizeXslHtml(html) {
   return pretty(html).trim();
 }
 
-expect.extend({
-  toMatchHtml(received, expected) {
-    const actualNorm = normalizeHtml(received);
-    const expectedNorm = normalizeHtml(expected);
-
-    if (actualNorm === expectedNorm) {
-      return { pass: true, message: () => '' };
-    }
-
-    const diffOutput = diff(expectedNorm, actualNorm, {
-      expand: false,
-      contextLines: 2
-    });
-
-    return {
-      pass: false,
-      message: () =>
-        `HTML mismatch (expected vs actual):\n\n${diffOutput}`
-    };
-  },
-});
+expect.extend(
+  createToMatchHtml(normalizeXslHtml)
+);
 
 describe('HTML generation tests', () => {
 
