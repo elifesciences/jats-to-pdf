@@ -17,9 +17,9 @@ const TEST_CASES = [
 ];
 
 function normalizeHtml(html) {
-  // remove data-..., id, and empty class attributes
-  let cleaned = html.replace(/\sdata-\w+=\".*?\"/g, '');
-  cleaned = html.replace(/\sdata-\w+=\".*?\"/g, '');
+  // remove data-..., id, and empty class attributes, remove script tags
+  let cleaned = html.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '');
+  cleaned = cleaned.replace(/\sdata-\w+=\".*?\"/g, '');
   cleaned = cleaned.replace(/\sid=\".*?\"/g, '');
   cleaned = cleaned.replace(/\sclass=\"\"/g, '');
   return pretty(cleaned).trim();
