@@ -1,21 +1,11 @@
+import { TIMEOUT, PROJECT_ROOT, TEST_CASE_DIR, TEST_CASES } from './test-config.js';
 import { compileXsl, xslTransform } from '../server.js';
 import fs from 'fs';
 import path from 'path';
-import { fileURLToPath } from 'url';
 import { diff } from 'jest-diff';
 import pretty from 'pretty';
 
-const TIMEOUT = 15000;
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const TEST_DIR = path.resolve(__dirname);
-const TEST_CASE_DIR = path.join(TEST_DIR, 'test-cases');
-const TEST_CASES = [
-  { id: '001', description: 'a kitchen sink article' },
-  { id: '002', description: 'some processing-instruction examples' }
-];
-
-const COMPILED_SEF = path.join(__dirname, '..', 'xsl', 'jats-to-html.sef.json');
+const COMPILED_SEF = path.join(PROJECT_ROOT, 'xsl', 'jats-to-html.sef.json');
 let COMPILED_STYLESHEET = null;
 
 function normalizeHtml(html) {
