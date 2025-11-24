@@ -39,7 +39,7 @@ describe('PDF generation tests (pagedjs HTML output)', () => {
     'generated PDF-ready HTML for $id (exhibiting $description) should match expected PDF-ready HTML',
     async ({ id }) => {
       const inputFilePath = path.join(TEST_CASE_DIR, `${id}.expected.html`);
-      const expectedHtmlFile = path.join(TEST_CASE_DIR, `${id}.pdf.expected.html`);
+      const expectedHtmlFile = path.join(TEST_CASE_DIR, `${id}.expected.pdf.html`);
 
       if (!fs.existsSync(inputFilePath)) throw new Error(`Missing input HTML file: ${inputFilePath}`);
       if (!fs.existsSync(expectedHtmlFile)) throw new Error(`Missing expected HTML file: ${expectedHtmlFile}`);
@@ -49,7 +49,7 @@ describe('PDF generation tests (pagedjs HTML output)', () => {
       fs.copyFileSync(inputFilePath, tempInputFile);
 
       const expectedHtml = fs.readFileSync(expectedHtmlFile, 'utf-8');
-      const actualHtmlPath = path.join(TEST_CASE_DIR, `${id}.pdf.actual.html`);
+      const actualHtmlPath = path.join(TEST_CASE_DIR, `${id}.actual.pdf.html`);
 
       await generatePDF(tempInputFile, actualHtmlPath, true);
 
