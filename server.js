@@ -176,7 +176,7 @@ app.post('/', async (req, res) => {
         tempPDF = fileSync({ prefix: 'final-', postfix: '.pdf', keep: true }).name;
 
         console.log("Starting XSLT transformation...");
-        const htmlContent = await transform(xmlContent, COMPILED_STYLESHEET);
+        const htmlContent = await xslTransform(xmlContent, COMPILED_STYLESHEET);
         writeFileSync(tempHTML, htmlContent);
         console.log(`HTML written to ${tempHTML}`);
 
