@@ -54,6 +54,10 @@ figcaption p {
   margin: 0 auto;
 }
 
+.fig-group p.figure__caption {
+  break-before: avoid;
+}
+
 .fig-group p.table {
   break-inside: avoid;
 }
