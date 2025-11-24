@@ -9,6 +9,7 @@ const TIMEOUT = 15000;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const TEST_DIR = path.resolve(__dirname);
+const TEST_CASE_DIR = path.join(TEST_DIR, 'test-cases');
 const TEST_CASES = [
   { id: '001', description: 'a kitchen sink article' },
   { id: '002', description: 'some processing-instruction examples' }
@@ -54,8 +55,8 @@ describe('HTML generation tests', () => {
   test.each(TEST_CASES)(
     'generated HTML for $id (exhibiting $description) should match expected HTML',
     async ({ id }) => {
-      const xmlFile = path.join(TEST_DIR, `${id}.xml`);
-      const expectedHtmlFile = path.join(TEST_DIR, `${id}.expected.html`);
+      const xmlFile = path.join(TEST_CASE_DIR, `${id}.xml`);
+      const expectedHtmlFile = path.join(TEST_CASE_DIR, `${id}.expected.html`);
 
       if (!fs.existsSync(xmlFile)) throw new Error(`Missing XML file: ${xmlFile}`);
       if (!fs.existsSync(expectedHtmlFile)) throw new Error(`Missing expected HTML file: ${expectedHtmlFile}`);
@@ -68,7 +69,7 @@ describe('HTML generation tests', () => {
       try {
         expect(actualHtml).toMatchHtml(expectedHtml);
       } catch (err) {
-        const outFile = path.join(TEST_DIR, `${id}.actual.html`);
+        const outFile = path.join(TEST_CASE_DIR, `${id}.actual.html`);
         fs.writeFileSync(outFile, actualHtml, 'utf8');
         console.log(`Test failed — wrote actual HTML to ${outFile}`);
         throw err;

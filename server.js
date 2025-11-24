@@ -116,15 +116,17 @@ export async function xslTransform(xmlContent, compiledStylesheet) {
 /**
  * Runs the paged-js CLI to convert HTML to PDF
  * @param {string} htmlPath
- * @param {string} pdfPath
+ * @param {string} outputPath
+ * @param {boolean} htmlOnly
  * @returns {Promise<void>}
  */
-function generatePDF(htmlPath, pdfPath) {
+export async function generatePDF(htmlPath, outputPath, htmlOnly = false) {
     return new Promise((resolve, reject) => {
         const cliPath = join(__dirname, 'node_modules', '.bin', 'pagedjs-cli');
         const scripts = ADDITIONAL_SCRIPTS.map(s => `--additional-script ${join(__dirname, s)}`).join(' ');
         const styles = `--style ${join(__dirname, MAIN_CSS)}`;
-        const command = `${cliPath} ${htmlPath} ${scripts} ${styles} -o ${pdfPath}`;
+        const htmlFlag = htmlOnly ? '--html' : '';
+        const command = `${cliPath} ${htmlPath} ${scripts} ${styles} -o ${outputPath} ${htmlFlag}`.trim();
 
         console.log(`Running Paged.js CLI: ${command}`);
         exec(command, { maxBuffer: 1024 * 5000 }, (error, stdout, stderr) => {
