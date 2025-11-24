@@ -1,4 +1,4 @@
-import { compileXsl, transform } from '../server.js';
+import { compileXsl, xslTransform } from '../server.js';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -63,7 +63,7 @@ describe('HTML generation tests', () => {
       const xmlInput = fs.readFileSync(xmlFile, 'utf-8');
       const expectedHtml = fs.readFileSync(expectedHtmlFile, 'utf-8');
 
-      const actualHtml = await transform(xmlInput, COMPILED_STYLESHEET);
+      const actualHtml = await xslTransform(xmlInput, COMPILED_STYLESHEET);
 
       try {
         expect(actualHtml).toMatchHtml(expectedHtml);

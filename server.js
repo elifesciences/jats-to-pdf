@@ -91,7 +91,7 @@ export async function compileXsl() {
  * @param {string} compiledStylesheet - A SEF JSON object
  * @returns {Promise<string>}
  */
-export async function transform(xmlContent, compiledStylesheet) {
+export async function xslTransform(xmlContent, compiledStylesheet) {
     return new Promise((resolve, reject) => {
         try {
             const result = SaxonJS.transform({
