@@ -71,14 +71,14 @@ describe('PDF generation tests (pagedjs HTML output)', () => {
 
         try {
             expect(actualHtml).toMatchHtml(expectedHtml);
-            try {} 
-            catch (err) {}
+            try {
+              fs.unlinkSync(actualHtmlPath)
+            } catch (err) {}
         } catch (err) {
             console.log(`Test failed`);
             throw err;
         } finally {
             try {
-                fs.unlinkSync(actualHtmlPath)
                 fs.unlinkSync(tempInputFile)
             } catch (err) {}
         }

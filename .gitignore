@@ -8,3 +8,4 @@
 final-document.pdf
 /*.html
 /paged-js/*.html
+__tests__/test-cases/*.actual.html
