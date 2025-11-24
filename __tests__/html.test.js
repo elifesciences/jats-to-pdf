@@ -63,6 +63,10 @@ describe('HTML generation tests', () => {
         fs.writeFileSync(outFile, actualHtml, 'utf8');
         console.log(`Test failed — wrote actual HTML to ${outFile}`);
         throw err;
+      } finally {
+        try {
+          fs.unlinkSync(COMPILED_SEF)
+        } catch (err) { }
       }
     },
     TIMEOUT
