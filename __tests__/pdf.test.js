@@ -3,7 +3,6 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { diff } from 'jest-diff';
-import pretty from 'pretty';
 
 const TIMEOUT = 15000;
 const __filename = fileURLToPath(import.meta.url);
@@ -16,13 +15,30 @@ const TEST_CASES = [
   { id: '002', description: 'some processing-instruction examples' }
 ];
 
+// remove script tags, remove data-..., id, and empty class attributes
 function normalizeHtml(html) {
-  // remove data-..., id, and empty class attributes, remove script tags
-  let cleaned = html.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '');
-  cleaned = cleaned.replace(/\sdata-\w+=\".*?\"/g, '');
-  cleaned = cleaned.replace(/\sid=\".*?\"/g, '');
-  cleaned = cleaned.replace(/\sclass=\"\"/g, '');
-  return pretty(cleaned).trim();
+  const document = new DOMParser().parseFromString(html, 'text/html');
+  document.querySelectorAll('script, style').forEach(el => el.remove());
+  const cleanTree = root => {
+    root.querySelectorAll('*').forEach(element => {
+      [...element.attributes].forEach(attr => {
+        if (attr.name.startsWith('data-')) {
+          element.removeAttribute(attr.name);
+        }
+      });
+      element.removeAttribute('id');
+      if (element.hasAttribute('class') && element.classList.length === 0) {
+        element.removeAttribute('class');
+      }
+    });
+  };
+  cleanTree(document);
+  document.querySelectorAll('template').forEach(template => {
+    cleanTree(template.content);
+  });
+  const serializer = new XMLSerializer();
+  const cleaned = serializer.serializeToString(document.body);
+  return cleaned.trim();
 };
 
 expect.extend({
