@@ -295,8 +295,6 @@ figure:not(.tofill) figcaption {
   break-inside: avoid;
 }
 
-/*weird thing: a missing images*/
-
 .figure:not(.tofill), figure.table:not(.tofill) {
   max-width: 100% !important;
   max-height: unset;
@@ -305,12 +303,6 @@ figure:not(.tofill) figcaption {
 
 .tofill img {
   max-height: 800px;
-}
-
-/*for tables*/
-
-.tofill[id*="tbl"] img {
-  /* width: 80%; */
 }
 
 /* we use classes to automatically reduce image size based on what we found to have that image management*/
@@ -447,6 +439,14 @@ img.inline-formula.formula-max-400 {height: calc(var(--math-unit) * 11);}
 
 p.movedfig:not(.table) img {
   max-height: 700px;
+}
+
+p.movedfig.table img {
+  max-height: 800px;
+}
+
+p.figure.movedfig {
+    break-inside: avoid !important;
 }
 
 .widowfix,
