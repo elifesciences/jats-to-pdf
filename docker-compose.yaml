@@ -19,3 +19,5 @@ services:
         max-file: "5"
     security_opt:
       - seccomp:seccomp.json
+    cap_add:
+      - CAP_SYS_ADMIN
