@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  jats-to-pdf:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      shm_size: 1gb
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - CHROME_PATH=/usr/bin/chromium
+    restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
+    security_opt:
+      - seccomp:seccomp.json
+    cap_add:
+      - CAP_SYS_ADMIN
