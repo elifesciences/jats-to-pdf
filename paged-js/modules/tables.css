@@ -1,0 +1,85 @@
+table {
+  table-layout: fixed;
+  width: 100%;
+  border-collapse: collapse;
+  border-spacing: 0;
+  font-size: .8em;
+  margin: 10px 0;
+}
+
+tr {
+  display: table-row;
+  page-break-inside: avoid;
+}
+
+/* add a border to the top of split tables */
+table[data-split-from] > *:first-child > tr:first-child > *:is(tr, td) {
+  border-top: 1px solid var(--color-elife-grey);
+}
+
+th, td {
+  border-bottom: 1px solid var(--color-elife-grey);
+  padding: .375rem;
+  min-width: 1px;
+  box-sizing: border-box;
+  page-break-inside: avoid;
+}
+
+thead th {
+  border-bottom-color: var(--color-elife-black);
+  font-weight: 600;
+  color: var(--color-elife-grey);
+}
+
+
+/* 
++===========================+
+| Funding tables | 💰 | ┬─┬ |
++===========================+
+*/
+
+#funding-table,
+table[data-id="funding-table"] {
+  width: 90%;
+  margin-right: auto;
+}
+
+#funding-table th,
+#funding-table td,
+table[data-id="funding-table"] td,
+table[data-id="funding-table"] th {
+  text-align: left;
+}
+
+#funding-table th:first-child,
+#funding-table td:first-child,
+table[data-id="funding-table"] td:first-child,
+table[data-id="funding-table"] th:first-child {
+  width: 45%;
+}
+
+/* expand if there's only two columns */
+#funding-table th:nth-last-child(2):first-child,
+#funding-table td:nth-last-child(2):first-child,
+table[data-id="funding-table"] th:nth-last-child(2):first-child,
+table[data-id="funding-table"] td:nth-last-child(2):first-child {
+  width: 65%;
+}
+
+#funding-table th:nth-child(2),
+#funding-table td:nth-child(2),
+table[data-id="funding-table"] td:nth-child(2)
+table[data-id="funding-table"] th:nth-child(2) {
+  width: 35%;
+}
+
+#funding-table th:nth-child(3),
+#funding-table td:nth-child(3),
+table[data-id="funding-table"] td:nth-child(3),
+table[data-id="funding-table"] th:nth-child(3) {
+  width: 20%
+}
+
+.funding-statement {
+  color: var(--color-elife-grey);
+}

@@ -1513,58 +1513,85 @@
     </xsl:template>
     
     <xsl:template match="funding-group">
+        <xsl:variable name="has-authors" select="boolean(descendant::principal-award-recipient)"/>
         <section id="funding">
             <h2>Funding</h2>
-            <ul class="funding-list list-simple">
-                <xsl:for-each select="./award-group">
-                <li class="funding-list-item">
-                    <p>
-                        <xsl:value-of select="descendant::institution[1]"/>
-                        <xsl:if test="./award-id[not(@award-id-type='doi')]">
-                            <xsl:text> (</xsl:text>
-                            <xsl:choose>
-                                <xsl:when test="./award-id[@award-id-type='doi']">
-                                    <a>
-                                        <xsl:attribute name="href">
-                                            <xsl:value-of select="concat('https://doi.org/',./award-id[@award-id-type='doi'][1])"/>
-                                        </xsl:attribute>
-                                        <xsl:value-of select="concat('https://doi.org/',./award-id[@award-id-type='doi'][1])"/>
-                                    </a>
-                                </xsl:when>
-                                <xsl:otherwise>
-                                    <xsl:value-of select="./award-id"/>
-                                </xsl:otherwise>
-                            </xsl:choose>
-                            <xsl:text>)</xsl:text>
+            <table id="funding-table">
+                <thead>
+                    <tr>
+                        <th>Funder</th>
+                        <th>Grant reference number</th>
+                        <xsl:if test="$has-authors">
+                            <th>Author</th>
                         </xsl:if>
-                    </p>
-                    <xsl:if test="./principal-award-recipient">
-                    <ul class="list-bullet">
-                        <xsl:for-each select="./principal-award-recipient/*[name()=('name','collab')]">
-                            <li>
-                                <p>
-                                    <xsl:choose>
-                                        <xsl:when test="./surname and ./given-names">
-                                            <xsl:value-of select="concat(./given-names,' ',./surname)"/>
-                                        </xsl:when>
-                                        <xsl:otherwise>
-                                            <xsl:value-of select="."/>
-                                        </xsl:otherwise>
-                                    </xsl:choose>
-                                </p>
-                            </li>
-                        </xsl:for-each>
-                    </ul>
-                </xsl:if>
-                </li>
-            </xsl:for-each>
-            </ul>
-            <xsl:if test="funding-statement">
-                <p>
-                    <xsl:apply-templates select="funding-statement/node()"/>
-                </p>
-            </xsl:if>
+                    </tr>
+                </thead>
+                <tbody>
+                    <xsl:apply-templates select="award-group|funding-statement">
+                        <xsl:with-param name="including-authors" select="$has-authors"/>
+                    </xsl:apply-templates>
+                </tbody>
+            </table>
         </section>
+    </xsl:template>
+    
+    <xsl:template match="award-group">
+        <xsl:param name="including-authors" select="false()"/>
+        <tr>
+            <td>
+                <xsl:apply-templates select="descendant::institution[1]/node()"/>
+            </td>
+            <td>
+                <xsl:apply-templates select="award-id"/>
+            </td>
+            <xsl:if test="$including-authors">
+                <td>
+                    <xsl:apply-templates select="principal-award-recipient"/>
+                </td>
+            </xsl:if>
+        </tr>
+    </xsl:template>
+    
+    <xsl:template match="award-id">
+        <xsl:choose>
+            <xsl:when test="@award-id-type='doi'">
+                <a>
+                    <xsl:attribute name="href">
+                        <xsl:value-of select="'https://doi.org/'||."/>
+                    </xsl:attribute>
+                    <xsl:value-of select="'https://doi.org/'||."/>
+                </a>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="."/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+    
+    <xsl:template match="principal-award-recipient">
+        <xsl:for-each select="name|institution">
+            <xsl:if test="preceding-sibling::*">
+                <br/>
+            </xsl:if>
+            <xsl:choose>
+                <xsl:when test="surname and given-names">
+                    <xsl:value-of select="given-names[1]||' '||surname[1]"/>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:value-of select="."/>
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:for-each>
+    </xsl:template>
+    
+    <xsl:template match="funding-statement">
+        <xsl:param name="including-authors" select="false()"/>
+        <xsl:variable name="colspan" select="if ($including-authors) then 3 else 2"/>
+        <tr class="funding-statement">
+            <td colspan="{$colspan}">
+                <xsl:apply-templates select="node()"/>
+            </td>
+        </tr>
     </xsl:template>
     
     <xsl:template match="related-object">
