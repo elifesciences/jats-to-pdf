@@ -1513,6 +1513,7 @@
     </xsl:template>
     
     <xsl:template match="funding-group">
+        <xsl:variable name="has-authors" select="boolean(descendant::principal-award-recipient)"/>
         <section id="funding">
             <h2>Funding</h2>
             <table id="funding-table">
@@ -1520,17 +1521,22 @@
                     <tr>
                         <th>Funder</th>
                         <th>Grant reference number</th>
-                        <th>Author</th>
+                        <xsl:if test="$has-authors">
+                            <th>Author</th>
+                        </xsl:if>
                     </tr>
                 </thead>
                 <tbody>
-                    <xsl:apply-templates select="award-group|funding-statement"/>
+                    <xsl:apply-templates select="award-group|funding-statement">
+                        <xsl:with-param name="including-authors" select="$has-authors"/>
+                    </xsl:apply-templates>
                 </tbody>
             </table>
         </section>
     </xsl:template>
     
     <xsl:template match="award-group">
+        <xsl:param name="including-authors" select="false()"/>
         <tr>
             <td>
                 <xsl:apply-templates select="descendant::institution[1]/node()"/>
@@ -1538,11 +1544,11 @@
             <td>
                 <xsl:apply-templates select="award-id"/>
             </td>
-            <td>
-                <xsl:value-of select="for $name in principal-award-recipient/*[name()=('name','collab')]
-                    return if ($name[surname and given-names]) then concat($name/given-names[1],' ',$name/surname[1])
-                    else $name"/>
-            </td>
+            <xsl:if test="$including-authors">
+                <td>
+                    <xsl:apply-templates select="principal-award-recipient"/>
+                </td>
+            </xsl:if>
         </tr>
     </xsl:template>
     
@@ -1562,8 +1568,24 @@
         </xsl:choose>
     </xsl:template>
     
+    <xsl:template match="principal-award-recipient">
+        <xsl:for-each select="name|institution">
+            <xsl:if test="preceding-sibling::*">
+                <br/>
+            </xsl:if>
+            <xsl:choose>
+                <xsl:when test="surname and given-names">
+                    <xsl:value-of select="given-names[1]||' '||surname[1]"/>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:value-of select="."/>
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:for-each>
+    </xsl:template>
+    
     <xsl:template match="funding-statement">
-        <tr colspan="3">
+        <tr colspan="3" class="funding-statement">
             <td>
                 <xsl:apply-templates select="node()"/>
             </td>
