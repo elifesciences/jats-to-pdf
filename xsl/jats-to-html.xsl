@@ -124,7 +124,7 @@
                     'half':'max-width: 90% !important; max-height: unset !important; height: auto !important; text-align: center !important;',
                     'quarter':'max-width: 60% !important; max-height: unset !important; height: auto !important; text-align: center !important;'
                     }"/>
-        <xsl:variable name="fig-id" select="following-sibling::fig[1]/@id"/>
+        <xsl:variable name="fig-id" select="following-sibling::*[self::fig or self::table-wrap[graphic or alternatives/graphic]][1]/@id"/>
         <xsl:value-of select="'#'||$fig-id||' {--not-to-fill: ok; break-before: page;} 
             #'||$fig-id||' > img {'||$size-style-map(normalize-space(.))||'}'"/>
     </xsl:template>
@@ -442,7 +442,8 @@
                                     <xsl:choose>
                                         <xsl:when test="@fn-type='coi-statement'">
                                             <strong>Competing interests:</strong>
-                                            <xsl:value-of select="replace(./p[1],'^[Cc]ompeting [Ii]nterests?( [Ss]tatement)?:','')"/>
+                                            <xsl:text> </xsl:text>
+                                            <xsl:value-of select="replace(./p[1],'^[Cc]ompeting [Ii]nterests?( [Ss]tatement)?:\s?','')"/>
                                         </xsl:when>
                                         <xsl:otherwise>
                                             <xsl:apply-templates select="./p/node()"/>
@@ -1236,7 +1237,7 @@
                     </h3>
                 </figcaption>
             </xsl:if>
-            <xsl:apply-templates select="descendant::graphic"/>
+            <xsl:apply-templates select="descendant::graphic[not(ancestor::caption)]"/>
         </figure>
     </xsl:template>
     
@@ -1261,7 +1262,7 @@
         </div>
     </xsl:template>
     
-    <xsl:template match="graphic[ancestor::fig or ancestor::table-wrap]">
+    <xsl:template match="graphic[not(ancestor::caption) and (ancestor::fig or ancestor::table-wrap)]">
         <xsl:param name="give-boundary" select="false()"/>
         <xsl:variable name="image-uri" select="concat(
             $iiif-base-uri,
@@ -1441,6 +1442,15 @@
                 </ol>
             </xsl:otherwise>
         </xsl:choose>
+    </xsl:template>
+    
+    <xsl:template match="p">
+        <!-- Wrap each disp-formula in its own p -->
+        <xsl:for-each-group select="node()" group-starting-with="disp-formula">
+            <p>
+                <xsl:apply-templates select="current-group()"/>
+            </p>
+        </xsl:for-each-group>
     </xsl:template>
     
     <xsl:template match="list-item">
