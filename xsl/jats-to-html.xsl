@@ -1585,8 +1585,10 @@
     </xsl:template>
     
     <xsl:template match="funding-statement">
-        <tr colspan="3" class="funding-statement">
-            <td>
+        <xsl:param name="including-authors" select="false()"/>
+        <xsl:variable name="colspan" select="if ($including-authors) then 3 else 2"/>
+        <tr class="funding-statement">
+            <td colspan="{$colspan}">
                 <xsl:apply-templates select="node()"/>
             </td>
         </tr>
