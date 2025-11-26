@@ -9,6 +9,7 @@
 @import url(./modules/assesment.css);
 @import url(./modules/references.css);
 @import url(./modules/timeline.css);
+@import url(./modules/tables.css);
 
 body {
     --font-family-primary: '__Noto_Sans_d69442', '__Noto_Sans_Fallback_d69442', arial, helvetica, sans-serif;
