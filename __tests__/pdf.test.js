@@ -3,6 +3,14 @@ import { generatePDF } from '../server.js';
 import fs from 'fs';
 import path from 'path';
 
+// Replace 'real' images in test case HTML with placeholder
+function updateImagePaths(htmlString) {
+  const placeholderPath = './assets/placeholder-for-testing.png';
+  const regex = /(<img[^>]*?src=["'])(.*?)(["'][^>]*?>)/gi;
+  const replacement = `$1${placeholderPath}$3`;
+  return htmlString.replace(regex, replacement);
+};
+
 // remove script tags, remove data-..., id, and empty class attributes
 function normalizePdfHtml(html) {
   const document = new DOMParser().parseFromString(html, 'text/html');
@@ -45,13 +53,14 @@ describe('PDF generation tests (pagedjs HTML output)', () => {
       if (!fs.existsSync(expectedHtmlFile)) throw new Error(`Missing expected HTML file: ${expectedHtmlFile}`);
 
       // For pagedjs to load the styles, this needs to be copied into the root/paged-js folder(!)
-      const tempInputFile = path.join(PROJECT_ROOT, 'paged-js', `${id}-temp.expected.html`);
-      fs.copyFileSync(inputFilePath, tempInputFile);
+      const tempInputFilePath = path.join(PROJECT_ROOT, 'paged-js', `${id}-temp.expected.html`);
+      const tempInputHtml = updateImagePaths(fs.readFileSync(inputFilePath, 'utf-8'));
+      fs.writeFileSync(tempInputFilePath, tempInputHtml, 'utf-8');
 
-      const expectedHtml = fs.readFileSync(expectedHtmlFile, 'utf-8');
+      const expectedHtml = updateImagePaths(fs.readFileSync(expectedHtmlFile, 'utf-8'));
       const actualHtmlPath = path.join(TEST_CASE_DIR, `${id}.actual.pdf.html`);
 
-      await generatePDF(tempInputFile, actualHtmlPath, true);
+      await generatePDF(tempInputFilePath, actualHtmlPath, true);
 
       if (!fs.existsSync(actualHtmlPath)) throw new Error(`Error generating PDF-ready HTML file: ${actualHtmlPath}`);
       const actualHtml = fs.readFileSync(actualHtmlPath, 'utf-8');
@@ -66,7 +75,7 @@ describe('PDF generation tests (pagedjs HTML output)', () => {
         throw err;
       } finally {
         try {
-          fs.unlinkSync(tempInputFile)
+          fs.unlinkSync(tempInputFilePath)
         } catch (err) { }
       }
     },
