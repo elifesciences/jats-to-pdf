@@ -107,19 +107,21 @@ h3 {
   margin-top: 8px;
   margin-bottom: 6px;
   font-size: 14px;
-  color: var(--color-body);
 }
 
 h4 {
   font-size: 12px;
   margin-top: 6px;
   margin-bottom: 6px;
+  font-style: italic;
 }
 
-h5 {
+h5, h6 {
   font-size: 11px;
   margin-top: 6px;
   margin-bottom: 6px;
+  color: var(--color-sub);
+  font-style: italic;
 }
 
 h1 + section > h2:first-child {
