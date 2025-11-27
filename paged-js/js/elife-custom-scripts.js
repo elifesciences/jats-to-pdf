@@ -2,6 +2,7 @@
 class elifeBuild extends Paged.Handler {
   constructor(chunker, polisher, caller) {
     super(chunker, polisher, caller);
+    this.targets = {};
   }
 
   beforeParsed(content) {
@@ -14,6 +15,21 @@ class elifeBuild extends Paged.Handler {
 
     // add id to anything to fix things
     addIDtoEachElement(content);
+  }
+
+  // Collect page numbers for elements to add into page-ref links
+  afterPageLayout(page) {
+    if (!page) {
+        return;
+    }
+    const pageNumber = page.getAttribute('data-page-number');
+    if (!pageNumber) {
+        return;
+    }
+    const elementsWithIds = page.querySelectorAll('[id]');
+    Array.from(elementsWithIds).forEach((el) => {
+      this.targets[el.id] = pageNumber;
+    });
   }
 
   afterRendered(pages) {
@@ -43,6 +59,18 @@ class elifeBuild extends Paged.Handler {
           if (marginBox) {
             marginBox.classList.add("hasContent");
             }  
+        }
+      });
+      
+      // Introduce page numbers for page links
+      document.querySelectorAll(".page-ref").forEach((refLink) => {
+        const targetId = refLink.getAttribute("href").substring(1);
+        const targetPageNumber = this.targets[targetId];
+        if (targetPageNumber !== undefined) {
+          refLink.textContent = `page ${targetPageNumber}`;
+        } else {
+          refLink.textContent = 'page ??';
+          console.warn(`Target ID #${targetId} not found for page link.`);
         }
       });
   }
