@@ -386,7 +386,7 @@
     <xsl:variable name="author-notes-max-exceeded" select="$author-notes-length gt $author-notes-limit" as="xs:boolean"/>
     
     <xsl:template match="article-meta/author-notes">
-        <xsl:if test="fn or corresp or preceding-sibling::contrib-group/contrib[@contrib-type='author' and @corresp='yes' and email]">
+        <xsl:if test="fn or corresp or preceding-sibling::contrib-group/contrib[@contrib-type='author' and @corresp='yes' and email] or parent::article-meta/funding-group">
                 <div class="author-notes">
                     <xsl:if test="corresp or preceding-sibling::contrib-group/contrib[@contrib-type='author' and @corresp='yes' and email]">
                         <p>
@@ -416,16 +416,17 @@
                     <xsl:choose>
                         <xsl:when test="$author-notes-max-exceeded">
                             <p class="author-notes__list_item">
-                                <sup aria-hidden="true">
-                                    <strong>
-                                        <xsl:value-of select="string-join(distinct-values(fn/label),', ')"/>
-                                    </strong>
-                                </sup>
-                                <xsl:if test="fn/label">
-                                    <xsl:text>&#xA0;</xsl:text>
-                                </xsl:if>
-                                <xsl:text>See </xsl:text>
-                                <a href="#author-notes-expanded">Author notes</a>
+                                <strong>
+                                    <xsl:if test="fn/label">
+                                        <sup aria-hidden="true">
+                                            <xsl:value-of select="string-join(distinct-values(fn/label),', ')"/>
+                                        </sup>
+                                        <xsl:text>&#xA0;</xsl:text>
+                                    </xsl:if>
+                                    <xsl:text>Author notes:</xsl:text>
+                                </strong>
+                                <xsl:text> See </xsl:text>
+                                <a class="page-ref" href="#author-notes-expanded"/>
                             </p>
                         </xsl:when>
                         <xsl:otherwise>
@@ -453,6 +454,15 @@
                             </xsl:for-each>
                         </xsl:otherwise>
                     </xsl:choose>
+                    <xsl:if test="parent::article-meta/funding-group">
+                        <p class="author-notes__list_item">
+                            <strong>
+                                <xsl:text>Funding:</xsl:text>
+                            </strong>
+                            <xsl:text> See </xsl:text>
+                            <a class="page-ref" href="#funding"/>
+                        </p>
+                    </xsl:if>
                 </div>
             </xsl:if>
     </xsl:template>
