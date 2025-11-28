@@ -6,17 +6,35 @@ A two-step conversion pipeline:
 
 ## Getting Started
 
+### Docker
+
+```bash
+docker compose up
+```
+
+Will start the application in port 3000.
+
+### Node
+
 Install dependencies with:
 
-```js
+```bash
 npm install
 ```
 
 Start the application with:
 
-```js
+```bash
 node server.js
 ```
+
+Test with:
+
+```bash
+npm test
+```
+
+### Using the service
 
 Post XML to the endpoint (specifying the output path for the PDF), e.g.:
 
