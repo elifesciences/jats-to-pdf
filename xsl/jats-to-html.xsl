@@ -120,7 +120,7 @@
     <!-- Generate custom css for resizing figure images -->
     <xsl:template mode="inject-styling" match="processing-instruction('fig-size')">
         <xsl:variable name="size-style-map" select="map{
-                    'max':'max-width: 120% !important; margin-left: -120px !important; max-height: unset !important; height: auto !important;',
+                    'max':'max-width: 120% !important; margin-left: -120px !important; max-height: 900px !important; height: auto !important;',
                     'half':'max-width: 90% !important; max-height: unset !important; height: auto !important; text-align: center !important;',
                     'quarter':'max-width: 60% !important; max-height: unset !important; height: auto !important; text-align: center !important;'
                     }"/>
