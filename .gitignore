@@ -7,5 +7,6 @@
 /xsl/jats-to-html.sef.json
 final-document.pdf
 /*.html
+/xsl/*.html
 /paged-js/*.html
 __tests__/test-cases/*.actual.html
