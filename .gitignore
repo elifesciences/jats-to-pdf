@@ -5,5 +5,7 @@
 .env
 .env.local
 /xsl/jats-to-html.sef.json
-output.html
 final-document.pdf
+/*.html
+/paged-js/*.html
+__tests__/test-cases/*.actual.html

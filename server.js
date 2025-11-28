@@ -6,17 +6,20 @@ and runs a two-stage pipeline:
 to return a PDF
 */
 
-const express = require('express');
-const { exec } = require('child_process');
-const fs = require('fs');
-const path = require('path');
-const tmp = require('tmp');
-const SaxonJS = require('saxon-js');
+import express, { text as expressText } from 'express';
+import { exec } from 'child_process';
+import { fileURLToPath } from 'url';
+import fs from 'fs';
+import path from 'path';
+import tmp from 'tmp';
+import SaxonJS from 'saxon-js';
 
-const { text } = express;
 const { readFileSync, mkdirSync, existsSync, writeFileSync, createReadStream, unlinkSync } = fs;
 const { dirname, join } = path;
 const { fileSync } = tmp;
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const app = express();
 const port = 3000;
@@ -62,7 +65,7 @@ async function initializeAssets() {
     }
 }
 
-function compileXsl() {
+export async function compileXsl() {
     return new Promise((resolve, reject) => {
         const cliPath = join(__dirname, 'node_modules', '.bin', 'xslt3');
         const command = `${cliPath} -xsl:${XSL_STYLESHEET} -export:${COMPILED_SEF} -nogo`;
@@ -85,14 +88,14 @@ function compileXsl() {
 /**
  * Runs the XSL transformation to convert XML to HTML
  * @param {string} xmlContent
- * @param {string} xslPath
+ * @param {string} compiledStylesheet - A SEF JSON object
  * @returns {Promise<string>}
  */
-function transform(xmlContent) {
+export async function xslTransform(xmlContent, compiledStylesheet) {
     return new Promise((resolve, reject) => {
         try {
             const result = SaxonJS.transform({
-                stylesheetInternal: COMPILED_STYLESHEET,
+                stylesheetInternal: compiledStylesheet,
                 sourceText: xmlContent,
                 destination: "serialized"
             }, "sync");
@@ -113,15 +116,17 @@ function transform(xmlContent) {
 /**
  * Runs the paged-js CLI to convert HTML to PDF
  * @param {string} htmlPath
- * @param {string} pdfPath
+ * @param {string} outputPath
+ * @param {boolean} htmlOnly
  * @returns {Promise<void>}
  */
-function generatePDF(htmlPath, pdfPath) {
+export async function generatePDF(htmlPath, outputPath, htmlOnly = false) {
     return new Promise((resolve, reject) => {
         const cliPath = join(__dirname, 'node_modules', '.bin', 'pagedjs-cli');
         const scripts = ADDITIONAL_SCRIPTS.map(s => `--additional-script ${join(__dirname, s)}`).join(' ');
         const styles = `--style ${join(__dirname, MAIN_CSS)}`;
-        const command = `${cliPath} ${htmlPath} ${scripts} ${styles} -o ${pdfPath}`;
+        const htmlFlag = htmlOnly ? '--html' : '';
+        const command = `${cliPath} ${htmlPath} ${scripts} ${styles} -o ${outputPath} ${htmlFlag}`.trim();
 
         console.log(`Running Paged.js CLI: ${command}`);
         exec(command, { maxBuffer: 1024 * 5000 }, (error, stdout, stderr) => {
@@ -150,7 +155,7 @@ function cleanupFiles(filesToClean) {
      });
 }
 
-app.use(text({ type: 'application/xml', limit: '5mb' }));
+app.use(expressText({ type: 'application/xml', limit: '5mb' }));
 
 app.post('/', async (req, res) => {
     if (!req.body) {
@@ -173,7 +178,7 @@ app.post('/', async (req, res) => {
         tempPDF = fileSync({ prefix: 'final-', postfix: '.pdf', keep: true }).name;
 
         console.log("Starting XSLT transformation...");
-        const htmlContent = await transform(xmlContent, XSL_STYLESHEET);
+        const htmlContent = await xslTransform(xmlContent, COMPILED_STYLESHEET);
         writeFileSync(tempHTML, htmlContent);
         console.log(`HTML written to ${tempHTML}`);
 
@@ -198,15 +203,17 @@ app.post('/', async (req, res) => {
 });
 
 async function startServer() {
-    try {
-        await initializeAssets(); 
-        app.listen(port, () => {
-            console.log(`PDF Conversion Service listening on port ${port}`);
-            console.log(`POST XML to http://localhost:${port}/ to start conversion.`); 
-        });
-    } catch (error) {
-        console.error("Server failed to start:", error.message);
-        process.exit(1);
+    if (process.env.NODE_ENV !== 'test') {
+        try {
+            await initializeAssets(); 
+            app.listen(port, () => {
+                console.log(`PDF Conversion Service listening on port ${port}`);
+                console.log(`POST XML to http://localhost:${port}/ to start conversion.`); 
+            });
+        } catch (error) {
+            console.error("Server failed to start:", error.message);
+            process.exit(1);
+        }
     }
 }
 
