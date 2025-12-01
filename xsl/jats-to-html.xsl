@@ -129,6 +129,12 @@
             #'||$fig-id||' > img {'||$size-style-map(normalize-space(.))||'}'"/>
     </xsl:template>
     
+    <!-- Another method to generate custom css for resizing figure images -->
+    <xsl:template mode="inject-styling" match="processing-instruction('fig-width')">
+        <xsl:variable name="fig-id" select="following-sibling::*[self::fig or self::table-wrap[graphic or alternatives/graphic]][1]/@id"/>
+        <xsl:value-of select="'#'||$fig-id||' > img {max-width: '||normalize-space(.)||' !important;}'"/>
+    </xsl:template>
+    
     <xsl:template mode="inject-styling" match="processing-instruction('math-size')">
         <xsl:variable name="id" select="following-sibling::*[name()=('disp-formula','inline-formula')][1]/@id"/>
         <xsl:if test="$id!=''">
