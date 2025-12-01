@@ -118,15 +118,21 @@
     </xsl:template>
     
     <!-- Generate custom css for resizing figure images -->
-    <xsl:template mode="inject-styling" match="processing-instruction('fig-size')">
+    <xsl:template mode="inject-styling" match="processing-instruction('fig-class')">
         <xsl:variable name="size-style-map" select="map{
-                    'max':'max-width: 120% !important; margin-left: -120px !important; max-height: 900px !important; height: auto !important;',
+                    'full':'max-width: 120% !important; margin-left: -120px !important; max-height: 900px !important; height: auto !important;',
                     'half':'max-width: 90% !important; max-height: unset !important; height: auto !important; text-align: center !important;',
                     'quarter':'max-width: 60% !important; max-height: unset !important; height: auto !important; text-align: center !important;'
                     }"/>
         <xsl:variable name="fig-id" select="following-sibling::*[self::fig or self::table-wrap[graphic or alternatives/graphic]][1]/@id"/>
         <xsl:value-of select="'#'||$fig-id||' {--not-to-fill: ok; break-before: page;} 
             #'||$fig-id||' > img {'||$size-style-map(normalize-space(.))||'}'"/>
+    </xsl:template>
+    
+    <!-- Another method to generate custom css for resizing figure images -->
+    <xsl:template mode="inject-styling" match="processing-instruction('fig-width')">
+        <xsl:variable name="fig-id" select="following-sibling::*[self::fig or self::table-wrap[graphic or alternatives/graphic]][1]/@id"/>
+        <xsl:value-of select="'#'||$fig-id||' > img {width: '||normalize-space(.)||' !important; max-width: '||normalize-space(.)||' !important;}'"/>
     </xsl:template>
     
     <xsl:template mode="inject-styling" match="processing-instruction('math-size')">
