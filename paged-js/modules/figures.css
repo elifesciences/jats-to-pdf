@@ -55,6 +55,7 @@ figcaption p {
 }
 
 .fig-group p.figure__caption {
+  break-inside: auto;
   break-before: avoid;
 }
 
@@ -437,24 +438,21 @@ img.inline-formula.formula-max-400 {height: calc(var(--math-unit) * 11);}
   margin-bottom: 0;
 }
 
-p.movedfig:not(.table) img {
-  max-height: 700px;
+p.movedfig img {
+  max-height: 100%;
   height: auto;
   max-width: 100%;
   width: auto !important;
   object-fit: contain;
-}
-
-p.movedfig.table img {
-  max-height: 800px;
-  height: auto;
-  max-width: 100%;
-  width: auto !important;
-  object-fit: contain;
+  display: block;
 }
 
 p.figure.movedfig {
-    break-inside: avoid !important;
+  break-inside: avoid !important;
+  display: block;
+  max-height: 90vh;
+  break-before: region;
+  overflow: hidden;
 }
 
 .widowfix,
