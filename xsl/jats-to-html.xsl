@@ -1276,7 +1276,7 @@
         <xsl:param name="give-boundary" select="false()"/>
         <xsl:variable name="image-uri" select="concat(
             $iiif-base-uri,
-            ./@xlink:href,
+            replace(./@xlink:href,'/','%2F'),
             '/full/max/0/default.jpg'
             )"/>
         <xsl:variable name="class" select="if (ancestor::fig) then 'child-of-figure has-boundary imageonly'
