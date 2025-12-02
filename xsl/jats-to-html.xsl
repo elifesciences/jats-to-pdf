@@ -244,12 +244,15 @@
             <ol class="authors-list authors-list--expanded" aria-label="Authors of this article">
                 <xsl:variable name="note-types" select="('author-notes','fn','author-note','equal')"/>
                 <xsl:for-each select="./contrib[@contrib-type='author']|./on-behalf-of">
-                    <xsl:variable name="author-link-class" select="if (./email or ./xref[@ref-type='corresp']) then 'authors-link authors-email__link' 
-                        else 'authors-link'"/>
+                    <xsl:variable name="email-class" select="if (./email or ./xref[@ref-type='corresp']) then 'authors-email__link' else ''"/>
+                    <xsl:variable name="organisation-class" select="if (self::on-behalf-of or ./collab[not(contrib or contrib-group)]) then 'organisation' else ''"/>
+                    <xsl:variable name="author-class" select="string-join(
+                        ('authors-link',$email-class,$organisation-class)[.!='']
+                        ,' ')"/>
                     <xsl:choose>
                         <xsl:when test="self::contrib">
                             <li class="authors-list__item">
-                                <span class="{$author-link-class}">
+                                <span class="{$author-class}">
                                     <xsl:choose>
                                         <xsl:when test="./name">
                                             <xsl:apply-templates select="./name[1]"/>
@@ -291,7 +294,7 @@
                         </xsl:when>
                         <xsl:otherwise>
                             <li class="authors-list__item">
-                                <span class="authors-link">
+                                <span class="{$author-class}">
                                     <xsl:apply-templates select="node()"/>
                                 </span>
                             </li>
