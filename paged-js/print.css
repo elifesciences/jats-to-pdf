@@ -23,10 +23,6 @@ body {
     font-style: italic;
 }
 
-.onlynumbers {
-    display: none;
-}
-
 .figure:not(.tofill) {
     max-width: 100%;
 }
@@ -50,16 +46,6 @@ figure+figure {
     --pagedjs-baseline-color: transparent !important;
 }
 
-/*fixing a weid title issue*/
-
-#abstract .widowfix {
-    display: none;
-}
-
-#abstract .widowfix+h1 {
-    margin-top: 0;
-}
-
 /* //fixing weird list issue when the list is made of an image (dang, why do we do that?)*/
 ol {
     /* break-before:unset; */
@@ -69,21 +55,6 @@ ol {
 
 ol>li {
     break-inside: avoid;
-}
-
-.insideurl a {
-    color: inherit;
-    text-decoration: none;
-    border-bottom: none;
-    border-bottom: 0;
-}
-
-.insideurl a::after {
-    /* content: " p. " target-counter(attr(href), page); */
-}
-
-.insideurl .hidden {
-    display: inline;
 }
 
 .movedfig img {
@@ -116,25 +87,14 @@ p {
     border-top: 0 !important;
 }
 
-.descriptors__icon--cc a {
-    border-bottom: 0;
-    color: inherit;
-}
-
-.descriptors__icon--cc a .infourl {
-    display: none;
-}
-
-.descriptors__icon--cc a .hidden {
-    display: inline;
-}
-
 .review-content .descriptors__identifiers {
     list-style-type: none;
     padding-left: 0;
     margin-top: 0;
     font-family: var(--font-sans);
     margin-bottom: 2em;
+    break-inside: avoid;
+    break-before: avoid;
 }
 
 .descriptors__identifiers {
