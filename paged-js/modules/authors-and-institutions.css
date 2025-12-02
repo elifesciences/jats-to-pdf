@@ -12,7 +12,7 @@
   display: inline;
 }
 
-.authors-list__item span {
+.authors-list__item span:not(.organisation) {
   white-space: nowrap;
 }
 
