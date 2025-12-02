@@ -118,15 +118,21 @@
     </xsl:template>
     
     <!-- Generate custom css for resizing figure images -->
-    <xsl:template mode="inject-styling" match="processing-instruction('fig-size')">
+    <xsl:template mode="inject-styling" match="processing-instruction('fig-class')">
         <xsl:variable name="size-style-map" select="map{
-                    'max':'max-width: 120% !important; margin-left: -120px !important; max-height: 900px !important; height: auto !important;',
+                    'full':'max-width: 120% !important; margin-left: -120px !important; max-height: 900px !important; height: auto !important;',
                     'half':'max-width: 90% !important; max-height: unset !important; height: auto !important; text-align: center !important;',
                     'quarter':'max-width: 60% !important; max-height: unset !important; height: auto !important; text-align: center !important;'
                     }"/>
         <xsl:variable name="fig-id" select="following-sibling::*[self::fig or self::table-wrap[graphic or alternatives/graphic]][1]/@id"/>
         <xsl:value-of select="'#'||$fig-id||' {--not-to-fill: ok; break-before: page;} 
             #'||$fig-id||' > img {'||$size-style-map(normalize-space(.))||'}'"/>
+    </xsl:template>
+    
+    <!-- Another method to generate custom css for resizing figure images -->
+    <xsl:template mode="inject-styling" match="processing-instruction('fig-width')">
+        <xsl:variable name="fig-id" select="following-sibling::*[self::fig or self::table-wrap[graphic or alternatives/graphic]][1]/@id"/>
+        <xsl:value-of select="'#'||$fig-id||' > img {width: '||normalize-space(.)||' !important; max-width: '||normalize-space(.)||' !important;}'"/>
     </xsl:template>
     
     <xsl:template mode="inject-styling" match="processing-instruction('math-size')">
@@ -238,12 +244,15 @@
             <ol class="authors-list authors-list--expanded" aria-label="Authors of this article">
                 <xsl:variable name="note-types" select="('author-notes','fn','author-note','equal')"/>
                 <xsl:for-each select="./contrib[@contrib-type='author']|./on-behalf-of">
-                    <xsl:variable name="author-link-class" select="if (./email or ./xref[@ref-type='corresp']) then 'authors-link authors-email__link' 
-                        else 'authors-link'"/>
+                    <xsl:variable name="email-class" select="if (./email or ./xref[@ref-type='corresp']) then 'authors-email__link' else ''"/>
+                    <xsl:variable name="organisation-class" select="if (self::on-behalf-of or ./collab[not(contrib or contrib-group)]) then 'organisation' else ''"/>
+                    <xsl:variable name="author-class" select="string-join(
+                        ('authors-link',$email-class,$organisation-class)[.!='']
+                        ,' ')"/>
                     <xsl:choose>
                         <xsl:when test="self::contrib">
                             <li class="authors-list__item">
-                                <span class="{$author-link-class}">
+                                <span class="{$author-class}">
                                     <xsl:choose>
                                         <xsl:when test="./name">
                                             <xsl:apply-templates select="./name[1]"/>
@@ -285,7 +294,7 @@
                         </xsl:when>
                         <xsl:otherwise>
                             <li class="authors-list__item">
-                                <span class="authors-link">
+                                <span class="{$author-class}">
                                     <xsl:apply-templates select="node()"/>
                                 </span>
                             </li>
@@ -1276,7 +1285,7 @@
         <xsl:param name="give-boundary" select="false()"/>
         <xsl:variable name="image-uri" select="concat(
             $iiif-base-uri,
-            ./@xlink:href,
+            replace(./@xlink:href,'/','%2F'),
             '/full/max/0/default.jpg'
             )"/>
         <xsl:variable name="class" select="if (ancestor::fig) then 'child-of-figure has-boundary imageonly'
