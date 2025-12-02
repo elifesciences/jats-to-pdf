@@ -46,10 +46,6 @@ figure+figure {
     --pagedjs-baseline-color: transparent !important;
 }
 
-.movedfig img {
-    display: block;
-}
-
 .nottofill {
     margin: 1em 0;
 }
