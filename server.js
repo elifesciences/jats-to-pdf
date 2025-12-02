@@ -128,7 +128,9 @@ export async function generatePDF(htmlPath, outputPath, htmlOnly = false) {
         const htmlFlag = htmlOnly ? '--html' : '';
         const command = `${cliPath} ${htmlPath} ${scripts} ${styles} -o ${outputPath} ${htmlFlag}`.trim();
 
-        console.log(`Running Paged.js CLI: ${command}`);
+        if (process.env.NODE_ENV !== 'test') {
+            console.log(`Running Paged.js CLI: ${command}`);
+        }
         exec(command, { maxBuffer: 1024 * 5000 }, (error, stdout, stderr) => {
             if (error) {
                 console.error(`Paged.js CLI failed: ${error.message}`);
@@ -136,8 +138,10 @@ export async function generatePDF(htmlPath, outputPath, htmlOnly = false) {
                 console.error(`Stderr: ${stderr}`);
                 return reject(new Error(`PDF Generation Failed: ${error.message}`));
             }
-            if (stderr) {
-                console.warn(`Paged.js CLI warnings:\n${stderr}`);
+            if (process.env.NODE_ENV !== 'test') {
+                if (stderr) {
+                    console.warn(`Paged.js CLI warnings:\n${stderr}`);
+                }
             }
             resolve();
         });
