@@ -59,10 +59,6 @@ figure+figure {
     margin: 0.8em auto;
 }
 
-:is(.prettified-link, .prettified-symbol) {
-    display: none;
-}
-
 p {
     widows: 2;
     orphans: 2;
@@ -95,11 +91,6 @@ p {
 
 .pagebreak {
     break-before: page;
-}
-
-#authors ul {
-    list-style-type: none;
-    padding-left: 0;
 }
 
 :root {

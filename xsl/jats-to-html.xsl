@@ -1691,7 +1691,7 @@
         <xsl:choose>
             <!-- Don't add the icon when it's just a numbered reference citation -->
             <xsl:when test="./@ref-type='bibr' and matches(.,'^\d{1,3}$')">
-                <a href="{concat('#',@rid)}">
+                <a class="linktoref" href="{concat('#',@rid)}">
                     <xsl:apply-templates select="node()"/>
                 </a>
             </xsl:when>
