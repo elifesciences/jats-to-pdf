@@ -46,17 +46,6 @@ figure+figure {
     --pagedjs-baseline-color: transparent !important;
 }
 
-/* //fixing weird list issue when the list is made of an image (dang, why do we do that?)*/
-ol {
-    /* break-before:unset; */
-    display: block;
-    /* margin-top: 2em; */
-}
-
-ol>li {
-    break-inside: avoid;
-}
-
 .movedfig img {
     display: block;
 }
