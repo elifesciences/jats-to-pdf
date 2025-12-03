@@ -13,28 +13,10 @@ article ul {
   color: var(--color-elife-blue);
 }
 
-/*link that are looking for references*/
-
-.fakelink {
+.linktoref, .linktofig {
   font-family: var(--font-sans);
-}
-
-.fakelink.linktoref,
-a[href*="#c"] {
   color: var(--color-elife-black);
   border-bottom: 1px dotted var(--color-elife-black);
-}
-.fakelink > a[href*="#c"] {
-  border-bottom: 0 dotted var(--color-elife-black);
-}
-
-.fakelink.linktoref {
-  border-bottom: 1px dotted var(--color-elife-black);
-  /* font-family:var(--font-sans); */
-}
-
-.fakelink.linktofig {
-  font-weight: 600;
 }
 
 .fakelink a {
@@ -59,8 +41,6 @@ blockquote ol {
 
 .linktoext .fakelink-text {
   font-style: italic;
-
-  /* color: orange; */
 }
 
 h1 + h1 {

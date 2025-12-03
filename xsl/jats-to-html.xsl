@@ -132,7 +132,8 @@
     <!-- Another method to generate custom css for resizing figure images -->
     <xsl:template mode="inject-styling" match="processing-instruction('fig-width')">
         <xsl:variable name="fig-id" select="following-sibling::*[self::fig or self::table-wrap[graphic or alternatives/graphic]][1]/@id"/>
-        <xsl:value-of select="'#'||$fig-id||' > img {width: '||normalize-space(.)||' !important; max-width: '||normalize-space(.)||' !important;}'"/>
+        <xsl:variable name="continued-attribute" select="'ctn-'||$fig-id"/>
+        <xsl:value-of select="'#'||$fig-id||' > img, figure[data-continued-from=&quot;'||$continued-attribute||'&quot;] {width: '||normalize-space(.)||' !important; max-width: '||normalize-space(.)||' !important;}'"/>
     </xsl:template>
     
     <xsl:template mode="inject-styling" match="processing-instruction('math-size')">
@@ -1691,7 +1692,7 @@
         <xsl:choose>
             <!-- Don't add the icon when it's just a numbered reference citation -->
             <xsl:when test="./@ref-type='bibr' and matches(.,'^\d{1,3}$')">
-                <a href="{concat('#',@rid)}">
+                <a class="linktoref" href="{concat('#',@rid)}">
                     <xsl:apply-templates select="node()"/>
                 </a>
             </xsl:when>

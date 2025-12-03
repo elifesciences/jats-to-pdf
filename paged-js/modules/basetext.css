@@ -136,6 +136,14 @@ h3 + section > h4:first-child {
   margin-top: 4px;
 }
 
+ol {
+  display: block;
+}
+
+ol>li {
+  break-inside: avoid;
+}
+
 #article-content > ol {
   list-style-position: oustide;
   padding: 0;

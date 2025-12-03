@@ -65,7 +65,7 @@ figcaption p {
   font-size: 10px;
 }
 
-.fig-group p.table {
+.fig-group p.table:has(img:first-child:last-child) {
   break-inside: avoid;
 }
 
@@ -228,7 +228,7 @@ figure figcaption {
 
 .imageonly {
   /* background: red; */
-  break-before: avoid;
+  /*break-before: avoid;*/
   margin: 0;
   /* text-align: center; */
 }
