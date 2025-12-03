@@ -22,6 +22,11 @@ body {
   margin-bottom: 5px;
 }
 
+#peer-reviews p { 
+  widows: 2;
+  orphans: 2;
+}
+
 blockquote {
   margin-top: 8px;
   margin-bottom: 8px;
