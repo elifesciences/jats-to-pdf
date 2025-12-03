@@ -23,8 +23,8 @@ body {
 }
 
 #peer-reviews p { 
-  widows: 1;
-  orphans: 1;
+  widows: 2;
+  orphans: 2;
 }
 
 blockquote {
