@@ -70,7 +70,7 @@ jobs:
         tags: |
           ghcr.io/elifesciences/jats-to-pdf:latest
           ghcr.io/elifesciences/jats-to-pdf:${{ github.sha }}
-          ghcr.io/elifesciences/jats-to-pdf:master-${{ steps.commit_sha.outputs.commit_sha }}-${{ steps.date.outputs.date }}
+          ghcr.io/elifesciences/jats-to-pdf:main-${{ steps.commit_sha.outputs.commit_sha }}-${{ steps.date.outputs.date }}
     - name: Generate artefact attestation
       uses: actions/attest-build-provenance@977bb373ede98d70efdf65b84cb5f73e068dcc2a # v3
       with:
