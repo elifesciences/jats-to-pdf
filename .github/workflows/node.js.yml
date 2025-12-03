@@ -67,7 +67,6 @@ jobs:
         push: true
         load: false
         platforms: linux/amd64,linux/arm64
-        target: prod
         tags: |
           ghcr.io/elifesciences/jats-to-pdf:latest
           ghcr.io/elifesciences/jats-to-pdf:${{ github.sha }}
