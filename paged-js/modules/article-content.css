@@ -32,15 +32,14 @@ article ul {
   background-repeat: no-repeat;
 }
 
-/* reviewers */
+.linktoext .fakelink-text {
+  font-style: italic;
+  word-wrap: break-word;
+}
 
 blockquote ol {
   margin-left: 0;
   padding-left: 0;
-}
-
-.linktoext .fakelink-text {
-  font-style: italic;
 }
 
 h1 + h1 {

@@ -57,7 +57,7 @@
 }
 
 .reference__doi {
-  margin-left: 1ch;
+  word-wrap: break-word;
 }
 
 .reference__doi_link {
@@ -69,12 +69,13 @@
   content: " ";
 }
 
-.reference_doi::before {
-  content: " ";
+.reference__doi::before {
+  content: "\2002";
 }
 
 .reference__doi a + a::before {
   content: " | ";
+  color: var(--color-elife-grey);
 }
 
 /* #article-content { */
