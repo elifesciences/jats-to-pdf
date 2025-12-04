@@ -811,7 +811,7 @@
                 </h1>
             </xsl:when>
             <xsl:when test="parent::sec or parent::glossary[parent::sec] or parent::boxed-text[parent::sec] or parent::statement[parent::sec]">
-                <xsl:variable name="sec-depth" select="count(ancestor::sec) + count(ancestor::app) + count(ancestor::glossary) + count(ancestor::boxed-text) + count(ancestor::statement)"/>
+                <xsl:variable name="sec-depth" select="count(ancestor::sec) + count(ancestor::abstract) + count(ancestor::app) + count(ancestor::glossary) + count(ancestor::boxed-text) + count(ancestor::statement)"/>
                 <xsl:variable name="heading-level">
                     <xsl:value-of select="min((6,$sec-depth))"/>
                 </xsl:variable>

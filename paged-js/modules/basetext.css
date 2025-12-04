@@ -4,6 +4,22 @@ body {
   line-height: 17px;
 }
 
+.abstract section h2 {
+  float: left;
+  line-height: 17px;
+  font-size: 0.95em;
+  font-weight: 600;
+  margin-top: 0;
+  margin-bottom: 0;
+  margin-right: 15px;
+  color: var(--color-elife-blue);
+}
+
+.abstract section p {
+    widows: 2;
+    orphans: 2;
+}
+
 #article-content :is(p, li) {
   --pagedjs-baseline-snap: 17px;
   line-height: 17px;
