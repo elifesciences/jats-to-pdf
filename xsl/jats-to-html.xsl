@@ -1157,15 +1157,18 @@
     <xsl:template match="mixed-citation/person-group">
         <xsl:variable name="ref-list-class" select="if (@person-group-type='editor') then 'reference__editors_list' 
             else 'reference__authors_list'"/>
-        <xsl:choose>
-            <xsl:when test="count(*) gt 10">
-                <ol><xsl:attribute name="class" select="$ref-list-class"/><xsl:apply-templates select="*[position() lt 11]"/></ol>
-                <em> et al.</em>
+        <ol>
+            <xsl:attribute name="class" select="$ref-list-class"/>
+            <xsl:choose>
+                <xsl:when test="count(*) gt 10">
+                    <xsl:apply-templates select="*[position() lt 11]"/>
+                    <li class="reference__author"><em>et al.</em></li>
                 </xsl:when>
-            <xsl:otherwise>
-                <ol><xsl:attribute name="class" select="$ref-list-class"/><xsl:apply-templates select="*"/></ol>
-            </xsl:otherwise>
-        </xsl:choose>
+                <xsl:otherwise>
+                    <xsl:apply-templates select="*"/>
+                </xsl:otherwise>
+            </xsl:choose>
+        </ol>
     </xsl:template>
     
     <xsl:template match="person-group/string-name | person-group/name">
