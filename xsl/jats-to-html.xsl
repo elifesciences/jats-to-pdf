@@ -878,6 +878,9 @@
                 <xsl:if test="elocation-id and not(fpage)">
                     <xsl:value-of select="elocation-id"/>
                 </xsl:if>
+                <xsl:if test="comment">
+                    <xsl:value-of select="comment"/>
+                </xsl:if>
             </span>
         </xsl:if>
         <span class="reference__doi">
@@ -967,6 +970,9 @@
                 <xsl:if test="elocation-id and not(fpage)">
                     <xsl:value-of select="elocation-id"/>
                 </xsl:if>
+                <xsl:if test="comment">
+                    <xsl:value-of select="comment"/>
+                </xsl:if>
             </span>
         </xsl:if>
         <span class="reference__doi">
@@ -1023,6 +1029,9 @@
                 <xsl:if test="elocation-id and not(fpage)">
                     <xsl:value-of select="elocation-id"/>
                 </xsl:if>
+                <xsl:if test="comment">
+                    <xsl:value-of select="comment"/>
+                </xsl:if>
             </span>
         </xsl:if>
         <span class="reference__doi">
@@ -1056,7 +1065,12 @@
                     <xsl:value-of select="pub-id[@pub-id-type='accession']"/>
                 </xsl:if>
                 <xsl:if test="date-in-citation">
+                    <xsl:text> </xsl:text>
                     <xsl:apply-templates select="date-in-citation"/>
+                </xsl:if>
+                <xsl:if test="comment">
+                    <xsl:text> </xsl:text>
+                    <xsl:value-of select="comment"/>
                 </xsl:if>
             </span>
         </xsl:if>
@@ -1119,7 +1133,12 @@
                     <xsl:value-of select="elocation-id"/>
                 </xsl:if>
                 <xsl:if test="date-in-citation">
+                    <xsl:text> </xsl:text>
                     <xsl:apply-templates select="date-in-citation"/>
+                </xsl:if>
+                <xsl:if test="comment">
+                    <xsl:text> </xsl:text>
+                    <xsl:apply-templates select="comment"/>
                 </xsl:if>
             </span>
         </xsl:if>
