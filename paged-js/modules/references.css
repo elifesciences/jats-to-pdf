@@ -40,7 +40,7 @@
   display: inline;
 }
 
-.reference__author:not(:first-child):before {
+.reference__author:not(:last-child):after {
   content: ", ";
 }
 
