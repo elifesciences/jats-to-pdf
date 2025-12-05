@@ -1379,14 +1379,14 @@
     <xsl:template match="permissions[not(ancestor::article-meta)]">
         <xsl:choose>
             <xsl:when test="copyright-statement and license/license-p">
-                <p>
+                <p class="permissions">
                     <xsl:apply-templates select="copyright-statement/node()"/>
                     <xsl:text>. </xsl:text>
                     <xsl:apply-templates select="license/license-p/node()"/>
                 </p>
             </xsl:when>
             <xsl:when test="copyright-year and copyright-holder and license/license-p">
-                <p>
+                <p class="permissions">
                     <xsl:text>© </xsl:text>
                     <xsl:apply-templates select="copyright-year/node()"/>
                     <xsl:text>, </xsl:text>
@@ -1396,7 +1396,7 @@
                 </p>
             </xsl:when>
             <xsl:when test="(copyright-year or copyright-holder) and license/license-p">
-                <p>
+                <p class="permissions">
                     <xsl:text>© </xsl:text>
                     <xsl:apply-templates select="*[name()=('copyright-year','copyright-holder')]/node()"/>
                     <xsl:text>. </xsl:text>
@@ -1404,7 +1404,7 @@
                 </p>
             </xsl:when>
             <xsl:when test="license/license-p">
-                <p><xsl:apply-templates select="license/license-p/node()"/></p>
+                <p class="permissions"><xsl:apply-templates select="license/license-p/node()"/></p>
             </xsl:when>
             <xsl:otherwise/>
         </xsl:choose>
@@ -1412,7 +1412,7 @@
     
     <!-- To do: style this differently -->
     <xsl:template match="attrib">
-        <p>
+        <p class="attrib">
             <xsl:apply-templates select="node()"/>
         </p>
     </xsl:template>
