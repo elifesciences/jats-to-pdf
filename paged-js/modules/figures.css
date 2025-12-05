@@ -368,10 +368,10 @@ img.disp-formula {
     max-height: 90% !important;
 }
 
-img.disp-formula.formula-max-10 {height: calc(var(--math-unit) * 1);}
-img.disp-formula.formula-max-20 {height: calc(var(--math-unit) * 1);}
-img.disp-formula.formula-max-40 {height: calc(var(--math-unit) * 1.6);}
-img.disp-formula.formula-max-60 {height: calc(var(--math-unit) * 2);}
+img.disp-formula.formula-max-10 {height: calc(var(--math-unit) * 0.75);}
+img.disp-formula.formula-max-20 {height: calc(var(--math-unit) * 0.8);}
+img.disp-formula.formula-max-40 {height: calc(var(--math-unit) * 1.5);}
+img.disp-formula.formula-max-60 {height: calc(var(--math-unit) * 1.6);}
 img.disp-formula.formula-max-80 {height: calc(var(--math-unit) * 2);}
 img.disp-formula.formula-max-100 {height: calc(var(--math-unit) * 3);}
 img.disp-formula.formula-max-120 {height: calc(var(--math-unit) * 3.3);}
