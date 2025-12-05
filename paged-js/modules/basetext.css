@@ -213,3 +213,12 @@ code, pre {
     border-left: 5px solid var(--color-elife-blue-light);
     padding-left: 20px;
 }
+
+.permissions, .attrib {
+  font-size: 9px !important; 
+  color: var(--color-elife-grey);
+}
+
+.permissions > .fake-link, .attrib > .fake-link {
+  color: var(--color-elife-grey) !important;
+}
