@@ -218,7 +218,3 @@ code, pre {
   font-size: 9px !important; 
   color: var(--color-elife-grey);
 }
-
-.permissions > .fake-link, .attrib > .fake-link {
-  color: var(--color-elife-grey) !important;
-}

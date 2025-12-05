@@ -15,7 +15,6 @@ article ul {
 
 .linktoref, .linktofig {
   font-family: var(--font-sans);
-  color: var(--color-elife-black);
   border-bottom: 1px dotted var(--color-elife-black);
 }
 
