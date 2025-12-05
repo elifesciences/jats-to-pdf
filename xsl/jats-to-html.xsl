@@ -862,9 +862,9 @@
             <span class="reference__origin">
                 <xsl:if test="source">
                     <i><xsl:value-of select="source"/></i>
-                    <xsl:text> </xsl:text>
                 </xsl:if>
                 <xsl:if test="volume">
+                    <xsl:text> </xsl:text>
                     <strong><xsl:value-of select="volume"/></strong>
                 </xsl:if>
                 <xsl:if test="volume and (fpage or elocation-id)">
@@ -876,7 +876,12 @@
                 </xsl:if>
                 <xsl:value-of select="lpage"/>
                 <xsl:if test="elocation-id and not(fpage)">
+                    <xsl:text> </xsl:text>
                     <xsl:value-of select="elocation-id"/>
+                </xsl:if>
+                <xsl:if test="comment">
+                    <xsl:text> </xsl:text>
+                    <xsl:value-of select="comment"/>
                 </xsl:if>
             </span>
         </xsl:if>
@@ -954,10 +959,10 @@
                             <xsl:apply-templates select="publisher-name"/>
                         </xsl:otherwise>
                     </xsl:choose>
-                    <xsl:text>. </xsl:text>
+                    <xsl:text>.</xsl:text>
                 </xsl:if>
                 <xsl:if test="fpage">
-                    <xsl:text>pp.&#xA0;</xsl:text>
+                    <xsl:text> pp.&#xA0;</xsl:text>
                     <xsl:value-of select="fpage"/>
                 </xsl:if>
                 <xsl:if test="fpage and lpage">
@@ -965,7 +970,12 @@
                     <xsl:value-of select="lpage"/>
                 </xsl:if>
                 <xsl:if test="elocation-id and not(fpage)">
+                    <xsl:text> </xsl:text>
                     <xsl:value-of select="elocation-id"/>
+                </xsl:if>
+                <xsl:if test="comment">
+                    <xsl:text> </xsl:text>
+                    <xsl:value-of select="comment"/>
                 </xsl:if>
             </span>
         </xsl:if>
@@ -1010,10 +1020,10 @@
                             <xsl:apply-templates select="publisher-name"/>
                         </xsl:otherwise>
                     </xsl:choose>
-                    <xsl:text>. </xsl:text>
+                    <xsl:text>.</xsl:text>
                 </xsl:if>
                 <xsl:if test="fpage">
-                    <xsl:text>pp. </xsl:text>
+                    <xsl:text> pp. </xsl:text>
                     <xsl:value-of select="fpage"/>
                 </xsl:if>
                 <xsl:if test="fpage and lpage">
@@ -1021,7 +1031,12 @@
                     <xsl:value-of select="lpage"/>
                 </xsl:if>
                 <xsl:if test="elocation-id and not(fpage)">
+                    <xsl:text> </xsl:text>
                     <xsl:value-of select="elocation-id"/>
+                </xsl:if>
+                <xsl:if test="comment">
+                    <xsl:text> </xsl:text>
+                    <xsl:value-of select="comment"/>
                 </xsl:if>
             </span>
         </xsl:if>
@@ -1045,17 +1060,20 @@
             <span class="reference__origin">
                 <xsl:if test="source">
                     <xsl:value-of select="source"/>
-                    <xsl:text>. </xsl:text>
+                    <xsl:text>.</xsl:text>
                 </xsl:if>
                 <xsl:if test="version">
-                    <xsl:text>version: </xsl:text>
+                    <xsl:text> version: </xsl:text>
                     <xsl:value-of select="version"/>
+                    <xsl:text>.</xsl:text>
                 </xsl:if>
                 <xsl:if test="pub-id[@pub-id-type='accession']">
-                    <xsl:text>ID </xsl:text>
+                    <xsl:text> ID </xsl:text>
                     <xsl:value-of select="pub-id[@pub-id-type='accession']"/>
+                    <xsl:text>.</xsl:text>
                 </xsl:if>
                 <xsl:if test="date-in-citation">
+                    <xsl:text> </xsl:text>
                     <xsl:apply-templates select="date-in-citation"/>
                 </xsl:if>
             </span>
@@ -1076,7 +1094,7 @@
         <xsl:apply-templates select="person-group[@person-group-type='author']"/>
         <xsl:apply-templates select="year"/>
         <xsl:apply-templates select="article-title | data-title | chapter-title"/>
-        <xsl:if test="source or person-group[@person-group-type='editor'] or publisher-name or fpage or elocation-id">
+        <xsl:if test="source or person-group[@person-group-type='editor'] or publisher-name or fpage or elocation-id or comment">
             <span class="reference__origin">
                 <xsl:apply-templates select="person-group[@person-group-type='editor']"/>
                 <xsl:if test="person-group[@person-group-type='editor']">
@@ -1105,10 +1123,10 @@
                             <xsl:apply-templates select="publisher-name"/>
                         </xsl:otherwise>
                     </xsl:choose>
-                    <xsl:text>. </xsl:text>
+                    <xsl:text>.</xsl:text>
                 </xsl:if>
                 <xsl:if test="fpage">
-                    <xsl:text>pp. </xsl:text>
+                    <xsl:text> pp. </xsl:text>
                     <xsl:value-of select="fpage"/>
                 </xsl:if>
                 <xsl:if test="fpage and lpage">
@@ -1118,7 +1136,12 @@
                 <xsl:if test="elocation-id and not(fpage)">
                     <xsl:value-of select="elocation-id"/>
                 </xsl:if>
+                <xsl:if test="comment">
+                    <xsl:text> </xsl:text>
+                    <xsl:value-of select="comment"/>
+                </xsl:if>
                 <xsl:if test="date-in-citation">
+                    <xsl:text> </xsl:text>
                     <xsl:apply-templates select="date-in-citation"/>
                 </xsl:if>
             </span>
