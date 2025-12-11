@@ -87,64 +87,13 @@ class fullpage extends Paged.Handler {
     // add the width and height to the image as attribute to get more data about what they are
     await addWidthHeightToImg(parsed);
     await calculateDesiredWidthPercentages(parsed.querySelectorAll("img"));
-
-    /* This is redundant now that we know which images are maths
-    try to see if an image is less than 50 px ans assume it’s math
-    parsed.querySelectorAll("img").forEach((img) => {
-      if (
-        img.height &&
-        img.height < 400 &&
-        !img.closest("figure")?.id.includes("tbl")
-      ) {
-        img.classList.add("probablyMath");
-      }
-      if (img.height && img.height < 200) {
-        if (img.closest("figure")) {
-          if (
-            img.closest("figure").classList.contains("continuedContent") ||
-            img.closest("figure").dataset.continuedMain
-          )
-            return;
-          img.closest("figure")?.classList.remove(fillPageClass);
-          // img.closest("figure").remove();
-        }
-      }
-    });*/
-
+    
     parsed.querySelectorAll(".disp-formula, .inline-formula").forEach((img) => {
-      // if (img.closest("figure")) {
-      //   return;
-      // }
-
-      // console.log(img);
-
-      // for those image, we should remove the max-width
-      // if (img.height < 20) {
-      //   img.classList.add("formula-max-20")
-      // }
-      // if (img.height < 40) {
-      //   img.classList.add("formula-max-40")
-      // }
-      // else if (img.height >= 40 && img.height < 80) {
-      //   img.classList.add("formula-max-80")
-      // }
-      // else if (img.height >= 80 && img.height < 100) {
-      //   img.classList.add("formula-max-100")
-      // }
-      // else if (img.height >= 100 && img.height < 140) {
-      //   img.classList.add("formula-max-140")
-      // }
-      // else if (img.height >= 140 && img.height < 180) {
-      //   img.classList.add("formula-max-180")
-      // }
-      // else if (img.height >= 180 && img.height < 240) {
-      //   img.classList.add("formula-max-240")
-      // }
-      // else if (img.height >= 240 && img.height < 300) {
-      //   img.classList.add("formula-max-300")
-      // }
-
-      for (let i = 0; i <= 400; i += 20) {
+      if (img.height > 1200) {
+        img.classList.add(`formula-max-max`);
+        return;
+      }
+      for (let i = 0; i <= 1200; i += 20) {
         if (img.height > i - 10 && img.height <= i + 10) {
           img.classList.add(`formula-max-${i}`);
           break;
