@@ -758,7 +758,7 @@
         <section class="statement">
             <xsl:apply-templates select="@id"/>
             <xsl:if test="label or title">
-                <h5>
+                <h4>
                     <xsl:if test="label">
                         <label>
                             <xsl:apply-templates select="label/node()"/>
@@ -768,7 +768,7 @@
                         </label>
                     </xsl:if>
                     <xsl:apply-templates select="title/node()"/>
-                </h5>
+                </h4>
             </xsl:if>
             <xsl:apply-templates select="*[not(name()=('label','title'))] | processing-instruction('page-break')"/>
         </section>
@@ -778,7 +778,7 @@
         <section class="boxed-text">
             <xsl:apply-templates select="@id"/>
             <xsl:if test="label or caption/title">
-                <h5>
+                <h4>
                     <xsl:if test="label">
                         <label>
                             <xsl:apply-templates select="label/node()"/>
@@ -788,7 +788,7 @@
                         </label>
                     </xsl:if>
                     <xsl:apply-templates select="caption/title/node()"/>
-                </h5>
+                </h4>
             </xsl:if>
             <xsl:apply-templates select="caption/p|*[not(name()=('label','caption'))] | processing-instruction('page-break')"/>
         </section>
@@ -810,7 +810,16 @@
                     <xsl:apply-templates select="node()"/>
                 </h1>
             </xsl:when>
-            <xsl:when test="parent::sec or parent::glossary[parent::sec] or parent::boxed-text[parent::sec] or parent::statement[parent::sec]">
+            <xsl:when test="parent::sec[ancestor::boxed-text or ancestor::statement]">
+                <h5 class="heading-5">
+                    <xsl:if test="preceding-sibling::label">
+                        <xsl:value-of select="preceding-sibling::label"/>
+                        <xsl:text> </xsl:text>
+                    </xsl:if>
+                    <xsl:apply-templates select="node()"/>
+                </h5>
+            </xsl:when>
+            <xsl:when test="parent::sec or parent::glossary[parent::sec]">
                 <xsl:variable name="sec-depth" select="count(ancestor::sec) + count(ancestor::abstract) + count(ancestor::app) + count(ancestor::glossary) + count(ancestor::boxed-text) + count(ancestor::statement)"/>
                 <xsl:variable name="heading-level">
                     <xsl:value-of select="min((6,$sec-depth))"/>
