@@ -16,25 +16,25 @@ Will start the application in port 3000.
 
 ### Node
 
-Install dependencies with:
+Install dependencies:
 
 ```bash
 npm install
 ```
 
-Start the application with:
+Start the application:
 
 ```bash
-node server.js
+npm start
 ```
 
-Test with:
+Run the test suite:
 
 ```bash
 npm test
 ```
 
-### Using the service
+## Using the service
 
 Post XML to the endpoint (specifying the output path for the PDF), e.g.:
 
