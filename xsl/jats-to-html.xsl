@@ -1620,10 +1620,10 @@
     </xsl:template>
     
     <xsl:template match="principal-award-recipient">
+        <xsl:if test="preceding-sibling::principal-award-recipient">
+            <br/>
+        </xsl:if>
         <xsl:for-each select="name|institution">
-            <xsl:if test="preceding-sibling::*">
-                <br/>
-            </xsl:if>
             <xsl:choose>
                 <xsl:when test="surname and given-names">
                     <xsl:value-of select="given-names[1]||' '||surname[1]"/>
