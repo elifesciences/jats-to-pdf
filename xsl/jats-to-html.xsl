@@ -1294,13 +1294,11 @@
     
     <!-- position='anchor' => An inline image that is placed in the flow of text -->
     <xsl:template mode="anchor" match="fig|table-wrap[graphic or alternatives/graphic]">
-        <div class="fig-group">
-            <xsl:variable name="class" select="if (self::table-wrap) then 'table movedfig'
-            else 'figure movedfig'"/>
-            <p class="{$class}">
-                <xsl:apply-templates select="@id"/>
-                <xsl:apply-templates select="descendant::graphic"/>
-            </p>
+        <xsl:variable name="class" select="if (self::table-wrap) then 'fig-group table'
+            else 'fig-group figure'"/>
+        <div class="{$class}">
+            <xsl:apply-templates select="@id"/>
+            <xsl:apply-templates select="descendant::graphic"/>
             <xsl:apply-templates mode="inline" select="caption"/>
             <xsl:if test="label and not(caption)">
                 <p class="figure__caption">
