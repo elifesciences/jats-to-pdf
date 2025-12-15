@@ -217,6 +217,11 @@ ul.list-simple > li > p {
   margin-left: 40px;
 }
 
+ul.list-simple > li > ul, 
+ul.list-simple > li > ol {
+  margin-left: 40px;
+}
+
 code, pre {
   max-width: 530px;
   word-wrap: break-word;
