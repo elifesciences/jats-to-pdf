@@ -35,10 +35,6 @@ figcaption p {
     margin-bottom: 20px;
 }
 
-.fig-group:has(img:only-of-type) {
-    break-inside: avoid;
-}
-
 .abstract .fig-group {
   margin-top: 10px;
 }
@@ -63,10 +59,6 @@ figcaption p {
 
 .fig-group p.figure__caption label {
   font-size: 10px;
-}
-
-.fig-group p.table:has(img:first-child:last-child) {
-  break-inside: avoid;
 }
 
 /*hide this one day*/
@@ -485,19 +477,13 @@ img.inline-formula.formula-max-400 {height: calc(var(--math-unit) * 11);}
   margin-bottom: 0;
 }
 
-p.movedfig img {
+.fig-group img {
   max-height: 800px;
   height: auto;
   max-width: 100%;
   width: auto !important;
   object-fit: contain;
-  display: block;
-}
-
-p.figure.movedfig {
-  break-inside: avoid !important;
-  display: block;
-  break-before: region;
+  /*display: block;*/
 }
 
 .widowfix,
