@@ -165,7 +165,7 @@
     <xsl:variable name="msid" select="if (not($version-doi='')) then tokenize($version-doi,'\.')[3] else ''"/>
     <xsl:variable name="rp-version" select="if (not($version-doi='')) then tokenize($version-doi,'\.')[last()] else ''"/>
     <xsl:variable name="iiif-base-uri" select="concat(
-                    'https://prod--epp.elifesciences.org/iiif/2/',
+                    'https://iiif.elifesciences.org/epp/',
                     $msid,
                     '%2Fv',
                     $rp-version,
