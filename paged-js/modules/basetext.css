@@ -201,6 +201,27 @@ ol.list-alpha-upper {
   list-style-type: upper-alpha;
 }
 
+ul.list-simple > li:has(label) {
+  list-style: none;
+}
+
+ul.list-simple > li > label {
+  float: left;
+  width: 10px;
+  margin-left: 28px;
+  font-weight: bold;
+  color: var(--color-elife-black);
+}
+
+ul.list-simple > li > p {
+  margin-left: 40px;
+}
+
+ul.list-simple > li > ul, 
+ul.list-simple > li > ol {
+  margin-left: 40px;
+}
+
 code, pre {
   max-width: 530px;
   word-wrap: break-word;
