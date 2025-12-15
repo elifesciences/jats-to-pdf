@@ -135,7 +135,9 @@
 }
 
 .author-notes li a {
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  font-size: 8px;
 }
 
 .article-status__heading {
