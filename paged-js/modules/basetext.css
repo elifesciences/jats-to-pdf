@@ -213,8 +213,13 @@ ul.list-simple > li > label {
   color: var(--color-elife-black);
 }
 
-ul.list-simple:not(.orcid-list) > li > p {
+ul.list-simple > li > p {
   margin-left: 40px;
+}
+
+ul.list-simple.orcid-list > li > p,
+ul.list-simple.author-notes-expanded-list > li > p {
+  margin-left: 0;
 }
 
 ul.list-simple > li > ul, 
