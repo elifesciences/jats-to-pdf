@@ -213,7 +213,7 @@ ul.list-simple > li > label {
   color: var(--color-elife-black);
 }
 
-ul.list-simple > li > p {
+ul.list-simple:not(.orcid-list) > li > p {
   margin-left: 40px;
 }
 
