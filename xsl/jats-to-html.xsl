@@ -1495,7 +1495,7 @@
     
     <xsl:template match="p">
         <!-- Wrap each disp-formula in its own p -->
-        <xsl:for-each-group select="node()" group-starting-with="disp-formula">
+        <xsl:for-each-group select="node()" group-adjacent="boolean(self::disp-formula)">
             <p>
                 <xsl:apply-templates select="current-group()"/>
             </p>
