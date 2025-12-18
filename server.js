@@ -159,6 +159,8 @@ function cleanupFiles(filesToClean) {
      });
 }
 
+app.use(express.json());
+
 app.use(expressText({ type: 'application/xml', limit: '5mb' }));
 
 app.post('/', async (req, res) => {
@@ -204,6 +206,13 @@ app.post('/', async (req, res) => {
         res.status(500).send({ error: `Conversion pipeline failed: ${error.message}` });
         cleanupFiles([tempXML, tempHTML, tempPDF])
     }
+});
+
+app.get('/health', (req, res) => {
+    res.status(200).json({
+        status: "OK",
+        timestamp: new Date().toISOString()
+    });
 });
 
 async function startServer() {
