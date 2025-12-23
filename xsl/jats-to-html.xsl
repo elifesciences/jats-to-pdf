@@ -1696,6 +1696,12 @@
         </code>
     </xsl:template>
     
+    <xsl:template match="named-content[@content-type='sequence']">
+        <span class="sequence">
+            <xsl:apply-templates select="node()"/>
+        </span>
+    </xsl:template>
+    
      <!-- This adds an icon next to links -->
     <xsl:template match="ext-link">
         <xsl:choose>

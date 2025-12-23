@@ -23,6 +23,10 @@ body {
     font-style: italic;
 }
 
+span.sequence {
+    word-break: break-all;
+}
+
 .figure:not(.tofill) {
     max-width: 100%;
 }
