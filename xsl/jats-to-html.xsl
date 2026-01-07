@@ -220,7 +220,7 @@
     
     <xsl:template name="article-notes">
         <section id="margin-notes">
-            <xsl:apply-templates select="//article-meta/author-notes"/>
+            <xsl:call-template name="author-notes"/>
             <xsl:apply-templates select="//article-meta/contrib-group[2][contrib]"/>
             <xsl:apply-templates select="//article-meta/permissions"/>
         </section>
@@ -395,16 +395,16 @@
     <xsl:variable name="author-notes-limit" select="400" as="xs:integer"/>
     <xsl:variable name="author-notes-max-exceeded" select="$author-notes-length gt $author-notes-limit" as="xs:boolean"/>
     
-    <xsl:template match="article-meta/author-notes">
-        <xsl:if test="fn or corresp or preceding-sibling::contrib-group/contrib[@contrib-type='author' and @corresp='yes' and email] or parent::article-meta/funding-group">
+    <xsl:template name="author-notes">
+        <xsl:if test="//article-meta/author-notes[fn or corresp] or //article-meta/contrib-group/contrib[@contrib-type='author' and @corresp='yes' and email] or //article-meta/funding-group">
                 <div class="author-notes">
-                    <xsl:if test="corresp or preceding-sibling::contrib-group/contrib[@contrib-type='author' and @corresp='yes' and email]">
+                    <xsl:if test="//article-meta/author-notes/corresp or //article-meta/contrib-group/contrib[@contrib-type='author' and @corresp='yes' and email]">
                         <p>
                             <xsl:choose>
-                                <xsl:when test="preceding-sibling::contrib-group/contrib[@contrib-type='author' and @corresp='yes' and email]">
+                                <xsl:when test="//article-meta/contrib-group/contrib[@contrib-type='author' and @corresp='yes' and email]">
                                     <strong class="email-icon">For correspondence:</strong>
                                     <ul class="list-simple">
-                                        <xsl:for-each select="preceding-sibling::contrib-group/contrib[@contrib-type='author' and @corresp='yes']/email">
+                                        <xsl:for-each select="//article-meta/contrib-group/contrib[@contrib-type='author' and @corresp='yes']/email">
                                             <li>
                                                 <a>
                                                     <xsl:attribute name="href">
@@ -418,7 +418,7 @@
                                 </xsl:when>
                                 <xsl:otherwise>
                                     <span class="email-icon"/>
-                                    <xsl:apply-templates select="corresp/node()[name()!='label']"/>
+                                    <xsl:apply-templates select="//article-meta/author-notes/corresp/node()[name()!='label']"/>
                                 </xsl:otherwise>
                             </xsl:choose>
                         </p>
@@ -427,9 +427,9 @@
                         <xsl:when test="$author-notes-max-exceeded">
                             <p class="author-notes__list_item">
                                 <strong>
-                                    <xsl:if test="fn/label">
+                                    <xsl:if test="//article-meta/author-notes/fn/label">
                                         <sup aria-hidden="true">
-                                            <xsl:value-of select="string-join(distinct-values(fn/label),', ')"/>
+                                            <xsl:value-of select="string-join(distinct-values(//article-meta/author-notes/fn/label),', ')"/>
                                         </sup>
                                         <xsl:text>&#xA0;</xsl:text>
                                     </xsl:if>
@@ -440,7 +440,7 @@
                             </p>
                         </xsl:when>
                         <xsl:otherwise>
-                            <xsl:for-each select="fn">
+                            <xsl:for-each select="//article-meta/author-notes/fn">
                                 <p class="author-notes__list_item">
                                     <xsl:if test="label">
                                         <sup aria-hidden="true">
@@ -464,7 +464,7 @@
                             </xsl:for-each>
                         </xsl:otherwise>
                     </xsl:choose>
-                    <xsl:if test="parent::article-meta/funding-group">
+                    <xsl:if test="//article-meta/funding-group">
                         <p class="author-notes__list_item">
                             <strong>
                                 <xsl:text>Funding:</xsl:text>
