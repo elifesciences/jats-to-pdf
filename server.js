@@ -160,8 +160,8 @@ function cleanupFiles(filesToClean) {
 }
 
 app.use(express.json());
-
 app.use(expressText({ type: 'application/xml', limit: '5mb' }));
+app.use(express.static('public'));
 
 app.post('/', async (req, res) => {
     if (!req.body) {
