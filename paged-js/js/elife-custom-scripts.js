@@ -5,13 +5,16 @@ class elifeBuild extends Paged.Handler {
     this.targets = {};
   }
 
-  beforeParsed(content) {
+  async beforeParsed(content) {
 
     // to divide figure in block
     dispatchFigure(content);
 
     //tag figure
     tagImgInFigures(content);
+
+    // Add width and height to imgs
+    await addWidthHeightToImg(content)
 
     // add id to anything to fix things
     addIDtoEachElement(content);
