@@ -1298,7 +1298,7 @@
             else 'fig-group figure'"/>
         <div class="{$class}">
             <xsl:apply-templates select="@id"/>
-            <xsl:apply-templates select="descendant::graphic"/>
+            <xsl:apply-templates select="descendant::graphic[not(ancestor::caption)]"/>
             <xsl:apply-templates mode="inline" select="caption"/>
             <xsl:if test="label and not(caption)">
                 <p class="figure__caption">
