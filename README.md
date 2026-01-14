@@ -42,6 +42,8 @@ Post XML to the endpoint (specifying the output path for the PDF), e.g.:
 curl -X POST -H 'Content-Type: application/xml' --data-binary @"./test.xml" http://localhost:3000/ -o "./output.pdf"
 ```
 
+Or visit http://localhost:3000/upload.html for a simple frontend, enabling PDF generation via XML upload.
+
 #### Note
 
 This app is developed with production-ready eLife Reviewed preprint XML in mind (available publicly at [elifesciences/elife-article-xml/preprints](https://github.com/elifesciences/elife-article-xml/tree/master/preprints)). In its current state other XML may produce unintended results.
