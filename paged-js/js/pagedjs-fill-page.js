@@ -240,17 +240,27 @@ class fullpage extends Paged.Handler {
           //get page height,
           const pageHeight = page.querySelector(
             ".pagedjs_page_content",
-          ).offsetHeight;
+          ).scrollHeight;
 
-          const figureHeight = page.querySelector("figure")?.offsetHeight;
+          const figureHeight = page.querySelector("figure")?.scrollHeight;
 
           //make image bigger if the page has more roome
           if (figureHeight > pageHeight) {
             let img = page.querySelector(" figure > img");
 
-            let captionHeight = page.querySelector("figcaption")
-              ? page.querySelector("figcaption").offsetHeight
-              : 0;
+            let captionElement = page.querySelector("figcaption");
+            let captionHeight = 0;
+
+            if (captionElement) {
+              captionHeight = captionElement.scrollHeight;
+              if (captionHeight === pageHeight || captionHeight > pageHeight * 0.8) {
+                // Caption height seems wrong, calculate from content
+                captionHeight = 0;
+                Array.from(captionElement.children).forEach(child => {
+                  captionHeight += child.offsetHeight;
+                });
+              }
+            }
 
             let finalHeight = Math.abs(pageHeight - captionHeight);
             img.style.height = `${finalHeight - 34}px`;
@@ -258,6 +268,7 @@ class fullpage extends Paged.Handler {
             img.style.width = "auto";
             img.style.objectFit = "contain";
             // img.style.objectPosition= "left bottom"
+          // The below is redundant??
           } else if (figureHeight > pageHeight) {
             //reduce img.
             let img = page.querySelector("img");
