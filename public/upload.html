@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>XML to PDF Converter</title>
-    <link rel="icon" type="image/png" sizes="32x32" href="../paged-js/assets/favicon-32x32.56d32e31.png">
+    <title>JATS to PDF Converter</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.56d32e31.png">
     <style>
         * {
             margin: 0;
@@ -13,18 +13,27 @@
         }
         body {
             font-family: '__Noto_Sans_d69442', '__Noto_Sans_Fallback_d69442', arial, helvetica, sans-serif;
-            background: linear-gradient(135deg, rgb(8, 122, 204) 0%, rgb(159, 215, 255) 100%);
+            background: linear-gradient(135deg,rgb(255, 255, 255) 0%, rgb(8, 122, 204) 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 20px;
+            position: relative;
+        }
+        .logo {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            max-width: 150px;
+            max-height: 80px;
+            object-fit: contain;
         }
         .container {
             background: white;
             border-radius: 16px;
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            padding: 40px;
+            padding: 60px;
             max-width: 500px;
             width: 100%;
         }
@@ -133,9 +142,9 @@
     </style>
 </head>
 <body>
+    <img src="elife-logo-transparent.svg" alt="Logo" class="logo">
     <div class="container">
-        <h1>XML to PDF Converter</h1>
-        <p class="subtitle">Upload your JATS XML file to convert it to PDF</p>
+        <h1>JATS to PDF Converter</h1>
         
         <div class="upload-area" id="uploadArea">
             <div class="upload-icon">📄</div>
