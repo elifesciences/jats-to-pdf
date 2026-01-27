@@ -1,7 +1,8 @@
 FROM node:22-bookworm-slim
 RUN apt-get update && apt-get install -y --no-install-recommends \
     chromium libnss3 libxss1 libasound2 libgbm1 libatk-bridge2.0-0 \
-    libgtk-3-0 fonts-liberation fonts-noto fonts-noto-extra fonts-dejavu \
+    libgtk-3-0 fonts-liberation fonts-noto fonts-noto-extra fonts-noto-cjk \
+    fonts-noto-cjk-extra fonts-noto-mono fonts-noto-color-emoji fonts-dejavu \
     fonts-stix \
  && rm -rf /var/lib/apt/lists/*
 WORKDIR /usr/src/app
