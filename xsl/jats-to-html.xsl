@@ -41,25 +41,18 @@
             <script>
                 <xsl:text disable-output-escaping="yes">
                     window.MathJax = {
-                      loader: {
-                        load: ['input/mml', 'output/chtml']
-                      },
-                      startup: {
-                        pageReady: () => {
-                          return MathJax.startup.defaultPageReady()
-                            .then(() => MathJax.typesetPromise())
-                            .then(() => window.PagedPolyfill.preview());
+                        options: {
+                            enableEnrichment: false,
+                            enableExplorer: false
+                        },
+                        chtml: {
+                          scale: 1,
+                          matchFontHeight: true
                         }
-                      },
-                      chtml: {
-                        scale: 1,
-                        matchFontHeight: true,
-                        mtextInheritFont: true
-                      }
-                    };
+                      };
                 </xsl:text>
             </script>
-            <script id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@4/mml-chtml.js"></script>
+            <script id="MathJax-script" src="assets/mathjax4-mml-chtml.js"></script>
         </head>
     </xsl:variable>
     
