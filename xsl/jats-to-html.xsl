@@ -9,7 +9,7 @@
     exclude-result-prefixes="xs xsi xlink mml ali e"
     version="3.0">
     
-    <xsl:output method="html" indent="no"/>
+    <xsl:output method="html" version="5.0" indent="no"/>
     
     <xsl:template match="@*|node()">
         <xsl:choose>
@@ -38,6 +38,28 @@
             <xsl:if test="descendant::processing-instruction()">
                 <xsl:call-template name="inject-styling"/>
             </xsl:if>
+            <script>
+                <xsl:text disable-output-escaping="yes">
+                    window.MathJax = {
+                      loader: {
+                        load: ['input/mml', 'output/chtml']
+                      },
+                      startup: {
+                        pageReady: () => {
+                          return MathJax.startup.defaultPageReady()
+                            .then(() => MathJax.typesetPromise())
+                            .then(() => window.PagedPolyfill.preview());
+                        }
+                      },
+                      chtml: {
+                        scale: 1,
+                        matchFontHeight: true,
+                        mtextInheritFont: true
+                      }
+                    };
+                </xsl:text>
+            </script>
+            <script id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@4/es5/mml-chtml.js"></script>
         </head>
     </xsl:variable>
     
@@ -1424,7 +1446,28 @@
         </p>
     </xsl:template>
     
-    <xsl:template match="disp-formula[graphic or alternatives/graphic]">
+    <xsl:template match="disp-formula[mml:math or alternatives/mml:math]">
+        <div class="math-block">
+            <xsl:apply-templates select="mml:math | alternatives/mml:math" mode="mathml"/>
+        </div>
+    </xsl:template>
+    
+    <xsl:template match="inline-formula[mml:math or alternatives/mml:math]">
+        <xsl:apply-templates select="mml:math | alternatives/mml:math" mode="mathml"/>
+    </xsl:template>
+    
+    <xsl:template match="mml:*" mode="mathml">
+        <xsl:element name="{local-name()}" namespace="http://www.w3.org/1998/Math/MathML">
+            <xsl:copy-of select="@*"/>
+            <xsl:apply-templates select="node()" mode="mathml"/>
+        </xsl:element>
+    </xsl:template>
+    
+    <xsl:template match="text()" mode="mathml">
+        <xsl:copy/>
+    </xsl:template>
+    
+    <xsl:template match="disp-formula[graphic or alternatives[not(mml:math)]/graphic]">
         <xsl:choose>
             <xsl:when test="not(parent::p)">
                 <p>
@@ -1437,11 +1480,11 @@
         </xsl:choose>
     </xsl:template>
     
-    <xsl:template match="inline-formula[inline-graphic or alternatives/inline-graphic]">
+    <xsl:template match="inline-formula[inline-graphic or alternatives[not(mml:math)]/inline-graphic]">
         <xsl:apply-templates select="descendant::inline-graphic"/>
     </xsl:template>
     
-    <xsl:template match="graphic[ancestor::disp-formula] | inline-graphic[ancestor::inline-formula]">
+    <xsl:template match="graphic[ancestor::disp-formula[not(descendant::mml:math)]] | inline-graphic[ancestor::inline-formula[not(descendant::mml:math)]]">
         <xsl:variable name="image-uri" select="concat(
             $iiif-base-uri,
             ./@xlink:href,
@@ -1495,7 +1538,7 @@
     
     <xsl:template match="p">
         <!-- Wrap each disp-formula in its own p -->
-        <xsl:for-each-group select="node()" group-adjacent="boolean(self::disp-formula)">
+        <xsl:for-each-group select="node()" group-adjacent="boolean(self::disp-formula[graphic or alternatives[not(mml:math)]/graphic])">
             <p>
                 <xsl:apply-templates select="current-group()"/>
             </p>
