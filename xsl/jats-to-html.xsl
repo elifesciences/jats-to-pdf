@@ -59,7 +59,7 @@
                     };
                 </xsl:text>
             </script>
-            <script id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@4/es5/mml-chtml.js"></script>
+            <script id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@4/mml-chtml.js"></script>
         </head>
     </xsl:variable>
     
@@ -1449,6 +1449,11 @@
     <xsl:template match="disp-formula[mml:math or alternatives/mml:math]">
         <div class="math-block">
             <xsl:apply-templates select="mml:math | alternatives/mml:math" mode="mathml"/>
+            <xsl:if test="label">
+                <span class="equation-label">
+                    <xsl:value-of select="label"/>
+                </span>
+            </xsl:if>
         </div>
     </xsl:template>
     
@@ -1537,7 +1542,7 @@
     </xsl:template>
     
     <xsl:template match="p">
-        <!-- Wrap each disp-formula in its own p -->
+        <!-- Wrap each disp-formula image in its own p -->
         <xsl:for-each-group select="node()" group-adjacent="boolean(self::disp-formula[graphic or alternatives[not(mml:math)]/graphic])">
             <p>
                 <xsl:apply-templates select="current-group()"/>
