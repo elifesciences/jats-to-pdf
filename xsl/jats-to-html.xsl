@@ -43,7 +43,8 @@
                     window.MathJax = {
                         options: {
                             enableEnrichment: false,
-                            enableExplorer: false
+                            enableExplorer: false,
+                            enableAssistiveMml: false
                         },
                         chtml: {
                           scale: 1,
@@ -52,7 +53,7 @@
                       };
                 </xsl:text>
             </script>
-            <script id="MathJax-script" src="assets/mathjax4-mml-chtml.js"></script>
+            <script id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/mml-chtml.js"></script>
         </head>
     </xsl:variable>
     
