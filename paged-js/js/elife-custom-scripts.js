@@ -6,7 +6,6 @@ class elifeBuild extends Paged.Handler {
   }
 
   beforeParsed(content) {
-
     // to divide figure in block
     dispatchFigure(content);
 
