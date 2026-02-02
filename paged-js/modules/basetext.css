@@ -264,4 +264,6 @@ code, pre {
   width: 3em;
   text-align: right;
   padding-right: 10px;
+  font-weight: 700;
+  color: var(--color-elife-grey);
 }
