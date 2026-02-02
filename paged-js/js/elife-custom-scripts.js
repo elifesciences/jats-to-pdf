@@ -5,10 +5,7 @@ class elifeBuild extends Paged.Handler {
     this.targets = {};
   }
 
-  async beforeParsed(content) {
-
-    await finalizeMathJax();
-
+  beforeParsed(content) {
     // to divide figure in block
     dispatchFigure(content);
 
@@ -990,28 +987,4 @@ function tagImgInFigures(content) {
     // if it’s a continued element, don’t show its name
     if (figure.querySelector(".ctn")) return;
   });
-}
-
-// To avoid a race condition between mathjax and paged-js
-async function finalizeMathJax() {
-  if (!window.MathJax || !MathJax.startup) {
-    return;
-  }
-  await MathJax.startup.promise;
-  
-  if (MathJax.typesetPromise) {
-    await MathJax.typesetPromise();
-  }
-  
-  const doc = MathJax.startup.document;
-  if (doc) {
-    doc.clear();
-    doc.updateDocument();
-    if (doc.state) {
-      doc.state(0);
-    }
-    await MathJax.typesetPromise();
-  }
-  
-  await new Promise(resolve => setTimeout(resolve, 100));
 }
