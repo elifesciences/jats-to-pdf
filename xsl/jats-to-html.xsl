@@ -47,7 +47,7 @@
                             enableAssistiveMml: false
                         },
                         chtml: {
-                          scale: 1,
+                          scale: 0.85,
                           matchFontHeight: true
                         }
                       };
