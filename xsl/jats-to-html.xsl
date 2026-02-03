@@ -48,7 +48,8 @@
                         },
                         chtml: {
                           scale: 0.9,
-                          matchFontHeight: true
+                          matchFontHeight: false,
+                          minScale: 0.5
                         }
                       };
                 </xsl:text>
