@@ -861,11 +861,19 @@
             </xsl:when>
             <xsl:when test="parent::caption">
                 <h3>
-                    <xsl:if test="ancestor::*[name()=('fig','table-wrap')]/label">
-                        <span class="label figure-name">
-                            <xsl:apply-templates select="ancestor::*[name()=('fig','table-wrap')]/label"/>
-                        </span>
-                    </xsl:if>
+                    <xsl:choose>
+                        <xsl:when test="ancestor::fig/label or ancestor::table-wrap[graphic and not(descendant::table)]/label">
+                            <span class="label figure-name">
+                                <xsl:apply-templates select="ancestor::*[name()=('fig','table-wrap')]/label"/>
+                            </span>
+                        </xsl:when>
+                        <xsl:when test="ancestor::table-wrap[descendant::table]/label">
+                            <span class="label table-name">
+                                <xsl:apply-templates select="ancestor::table-wrap/label"/>
+                            </span>
+                        </xsl:when>
+                        <xsl:otherwise/>
+                    </xsl:choose>
                     <xsl:apply-templates select="node()"/>
                 </h3>
             </xsl:when>
@@ -1283,7 +1291,7 @@
         <xsl:apply-templates select="*"/>
     </xsl:template>
     
-    <xsl:template match="fig|table-wrap[graphic or alternatives/graphic]">
+    <xsl:template match="fig|table-wrap[graphic and not(descendant::table)]">
         <xsl:choose>
             <!-- figures with labels and position=float are given their own page -->
             <xsl:when test="label and @position='float' and not(ancestor::sub-article) and not(ancestor::app) and not(ancestor::abstract)">
@@ -1297,7 +1305,7 @@
     </xsl:template>
     
     <!-- position='float' => A floating image that is placed on it's own page -->
-    <xsl:template mode="float" match="fig|table-wrap[graphic or alternatives/graphic]">
+    <xsl:template mode="float" match="fig|table-wrap[graphic and not(descendant::table)]">
         <xsl:variable name="class" select="if (self::table-wrap) then 'table tofill'
             else 'figure tofill'"/>
         <figure class="{$class}">
@@ -1317,7 +1325,7 @@
     </xsl:template>
     
     <!-- position='anchor' => An inline image that is placed in the flow of text -->
-    <xsl:template mode="anchor" match="fig|table-wrap[graphic or alternatives/graphic]">
+    <xsl:template mode="anchor" match="fig|table-wrap[graphic and not(descendant::table)]">
         <xsl:variable name="class" select="if (self::table-wrap) then 'fig-group table'
             else 'fig-group figure'"/>
         <div class="{$class}">
@@ -1348,13 +1356,13 @@
         <img class="{$class}" loading="eager" src="{$image-uri}" alt=""/>
     </xsl:template>
     
-    <xsl:template match="fig/label|table-wrap[graphic or alternatives/graphic]/label">
+    <xsl:template match="fig/label|table-wrap[graphic and not(descendant::table)]/label">
         <label class="figure__label">
             <xsl:value-of select="concat(replace(.,'\s*[\.\|:]\s*$',''),'.')"/>
         </label>
     </xsl:template>
     
-    <xsl:template match="fig/caption|table-wrap[graphic or alternatives/graphic]/caption">
+    <xsl:template match="fig/caption|table-wrap[graphic and not(descendant::table)]/caption">
         <figcaption class="figure__caption">
             <xsl:if test="not(title) and parent::*/label">
                 <h3>
@@ -1383,6 +1391,59 @@
             </xsl:if>
             <xsl:apply-templates select="p/node()"/>
         </p>
+    </xsl:template>
+    
+    <xsl:template match="table-wrap[descendant::table]">
+        <div class="table-wrap">
+            <xsl:apply-templates select="@id|caption|descendant::table|processing-instruction()"/>
+        </div>
+    </xsl:template>
+    
+    <xsl:template match="table-wrap[descendant::table]/label">
+        <label class="table__label">
+            <xsl:value-of select="concat(replace(.,'\s*[\.\|:]\s*$',''),'.')"/>
+        </label>
+    </xsl:template>
+    
+    <xsl:template match="table-wrap[descendant::table]/caption">
+        <div class="table__caption">
+            <xsl:if test="not(title) and parent::*/label">
+                <h3>
+                    <span class="label table-name">
+                        <xsl:apply-templates select="parent::*/label"/>
+                    </span>
+                </h3>
+            </xsl:if>
+            <xsl:apply-templates select="*|parent::*/permissions|parent::*/attrib"/>
+        </div>
+    </xsl:template>
+    
+    <xsl:template match="table-wrap//table">
+        <xsl:copy>
+            <xsl:attribute name="id">
+                <xsl:variable name="table-no" select="count(ancestor::article//table) - count(following::table)"/>
+                <xsl:value-of select="concat('table-elem-',$table-no)"/>
+            </xsl:attribute>
+            <xsl:if test="ancestor::table-wrap[@position='landscape']">
+                <xsl:attribute name="class">wide</xsl:attribute>
+            </xsl:if>
+            <xsl:apply-templates select="node()|processing-instruction()"/>
+        </xsl:copy>
+    </xsl:template>
+    
+    <xsl:template match="td|th">
+        <xsl:copy>
+            <xsl:apply-templates select="@colspan|@rowspan"/>
+            <xsl:if test="@align or @valign">
+                <xsl:variable name="class" select="if (@align and @valign) then concat('align-',@align,' valign-',@valign)
+                                                   else if (@align) then concat('align-',@align)
+                                                   else concat('valign-',@valign)"/>
+                <xsl:attribute name="class">
+                    <xsl:value-of select="$class"/>
+                </xsl:attribute>
+            </xsl:if>
+            <xsl:apply-templates select="node()|processing-instruction()"/>
+        </xsl:copy>
     </xsl:template>
     
     <xsl:template match="supplementary-material">
