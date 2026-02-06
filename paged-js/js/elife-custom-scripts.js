@@ -3,6 +3,7 @@ class elifeBuild extends Paged.Handler {
   constructor(chunker, polisher, caller) {
     super(chunker, polisher, caller);
     this.targets = {};
+    this.tableRegistry = {};
   }
 
   beforeParsed(content) {
@@ -14,13 +15,16 @@ class elifeBuild extends Paged.Handler {
 
     // add id to anything to fix things
     addIDtoEachElement(content);
+
+    // Make table widths consistent when spanning pages
+    this.tableRegistry = createTableLayoutRegistry(content);
   }
 
-  // Collect page numbers for elements to add into page-ref links
   afterPageLayout(page) {
     if (!page) {
         return;
     }
+    // Collect page numbers for elements to add into page-ref links
     const pageNumber = page.getAttribute('data-page-number');
     if (!pageNumber) {
         return;
@@ -28,6 +32,20 @@ class elifeBuild extends Paged.Handler {
     const elementsWithIds = page.querySelectorAll('[id]');
     Array.from(elementsWithIds).forEach((el) => {
       this.targets[el.id] = pageNumber;
+    });
+
+    // Introduce colspans for tables that are split across pages
+    const splitTables = page.querySelectorAll('table[data-split-from]');
+    splitTables.forEach(splitTable => {
+      const originalId = splitTable.getAttribute('data-id');
+      const layout = this.tableRegistry.get(originalId);
+      if (layout) {
+        if (!splitTable.querySelector('colgroup')) {
+          splitTable.insertAdjacentHTML('afterbegin', layout.colgroupHtml);
+        }
+        splitTable.style.width = layout.width;
+        splitTable.style.tableLayout = 'fixed';
+      }
     });
   }
 
@@ -1003,4 +1021,59 @@ function tagImgInFigures(content) {
     // if it’s a continued element, don’t show its name
     if (figure.querySelector(".ctn")) return;
   });
+}
+
+function createTableLayoutRegistry(container) {
+  const registry = new Map();
+  const tables = container.querySelectorAll('table');
+
+  tables.forEach(table => {
+    const originalParent = table.parentNode;
+    const nextSibling = table.nextSibling;
+    document.body.appendChild(table);
+
+    const rect = table.getBoundingClientRect();
+    const widthPx = `${rect.width}px`;
+    table.style.width = widthPx;
+    table.style.tableLayout = 'fixed';
+
+    let colgroup = table.querySelector('colgroup');
+    if (!colgroup) {
+      colgroup = document.createElement('colgroup');
+      table.insertBefore(colgroup, table.firstChild);
+    }
+
+    const firstRow = table.querySelector('tr');
+    if (firstRow) {
+      const cells = Array.from(firstRow.children);
+      colgroup.innerHTML = ''; 
+      cells.forEach(cell => {
+        const col = document.createElement('col');
+        col.style.width = `${cell.getBoundingClientRect().width}px`;
+        colgroup.appendChild(col);
+      });
+    }
+
+    registry.set(table.id, {
+      width: widthPx,
+      colgroupHtml: colgroup.outerHTML
+    });
+
+    // --- POSSIBLE WORKAROUND FOR MISSING ROW ---
+    const tbody = table.querySelector('tbody') || table;
+    if (!table.querySelector('.pagedjs-buffer-row')) {
+      const buffer = document.createElement('tr');
+      buffer.className = 'pagedjs-buffer-row';
+      buffer.innerHTML = `<td colspan="100%" style="height:0.01pt; padding:0; border:none; visibility:hidden;"></td>`;
+      tbody.appendChild(buffer);
+    }
+
+    if (nextSibling) {
+      originalParent.insertBefore(table, nextSibling);
+    } else {
+      originalParent.appendChild(table);
+    }
+  });
+
+  return registry;
 }
