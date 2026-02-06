@@ -32,6 +32,21 @@ class elifeBuild extends Paged.Handler {
   }
 
   afterRendered(pages) {
+    // Add retracted watermark (when appropriate)
+    let retractedWatermark = document.querySelector("#page-templates #retracted-watermark");
+    if (retractedWatermark) {
+        document
+        .querySelectorAll(".pagedjs_page")
+        .forEach((page) => {
+          let newRetractedWatermark = retractedWatermark.cloneNode(true);
+          newRetractedWatermark.classList.add('retracted-watermark');
+          newRetractedWatermark.style.display = 'block';
+          page
+            .querySelector(".pagedjs_pagebox")
+            .insertAdjacentElement("afterbegin", newRetractedWatermark.cloneNode(true));
+          });
+      }
+
     // add the running head
     let runninghead = document.querySelector(".runninghead");
     // add the MSAs
@@ -72,7 +87,8 @@ class elifeBuild extends Paged.Handler {
           console.warn(`Target ID #${targetId} not found for page link.`);
         }
       });
-  }
+
+    }
 }
 
 Paged.registerHandlers(elifeBuild);

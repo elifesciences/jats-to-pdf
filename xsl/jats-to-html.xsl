@@ -119,11 +119,18 @@
         </div>
     </xsl:variable>
     
+    <xsl:variable name="retracted-watermark">
+        <xsl:if test="/article//article-meta/title-group/article-title[starts-with(.,'RETRACTED:')]">
+            <div id="retracted-watermark">RETRACTED</div>
+        </xsl:if>
+    </xsl:variable>
+    
     <xsl:variable name="page-templates">
         <div id="page-templates">
             <xsl:copy-of select="$runninghead"/>
             <xsl:apply-templates select=".//article-meta/article-categories"/>
             <xsl:copy-of select="$first-page-banner"/>
+            <xsl:copy-of select="$retracted-watermark"/>
         </div>
     </xsl:variable>
     
