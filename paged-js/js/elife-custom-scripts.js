@@ -1031,25 +1031,21 @@ function createTableLayoutRegistry(container) {
   const physicalPageWidth = 816; 
   const totalMargins = 100; // 50px left + 50px right
   const maxAvailableWidth = physicalPageWidth - totalMargins; // 716px
-  const designOffset = 180; // The gutter the table can bleed into
+  const designOffset = 180; // The margin the table can bleed into
   const standardWidth = maxAvailableWidth - designOffset; // 536px
 
   tables.forEach(table => {
     // Exclude funding table from this
-    if (table.id === "funding-table") {
-      return; 
-    }
-    
+    if (table.id === "funding-table") return;
+
+    table.style.height = 'auto';
+    table.querySelectorAll('tr').forEach(tr => tr.style.height = 'auto');
     const originalParent = table.parentNode;
     const nextSibling = table.nextSibling;
 
-    // 1. STAGING: Give the table the full 716px to see how much it wants
+    // 1. STAGING: Give the table the max width to see how much it wants
     const measureWrapper = document.createElement('div');
-    measureWrapper.style.cssText = `
-        width: ${maxAvailableWidth}px; 
-        position: absolute; 
-        visibility: hidden;
-    `;
+    measureWrapper.style.cssText = `width: ${maxAvailableWidth}px; position: absolute; visibility: hidden;`;
     
     // Force No-Wrap to see the "true" width
     const style = document.createElement('style');
@@ -1059,42 +1055,49 @@ function createTableLayoutRegistry(container) {
     measureWrapper.appendChild(table);
 
     // 2. MEASURE
-    let measuredWidth = table.getBoundingClientRect().width;
-    // If it's wider than the paper (716px), we allow wrapping
-    if (measuredWidth > maxAvailableWidth) {
-        measuredWidth = maxAvailableWidth;
-    }
-
-    // 3. SHIFT LOGIC
-    let marginLeft = '0px';
-    if (measuredWidth > standardWidth) {
-      // Calculate how much it needs to shift left to stay on the page
-      const overflow = measuredWidth - standardWidth;
-      const pull = Math.min(overflow, designOffset);
-      marginLeft = `-${pull}px`;
-    }
-
-    const widthPx = `${measuredWidth}px`;
-    table.style.width = widthPx;
-    table.style.tableLayout = 'fixed';
-    table.style.marginLeft = marginLeft;
-
-    // 4. LOCK COLUMNS
     let colgroup = table.querySelector('colgroup');
     if (!colgroup) {
       colgroup = document.createElement('colgroup');
       table.insertBefore(colgroup, table.firstChild);
     }
-    const firstRow = table.querySelector('tr');
-    if (firstRow) {
-      const cells = Array.from(firstRow.children);
-      colgroup.innerHTML = ''; 
-      cells.forEach(cell => {
-        const col = document.createElement('col');
-        col.style.width = `${cell.getBoundingClientRect().width}px`;
-        colgroup.appendChild(col);
+    colgroup.innerHTML = '';
+
+    const rows = Array.from(table.querySelectorAll('tr'));
+    const maxWidths = [];
+    rows.forEach(row => {
+      const cells = Array.from(row.children);
+      cells.forEach((cell, idx) => {
+        const measuredWidth = cell.getBoundingClientRect().width;
+        if (!maxWidths[idx] || measuredWidth > maxWidths[idx]) {
+          maxWidths[idx] = measuredWidth;
+        }
       });
+    });
+    maxWidths.forEach((width, idx) => {
+      // const buffer = 10; // Collision protection
+      const col = document.createElement('col');
+      col.style.width = `${width}px`;
+      colgroup.appendChild(col);
+    });
+
+    let finalTableWidth = table.getBoundingClientRect().width;
+    if (finalTableWidth > maxAvailableWidth) {
+      finalTableWidth = maxAvailableWidth;
     }
+
+    // 3. SHIFT LOGIC (spill into margin?)
+    let marginLeft = '0px';
+    if (finalTableWidth > standardWidth) {
+      const overflow = finalTableWidth - standardWidth;
+      // Pull left, but only up to the 180px available gutter
+      const pull = Math.min(overflow, designOffset);
+      marginLeft = `-${pull}px`;
+    }
+
+    const widthPx = `${finalTableWidth}px`;
+    table.style.width = widthPx;
+    table.style.tableLayout = 'fixed';
+    table.style.marginLeft = marginLeft;
 
     registry.set(table.id, {
       width: widthPx,
