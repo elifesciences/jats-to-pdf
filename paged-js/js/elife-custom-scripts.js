@@ -44,6 +44,7 @@ class elifeBuild extends Paged.Handler {
           splitTable.insertAdjacentHTML('afterbegin', layout.colgroupHtml);
         }
         splitTable.style.width = layout.width;
+        splitTable.style.marginLeft = layout.marginLeft;
         splitTable.style.tableLayout = 'fixed';
       }
     });
@@ -1026,23 +1027,64 @@ function tagImgInFigures(content) {
 function createTableLayoutRegistry(container) {
   const registry = new Map();
   const tables = container.querySelectorAll('table');
+  
+  const physicalPageWidth = 816; 
+  const totalMargins = 100; // 50px left + 50px right
+  const maxAvailableWidth = physicalPageWidth - totalMargins; // 716px
+  const designOffset = 180; // The gutter the table can bleed into
+  const standardWidth = maxAvailableWidth - designOffset; // 536px
 
   tables.forEach(table => {
+    // Exclude funding table from this
+    if (table.id === "funding-table") {
+      return; 
+    }
+    
     const originalParent = table.parentNode;
     const nextSibling = table.nextSibling;
-    document.body.appendChild(table);
 
-    const rect = table.getBoundingClientRect();
-    const widthPx = `${rect.width}px`;
+    // 1. STAGING: Give the table the full 716px to see how much it wants
+    const measureWrapper = document.createElement('div');
+    measureWrapper.style.cssText = `
+        width: ${maxAvailableWidth}px; 
+        position: absolute; 
+        visibility: hidden;
+    `;
+    
+    // Force No-Wrap to see the "true" width
+    const style = document.createElement('style');
+    style.innerHTML = `#${table.id} td, #${table.id} th { white-space: nowrap !important; }`;
+    measureWrapper.appendChild(style);
+    document.body.appendChild(measureWrapper);
+    measureWrapper.appendChild(table);
+
+    // 2. MEASURE
+    let measuredWidth = table.getBoundingClientRect().width;
+    // If it's wider than the paper (716px), we allow wrapping
+    if (measuredWidth > maxAvailableWidth) {
+        measuredWidth = maxAvailableWidth;
+    }
+
+    // 3. SHIFT LOGIC
+    let marginLeft = '0px';
+    if (measuredWidth > standardWidth) {
+      // Calculate how much it needs to shift left to stay on the page
+      const overflow = measuredWidth - standardWidth;
+      const pull = Math.min(overflow, designOffset);
+      marginLeft = `-${pull}px`;
+    }
+
+    const widthPx = `${measuredWidth}px`;
     table.style.width = widthPx;
     table.style.tableLayout = 'fixed';
+    table.style.marginLeft = marginLeft;
 
+    // 4. LOCK COLUMNS
     let colgroup = table.querySelector('colgroup');
     if (!colgroup) {
       colgroup = document.createElement('colgroup');
       table.insertBefore(colgroup, table.firstChild);
     }
-
     const firstRow = table.querySelector('tr');
     if (firstRow) {
       const cells = Array.from(firstRow.children);
@@ -1056,23 +1098,13 @@ function createTableLayoutRegistry(container) {
 
     registry.set(table.id, {
       width: widthPx,
+      marginLeft: marginLeft,
       colgroupHtml: colgroup.outerHTML
     });
 
-    // --- POSSIBLE WORKAROUND FOR MISSING ROW ---
-    const tbody = table.querySelector('tbody') || table;
-    if (!table.querySelector('.pagedjs-buffer-row')) {
-      const buffer = document.createElement('tr');
-      buffer.className = 'pagedjs-buffer-row';
-      buffer.innerHTML = `<td colspan="100%" style="height:0.01pt; padding:0; border:none; visibility:hidden;"></td>`;
-      tbody.appendChild(buffer);
-    }
-
-    if (nextSibling) {
-      originalParent.insertBefore(table, nextSibling);
-    } else {
-      originalParent.appendChild(table);
-    }
+    // cleanup
+    originalParent.insertBefore(table, nextSibling);
+    document.body.removeChild(measureWrapper);
   });
 
   return registry;
