@@ -20,6 +20,23 @@ class elifeBuild extends Paged.Handler {
   afterParsed(content) {
     // Make table widths consistent when spanning pages
     this.tableRegistry = createTableLayoutRegistry(content);
+    
+    // Introduce the colgroups
+    const nonFundingTables = content.querySelectorAll('table:not(#funding-table)');
+    nonFundingTables.forEach(table => {
+      const layout = this.tableRegistry.get(table.id);
+      applyTableLayout(table, layout);
+    });
+  }
+
+  beforePageLayout(page){
+    // Introduce colgroups (again!) for tables that are split across pages
+    const nonFundingTables = this.chunker.source.querySelectorAll('table:not(#funding-table)');
+    nonFundingTables.forEach(table => {
+      const originalId = table.getAttribute('data-id') || table.id;
+      const layout = this.tableRegistry.get(originalId);
+      applyTableLayout(table, layout);
+    });
   }
 
   afterPageLayout(page) {
@@ -34,24 +51,6 @@ class elifeBuild extends Paged.Handler {
           this.targets[el.id] = pageNumber;
         });
     }
-
-    // Introduce colspans for tables that are split across pages
-    const nonFundingTables = page.querySelectorAll('table:not(#funding-table)');
-    nonFundingTables.forEach(table => {
-      const originalId = table.getAttribute('data-id') || table.id;
-      console.log(table);
-      const layout = this.tableRegistry.get(originalId);
-      if (layout) {
-        const existingColgroup = table.querySelector('colgroup');
-        if (existingColgroup) {
-          existingColgroup.remove();
-        }
-        table.insertAdjacentHTML('afterbegin', layout.colgroupHtml);
-        table.style.width = layout.width;
-        table.style.marginLeft = layout.marginLeft;
-        table.style.tableLayout = 'fixed';
-      }
-    });
   }
 
   afterRendered(pages) {
@@ -1115,4 +1114,21 @@ function createTableLayoutRegistry(container) {
   });
 
   return registry;
+}
+
+// Introduces the colgroups collected in createTableLayoutRegistry afterParse
+function applyTableLayout(table, layout) {
+  if (!table || !layout) return;
+  const existingColgroup = table.querySelector('colgroup');
+  if (existingColgroup) {
+    existingColgroup.remove();
+  }
+  // Inject the pristine colgroup from our registry
+  table.insertAdjacentHTML('afterbegin', layout.colgroupHtml);
+
+  // 2. Apply Styles
+  table.style.width = layout.width;
+  table.style.marginLeft = layout.marginLeft;
+  table.style.tableLayout = 'fixed';
+  table.style.height = 'auto';
 }
