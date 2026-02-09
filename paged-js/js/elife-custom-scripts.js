@@ -15,7 +15,9 @@ class elifeBuild extends Paged.Handler {
 
     // add id to anything to fix things
     addIDtoEachElement(content);
+  }
 
+  afterParsed(content) {
     // Make table widths consistent when spanning pages
     this.tableRegistry = createTableLayoutRegistry(content);
   }
@@ -26,26 +28,28 @@ class elifeBuild extends Paged.Handler {
     }
     // Collect page numbers for elements to add into page-ref links
     const pageNumber = page.getAttribute('data-page-number');
-    if (!pageNumber) {
-        return;
+    if (pageNumber) {
+        const elementsWithIds = page.querySelectorAll('[id]');
+        Array.from(elementsWithIds).forEach((el) => {
+          this.targets[el.id] = pageNumber;
+        });
     }
-    const elementsWithIds = page.querySelectorAll('[id]');
-    Array.from(elementsWithIds).forEach((el) => {
-      this.targets[el.id] = pageNumber;
-    });
 
     // Introduce colspans for tables that are split across pages
-    const splitTables = page.querySelectorAll('table[data-split-from]');
-    splitTables.forEach(splitTable => {
-      const originalId = splitTable.getAttribute('data-id');
+    const nonFundingTables = page.querySelectorAll('table:not(#funding-table)');
+    nonFundingTables.forEach(table => {
+      const originalId = table.getAttribute('data-id') || table.id;
+      console.log(table);
       const layout = this.tableRegistry.get(originalId);
       if (layout) {
-        if (!splitTable.querySelector('colgroup')) {
-          splitTable.insertAdjacentHTML('afterbegin', layout.colgroupHtml);
+        const existingColgroup = table.querySelector('colgroup');
+        if (existingColgroup) {
+          existingColgroup.remove();
         }
-        splitTable.style.width = layout.width;
-        splitTable.style.marginLeft = layout.marginLeft;
-        splitTable.style.tableLayout = 'fixed';
+        table.insertAdjacentHTML('afterbegin', layout.colgroupHtml);
+        table.style.width = layout.width;
+        table.style.marginLeft = layout.marginLeft;
+        table.style.tableLayout = 'fixed';
       }
     });
   }
