@@ -3,7 +3,6 @@ class elifeBuild extends Paged.Handler {
   constructor(chunker, polisher, caller) {
     super(chunker, polisher, caller);
     this.targets = {};
-    this.tableRegistry = {};
   }
 
   beforeParsed(content) {
@@ -15,28 +14,11 @@ class elifeBuild extends Paged.Handler {
 
     // add id to anything to fix things
     addIDtoEachElement(content);
-  }
 
-  afterParsed(content) {
-    // Make table widths consistent when spanning pages
-    this.tableRegistry = createTableLayoutRegistry(content);
+    // Generate and inject CSS for tables
+    const tableCSS = generateTableCSS(content);
+    injectTableCSS(tableCSS);
     
-    // Introduce the colgroups
-    const nonFundingTables = content.querySelectorAll('table:not(#funding-table)');
-    nonFundingTables.forEach(table => {
-      const layout = this.tableRegistry.get(table.id);
-      applyTableLayout(table, layout);
-    });
-  }
-
-  beforePageLayout(page){
-    // Introduce colgroups (again!) for tables that are split across pages
-    const nonFundingTables = this.chunker.source.querySelectorAll('table:not(#funding-table)');
-    nonFundingTables.forEach(table => {
-      const originalId = table.getAttribute('data-id') || table.id;
-      const layout = this.tableRegistry.get(originalId);
-      applyTableLayout(table, layout);
-    });
   }
 
   afterPageLayout(page) {
@@ -1027,108 +1009,113 @@ function tagImgInFigures(content) {
   });
 }
 
-function createTableLayoutRegistry(container) {
-  const registry = new Map();
-  const tables = container.querySelectorAll('table');
+/**
+ * Analyzes table structure and generates CSS rules for column widths and positioning.
+ * This approach uses CSS rather than DOM manipulation to avoid conflicts with pagedJS chunking.
+ * Generates rules that will apply to both original tables and their fragments.
+ */
+function generateTableCSS(content) {
+  const tables = content.querySelectorAll('table:not(#funding-table)');
   
-  const physicalPageWidth = 816; 
-  const totalMargins = 100; // 50px left + 50px right
-  const maxAvailableWidth = physicalPageWidth - totalMargins; // 716px
-  const designOffset = 180; // The margin the table can bleed into
-  const standardWidth = maxAvailableWidth - designOffset; // 536px
+  const physicalPageWidth = 816;
+  const totalMargins = 100;
+  const maxAvailableWidth = physicalPageWidth - totalMargins;
+  const designOffset = 180;
+  const standardWidth = maxAvailableWidth - designOffset;
+
+  let cssRules = '';
 
   tables.forEach(table => {
-    // Exclude funding table from this
-    if (table.id === "funding-table") return;
-
-    table.style.height = 'auto';
-    table.querySelectorAll('tr').forEach(tr => tr.style.height = 'auto');
-    const originalParent = table.parentNode;
-    const nextSibling = table.nextSibling;
-
-    // 1. STAGING: Give the table the max width to see how much it wants
-    const measureWrapper = document.createElement('div');
-    measureWrapper.style.cssText = `width: ${maxAvailableWidth}px; position: absolute; visibility: hidden;`;
-    
-    // Force No-Wrap to see the "true" width
-    const style = document.createElement('style');
-    style.innerHTML = `#${table.id} td, #${table.id} th { white-space: nowrap !important; }`;
-    measureWrapper.appendChild(style);
-    document.body.appendChild(measureWrapper);
-    measureWrapper.appendChild(table);
-
-    // 2. MEASURE
-    let colgroup = table.querySelector('colgroup');
-    if (!colgroup) {
-      colgroup = document.createElement('colgroup');
-      table.insertBefore(colgroup, table.firstChild);
+    // Ensure table has ID
+    if (!table.id) {
+      table.id = `table-${Math.random().toString(36).substr(2, 9)}`;
     }
-    colgroup.innerHTML = '';
+    const tableId = table.id;
+    // Create a clone for measurement in an isolated environment
+    const clone = table.cloneNode(true);
+    
+    // Create measurement wrapper
+    const measureWrapper = document.createElement('div');
+    measureWrapper.style.cssText = `
+      position: absolute;
+      visibility: hidden;
+      width: ${maxAvailableWidth}px;
+      top: -9999px;
+      left: -9999px;
+    `;
+    
+    document.body.appendChild(measureWrapper);
+    measureWrapper.appendChild(clone);
+    
+    // Force table to auto-size to see natural widths
+    clone.style.tableLayout = 'auto';
+    clone.style.width = 'auto';
+    
+    // Force no-wrap to get true column widths
+    const style = document.createElement('style');
+    style.textContent = `#${clone.id} td, #${clone.id} th { white-space: nowrap !important; }`;
+    measureWrapper.appendChild(style);
 
-    const rows = Array.from(table.querySelectorAll('tr'));
+    // Force layout
+    clone.offsetHeight;
+
+    // Measure columns
+    const rows = Array.from(clone.querySelectorAll('tr'));
     const maxWidths = [];
+    
     rows.forEach(row => {
-      const cells = Array.from(row.children);
-      cells.forEach((cell, idx) => {
-        const measuredWidth = cell.getBoundingClientRect().width;
-        if (!maxWidths[idx] || measuredWidth > maxWidths[idx]) {
-          maxWidths[idx] = measuredWidth;
-        }
+      Array.from(row.children).forEach((cell, idx) => {
+        const width = cell.getBoundingClientRect().width;
+        maxWidths[idx] = Math.max(maxWidths[idx] || 0, width);
       });
     });
-    maxWidths.forEach((width, idx) => {
-      // const buffer = 10; // Collision protection
-      const col = document.createElement('col');
-      col.style.width = `${width}px`;
-      colgroup.appendChild(col);
-    });
 
-    let finalTableWidth = table.getBoundingClientRect().width;
-    if (finalTableWidth > maxAvailableWidth) {
-      finalTableWidth = maxAvailableWidth;
-    }
+    // Calculate total width
+    let tableWidth = clone.getBoundingClientRect().width;
+    tableWidth = Math.min(tableWidth, maxAvailableWidth);
 
-    // 3. SHIFT LOGIC (spill into margin?)
-    let marginLeft = '0px';
-    if (finalTableWidth > standardWidth) {
-      const overflow = finalTableWidth - standardWidth;
-      // Pull left, but only up to the 180px available gutter
-      const pull = Math.min(overflow, designOffset);
-      marginLeft = `-${pull}px`;
-    }
-
-    const widthPx = `${finalTableWidth}px`;
-    table.style.width = widthPx;
-    table.style.tableLayout = 'fixed';
-    table.style.marginLeft = marginLeft;
-
-    registry.set(table.id, {
-      width: widthPx,
-      marginLeft: marginLeft,
-      colgroupHtml: colgroup.outerHTML
-    });
-
-    // cleanup
-    originalParent.insertBefore(table, nextSibling);
+    // Clean up measurement elements
     document.body.removeChild(measureWrapper);
+
+    // Calculate margin adjustment
+    let marginLeft = 0;
+    if (tableWidth > standardWidth) {
+      marginLeft = -Math.min(tableWidth - standardWidth, designOffset);
+    }
+
+    // Generate CSS for this specific table AND any fragments pagedJS creates
+    // pagedJS preserves the original ID in data-id attribute for fragments
+    cssRules += `
+table[id="${tableId}"],
+table[data-id="${tableId}"] {
+  width: ${tableWidth}px !important;
+  margin-left: ${marginLeft}px !important;
+  table-layout: fixed !important;
+  min-width: ${tableWidth}px !important;
+  max-width: ${tableWidth}px !important;
+}
+`;
+
+    // Add column width rules for both original and fragments
+    maxWidths.forEach((width, idx) => {
+      cssRules += `
+table[id="${tableId}"] tr > *:nth-child(${idx + 1}),
+table[data-id="${tableId}"] tr > *:nth-child(${idx + 1}) {
+  width: ${width}px !important;
+  min-width: ${width}px !important;
+  max-width: ${width}px !important;
+}
+`;
+    });
   });
 
-  return registry;
+  return cssRules;
 }
 
-// Introduces the colgroups collected in createTableLayoutRegistry afterParse
-function applyTableLayout(table, layout) {
-  if (!table || !layout) return;
-  const existingColgroup = table.querySelector('colgroup');
-  if (existingColgroup) {
-    existingColgroup.remove();
-  }
-  // Inject the pristine colgroup from our registry
-  table.insertAdjacentHTML('afterbegin', layout.colgroupHtml);
-
-  // 2. Apply Styles
-  table.style.width = layout.width;
-  table.style.marginLeft = layout.marginLeft;
-  table.style.tableLayout = 'fixed';
-  table.style.height = 'auto';
+//Injects CSS rules into the document head
+function injectTableCSS(css) {
+  const style = document.createElement('style');
+  style.id = 'table-layout-css';
+  style.textContent = css;
+  document.head.appendChild(style);
 }
