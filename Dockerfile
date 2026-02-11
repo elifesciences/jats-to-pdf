@@ -12,6 +12,8 @@ ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
     CHROME_ARGS="--disable-gpu"
 COPY package*.json ./
 RUN npm ci --only=production
+# Some random directly that pagedjs-cli@0.5.0-beta.2 requires
+RUN mkdir -p node_modules/pagedjs-cli/docker-userdata
 COPY --chown=node:node . .
 USER node
 EXPOSE 3000
