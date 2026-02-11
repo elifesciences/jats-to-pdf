@@ -1003,3 +1003,51 @@ function tagImgInFigures(content) {
     if (figure.querySelector(".ctn")) return;
   });
 }
+
+// For tables split across pages, copy the column widths from the 'first' table
+class TableColumnHandler extends Paged.Handler {
+  constructor(chunker, polisher, caller) {
+    super(chunker, polisher, caller);
+    this.tableColumnWidths = new Map();
+  }
+
+  afterRendered(pages) {
+    pages.forEach(page => {
+      const tables = page.element.querySelectorAll("table:not(#funding-table)");
+      tables.forEach(table => {
+        const dataId = table.getAttribute("data-id");
+        const tableId = table.id || dataId;
+        
+        if (!tableId) return;
+        
+        if (this.tableColumnWidths.has(tableId)) {
+          // Apply saved column widths to this table
+          const colWidths = this.tableColumnWidths.get(tableId);
+          const rows = table.querySelectorAll("tr");
+          rows.forEach(row => {
+            Array.from(row.children).forEach((cell, idx) => {
+              if (colWidths[idx]) {
+                cell.style.width = colWidths[idx];
+                cell.style.minWidth = colWidths[idx];
+                cell.style.maxWidth = colWidths[idx];
+              }
+            });
+          });
+        } else {
+          // Save column widths from this table
+          const firstRow = table.querySelector("tr");
+          if (firstRow) {
+            const colWidths = [];
+            Array.from(firstRow.children).forEach(cell => {
+              const width = getComputedStyle(cell).width;
+              colWidths.push(width);
+            });
+            this.tableColumnWidths.set(tableId, colWidths);
+          }
+        }
+      });
+    });
+  }
+}
+
+Paged.registerHandlers(TableColumnHandler);
