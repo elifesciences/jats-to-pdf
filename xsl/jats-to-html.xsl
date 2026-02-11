@@ -126,7 +126,7 @@
     </xsl:variable>
     
     <xsl:variable name="page-templates">
-        <div id="page-templates">
+        <div id="page-templates" style="height: 1px; margin-bottom: -1px;">
             <xsl:copy-of select="$runninghead"/>
             <xsl:apply-templates select=".//article-meta/article-categories"/>
             <xsl:copy-of select="$first-page-banner"/>
