@@ -1022,36 +1022,98 @@ class TableColumnHandler extends Paged.Handler {
         
         // If we haven't measured this table yet, measure it now
         if (!this.tableColumnWidths.has(tableId)) {
-          const firstRow = table.querySelector("tr");
-          if (firstRow) {
-            const colWidths = [];
-            Array.from(firstRow.children).forEach(cell => {
-              const width = getComputedStyle(cell).width;
-              colWidths.push(width);
-            });
-            
-            // Only store if valid
-            if (colWidths.length > 0 && colWidths[0] !== '0px') {
-              this.tableColumnWidths.set(tableId, colWidths);
-            }
+          const colWidths = this.measureTableColumns(table);
+          
+          if (colWidths.length > 0 && colWidths[0] !== '0px') {
+            this.tableColumnWidths.set(tableId, colWidths);
           }
         } else {
-          // We've measured this table before, apply saved widths
+          // Apply saved widths to this table fragment
           const colWidths = this.tableColumnWidths.get(tableId);
           if (colWidths && colWidths[0] !== '0px') {
-            const rows = table.querySelectorAll("tr");
-            rows.forEach(row => {
-              Array.from(row.children).forEach((cell, idx) => {
-                if (colWidths[idx] && colWidths[idx] !== '0px') {
-                  cell.style.width = colWidths[idx];
-                  cell.style.minWidth = colWidths[idx];
-                  cell.style.maxWidth = colWidths[idx];
-                  cell.style.boxSizing = 'border-box';
-                }
-              });
-            });
+            this.applyColumnWidths(table, colWidths);
           }
         }
+      });
+    });
+  }
+
+  measureTableColumns(table) {
+    const rows = table.querySelectorAll("tr");
+    const colWidths = [];
+    
+    // Find a row without any colspan to get true column count
+    let referenceRow = null;
+    for (const row of rows) {
+      const cells = Array.from(row.children);
+      const hasColspan = cells.some(cell => {
+        const colspan = parseInt(cell.getAttribute('colspan') || '1');
+        return colspan > 1;
+      });
+      
+      if (!hasColspan) {
+        referenceRow = row;
+        break;
+      }
+    }
+    
+    // If all rows have colspan, use the first row and calculate columns
+    if (!referenceRow && rows.length > 0) {
+      referenceRow = rows[0];
+    }
+    
+    if (referenceRow) {
+      const cells = Array.from(referenceRow.children);
+      cells.forEach(cell => {
+        const colspan = parseInt(cell.getAttribute('colspan') || '1');
+        const width = getComputedStyle(cell).width;
+        const cellWidthPx = parseFloat(width);
+        
+        if (colspan === 1) {
+          // Single column cell - use its width directly
+          colWidths.push(width);
+        } else {
+          // Cell spans multiple columns - divide width evenly
+          const individualColWidth = cellWidthPx / colspan;
+          for (let i = 0; i < colspan; i++) {
+            colWidths.push(`${individualColWidth}px`);
+          }
+        }
+      });
+    }
+    
+    return colWidths;
+  }
+
+  applyColumnWidths(table, colWidths) {
+    const rows = table.querySelectorAll("tr");
+    
+    rows.forEach(row => {
+      const cells = Array.from(row.children);
+      let colIndex = 0;
+      
+      cells.forEach(cell => {
+        const colspan = parseInt(cell.getAttribute('colspan') || '1');
+        
+        if (colspan === 1 && colWidths[colIndex]) {
+          // Simple case - single column
+          cell.style.width = colWidths[colIndex];
+          cell.style.minWidth = colWidths[colIndex];
+          cell.style.maxWidth = colWidths[colIndex];
+          cell.style.boxSizing = 'border-box';
+        } else if (colspan > 1) {
+          // Cell spans multiple columns - sum the widths
+          let totalWidth = 0;
+          for (let i = 0; i < colspan && colIndex + i < colWidths.length; i++) {
+            totalWidth += parseFloat(colWidths[colIndex + i]);
+          }
+          cell.style.width = `${totalWidth}px`;
+          cell.style.minWidth = `${totalWidth}px`;
+          cell.style.maxWidth = `${totalWidth}px`;
+          cell.style.boxSizing = 'border-box';
+        }
+        
+        colIndex += colspan;
       });
     });
   }
