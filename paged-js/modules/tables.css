@@ -75,7 +75,8 @@ td.valign-bottom,th.valign-bottom {
   caption-side: top;
   text-align: left;
   margin-bottom: 0.5em;
-  page-break-inside: avoid;
+  break-inside: avoid;
+  break-after: avoid;
   width: 100%;
   font-family: var(--font-sans);
   font-size: 10px;
