@@ -1020,21 +1020,8 @@ class TableColumnHandler extends Paged.Handler {
         
         if (!tableId) return;
         
-        if (this.tableColumnWidths.has(tableId)) {
-          // Apply saved column widths to this table
-          const colWidths = this.tableColumnWidths.get(tableId);
-          const rows = table.querySelectorAll("tr");
-          rows.forEach(row => {
-            Array.from(row.children).forEach((cell, idx) => {
-              if (colWidths[idx]) {
-                cell.style.width = colWidths[idx];
-                cell.style.minWidth = colWidths[idx];
-                cell.style.maxWidth = colWidths[idx];
-              }
-            });
-          });
-        } else {
-          // Save column widths from this table
+        // If we haven't measured this table yet, measure it now
+        if (!this.tableColumnWidths.has(tableId)) {
           const firstRow = table.querySelector("tr");
           if (firstRow) {
             const colWidths = [];
@@ -1042,7 +1029,27 @@ class TableColumnHandler extends Paged.Handler {
               const width = getComputedStyle(cell).width;
               colWidths.push(width);
             });
-            this.tableColumnWidths.set(tableId, colWidths);
+            
+            // Only store if valid
+            if (colWidths.length > 0 && colWidths[0] !== '0px') {
+              this.tableColumnWidths.set(tableId, colWidths);
+            }
+          }
+        } else {
+          // We've measured this table before, apply saved widths
+          const colWidths = this.tableColumnWidths.get(tableId);
+          if (colWidths && colWidths[0] !== '0px') {
+            const rows = table.querySelectorAll("tr");
+            rows.forEach(row => {
+              Array.from(row.children).forEach((cell, idx) => {
+                if (colWidths[idx] && colWidths[idx] !== '0px') {
+                  cell.style.width = colWidths[idx];
+                  cell.style.minWidth = colWidths[idx];
+                  cell.style.maxWidth = colWidths[idx];
+                  cell.style.boxSizing = 'border-box';
+                }
+              });
+            });
           }
         }
       });
