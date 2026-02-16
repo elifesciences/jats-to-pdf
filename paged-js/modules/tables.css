@@ -77,7 +77,8 @@ td.valign-bottom,th.valign-bottom {
   margin-bottom: 0.5em;
   break-inside: avoid;
   break-after: avoid;
-  width: 100%;
+  width: var(--column-width);
+  max-width: 100%;
   font-family: var(--font-sans);
   font-size: 10px;
   line-height: 1.2;
@@ -90,7 +91,7 @@ td.valign-bottom,th.valign-bottom {
 }
 
 .table__caption p {
-  margin: 5px 0;
+  margin: 2px 0;
 }
 
 .table-wrap-foot p {

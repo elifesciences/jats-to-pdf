@@ -91,7 +91,6 @@ export async function measureTablesWithPuppeteer(inputPath, outputPath) {
           css += `
 .table-wrap:has(#${tableId}),
 .table-wrap:has(table[data-id="${tableId}"]) {
-  width: ${finalWidth}px !important;
   margin-left: ${marginLeft}px !important;
   position: relative !important;
 }
