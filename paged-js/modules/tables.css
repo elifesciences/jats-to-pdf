@@ -93,6 +93,10 @@ td.valign-bottom,th.valign-bottom {
   margin: 5px 0;
 }
 
+.table-wrap-foot p {
+  font-size: 9px;
+}
+
 /* 
 +===========================+
 | Funding tables | 💰 | ┬─┬ |

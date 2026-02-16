@@ -32,9 +32,9 @@ export async function measureTablesWithPuppeteer(inputPath, outputPath) {
     const fragmentCSS = await page.evaluate(() => {
       const physicalPageWidth = 816;
       const pageMargins = 100;
-      const maxAvailableWidth = physicalPageWidth - pageMargins;
+      const maxAvailableWidth = physicalPageWidth - pageMargins; // 716px
       const designOffset = 180;
-      const standardWidth = maxAvailableWidth - designOffset;
+      const standardWidth = maxAvailableWidth - designOffset; // 536px
       
       const tables = document.querySelectorAll('table:not(#funding-table)');
       let css = '';
@@ -104,6 +104,17 @@ table[data-id="${tableId}"] {
   width: ${finalWidth}px !important;
   margin-left: ${wrapper ? '0px' : marginLeft + 'px'} !important;
   table-layout: fixed !important;
+}
+`;
+        
+        // Table footer - match table width
+        css += `
+.table-wrap:has(#${tableId}) .table-wrap-foot,
+.table-wrap:has(table[data-id="${tableId}"]) .table-wrap-foot {
+  width: ${finalWidth}px !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  box-sizing: border-box !important;
 }
 `;
         

@@ -1395,7 +1395,7 @@
     
     <xsl:template match="table-wrap[descendant::table]">
         <div class="table-wrap">
-            <xsl:apply-templates select="@id|caption|descendant::table|processing-instruction()"/>
+            <xsl:apply-templates select="@id|caption|descendant::table|descendant::table-wrap-foot|processing-instruction()"/>
         </div>
     </xsl:template>
     
@@ -1444,6 +1444,30 @@
             </xsl:if>
             <xsl:apply-templates select="node()|processing-instruction()"/>
         </xsl:copy>
+    </xsl:template>
+    
+    <xsl:template match="table-wrap-foot">
+        <div class="table-wrap-foot">
+            <xsl:apply-templates select="fn-group|fn"/>
+        </div>
+    </xsl:template>
+    
+    <xsl:template match="table-wrap-foot/fn-group">
+        <xsl:apply-templates select="fn"/>
+    </xsl:template>
+    
+    <xsl:template match="table-wrap-foot//fn">
+        <p>
+            <xsl:apply-templates select="@id"/>
+            <xsl:if test="label">
+                <sup>
+                    <strong>
+                        <xsl:apply-templates select="label/node()"/>
+                    </strong>
+                </sup>
+            </xsl:if>
+            <xsl:apply-templates select="p/node()"/>
+        </p>
     </xsl:template>
     
     <xsl:template match="supplementary-material">
