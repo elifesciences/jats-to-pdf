@@ -1442,8 +1442,16 @@
                     <xsl:value-of select="$class"/>
                 </xsl:attribute>
             </xsl:if>
-            <xsl:apply-templates select="node()|processing-instruction()"/>
+            <div>
+                <xsl:apply-templates select="node()|processing-instruction()"/>
+            </div>
         </xsl:copy>
+    </xsl:template>
+    
+    <!-- Use span instead of br because pagedJS will break on a br -->
+    <xsl:template match="break">
+        <!--<span class="line-break">&#8203;</span>-->
+        <br/>
     </xsl:template>
     
     <xsl:template match="table-wrap-foot">
@@ -1592,6 +1600,15 @@
                 <xsl:attribute name="id" select="ancestor::*[name()=('disp-formula','inline-formula')]/@id"/>
             </xsl:if>
         </img>
+    </xsl:template>
+    
+    <xsl:template match="inline-graphic[not(ancestor::inline-formula)]">
+        <xsl:variable name="image-uri" select="concat(
+            $iiif-base-uri,
+            ./@xlink:href,
+            '/full/max/0/default.jpg'
+            )"/>
+        <img loading="eager" src="{$image-uri}" alt=""/>
     </xsl:template>
     
     <xsl:template match="list">

@@ -18,7 +18,8 @@ table.wide {
 
 tr {
   display: table-row;
-  page-break-inside: avoid;
+  page-break-inside: avoid !important;
+  break-inside: avoid !important;
 }
 
 /* add a border to the top of split tables */
@@ -31,7 +32,8 @@ th, td {
   padding: .375rem;
   min-width: 1px;
   box-sizing: border-box;
-  page-break-inside: avoid;
+  page-break-inside: avoid !important;
+  break-inside: avoid !important;
 }
 
 td {
@@ -45,6 +47,20 @@ th {
   color: var(--color-elife-grey);
   text-align: center;
   vertical-align: bottom;
+}
+
+td > div, th > div {
+  break-inside: avoid !important;
+  display: contents;
+}
+
+td img, th img {
+  break-after: avoid;
+  break-before: avoid;
+}
+
+td br, th br {
+  display: inline !important;
 }
 
 td.align-left,th.align-left {
@@ -69,6 +85,16 @@ td.valign-middle,th.valign-middle {
 
 td.valign-bottom,th.valign-bottom {
   vertical-align: bottom;
+}
+
+table span.line-break {
+  display: block;
+  break-inside: avoid;
+  break-before: avoid;
+  break-after: avoid;
+  margin: 0;
+  padding: 0;
+  line-height: 1px;
 }
 
 .table__caption {

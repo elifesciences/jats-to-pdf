@@ -43,8 +43,18 @@ export async function measureTablesWithPuppeteer(inputPath, outputPath) {
     await page.setViewport({ width: 816, height: 1056 });
     await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
     
-    // Wait for fonts and styles to load
+    // Wait for fonts and images to load
     await page.evaluateHandle('document.fonts.ready');
+    await page.evaluate(() => {
+      return Promise.all(
+        Array.from(document.images)
+          .filter(img => !img.complete)
+          .map(img => new Promise(resolve => {
+            img.onload = resolve;
+            img.onerror = resolve;
+          }))
+      );
+    });
     await new Promise(resolve => setTimeout(resolve, 500));
     
     // Run measurement and get CSS
@@ -54,6 +64,9 @@ export async function measureTablesWithPuppeteer(inputPath, outputPath) {
       const maxAvailableWidth = physicalPageWidth - pageMargins; // 716px
       const designOffset = 180;
       const standardWidth = maxAvailableWidth - designOffset; // 536px
+
+      // Maximum height we want images to be in a table cell
+      const maxImageHeight = 80;
       
       const tables = document.querySelectorAll('table:not(#funding-table)');
       let css = '';
@@ -69,22 +82,52 @@ export async function measureTablesWithPuppeteer(inputPath, outputPath) {
         // Measure columns from actual rendered table
         const rows = Array.from(table.querySelectorAll('tr'));
         if (rows.length === 0) return;
+
+        // First pass: find columns that contain images and calculate
+        // their ideal width based on aspect ratio and max height
+        const imageColWidths = new Map();
+        rows.forEach(row => {
+          let colIndex = 0;
+          Array.from(row.children).forEach(cell => {
+            const colspan = parseInt(cell.getAttribute('colspan') || '1');
+            const img = cell.querySelector('img');
+            if (img && img.naturalWidth && img.naturalHeight) {
+              const aspectRatio = img.naturalWidth / img.naturalHeight;
+              // Calculate ideal column width based on aspect ratio and max height
+              const idealWidth = Math.ceil((aspectRatio * maxImageHeight)/2);
+              // Keep the widest image width for this column
+              const existing = imageColWidths.get(colIndex) || 0;
+              imageColWidths.set(colIndex, Math.max(existing, idealWidth));
+            }
+            colIndex += colspan;
+          });
+        });
         
+        // Second pass: measure all column widths, using image-based widths where applicable
         const referenceRow = rows.reduce((prev, curr) => 
           curr.children.length > prev.children.length ? curr : prev
         , rows[0]);
         
         const colWidths = [];
+        let colIndex = 0;
         Array.from(referenceRow.children).forEach(cell => {
           const colspan = parseInt(cell.getAttribute('colspan') || '1');
-          const width = cell.getBoundingClientRect().width;
           
-          if (colspan === 1) {
-            colWidths.push(width);
+          if (colspan === 1 && imageColWidths.has(colIndex)) {
+            // Use image-based width for this column
+            colWidths.push(imageColWidths.get(colIndex));
           } else {
-            const partWidth = width / colspan;
-            for (let i = 0; i < colspan; i++) colWidths.push(partWidth);
+            // Use measured width
+            const width = cell.getBoundingClientRect().width;
+            if (colspan === 1) {
+              colWidths.push(width);
+            } else {
+              const partWidth = width / colspan;
+              for (let i = 0; i < colspan; i++) colWidths.push(partWidth);
+            }
           }
+          
+          colIndex += colspan;
         });
         
         const totalWidth = colWidths.reduce((sum, w) => sum + w, 0);
@@ -136,9 +179,15 @@ table[data-id="${tableId}"] {
 }
 `;
         
-        // Column widths
+        // Column widths and image sizing based on aspect ratio
         colWidths.forEach((width, idx) => {
           const scaledWidth = width * scaleFactor;
+          
+          // Calculate image height based on scaled column width and aspect ratio
+          const imageHeight = imageColWidths.has(idx)
+            ? Math.ceil(scaledWidth / (imageColWidths.get(idx) / maxImageHeight))
+            : maxImageHeight;
+
           css += `
 table#${tableId} tr > *:nth-child(${idx + 1}),
 table[data-id="${tableId}"] tr > *:nth-child(${idx + 1}) {
@@ -148,6 +197,19 @@ table[data-id="${tableId}"] tr > *:nth-child(${idx + 1}) {
   box-sizing: border-box !important;
 }
 `;
+
+          // Only add image rules for columns that contain images
+          if (imageColWidths.has(idx)) {
+            css += `
+table#${tableId} tr > *:nth-child(${idx + 1}) img,
+table[data-id="${tableId}"] tr > *:nth-child(${idx + 1}) img {
+  width: ${scaledWidth}px !important;
+  height: ${imageHeight}px !important;
+  display: block !important;
+  object-fit: contain !important;
+}
+`;
+          }
         });
       });
       
