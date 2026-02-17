@@ -1869,6 +1869,12 @@
                     <xsl:apply-templates select="node()"/>
                 </a>
             </xsl:when>
+            <!-- Don't add the icon when it's a table footnote link -->
+            <xsl:when test="./@ref-type='table-fn'">
+                <a class="linktoref" href="{concat('#',@rid)}">
+                    <xsl:apply-templates select="node()"/>
+                </a>
+            </xsl:when>
             <xsl:otherwise>
                 <xsl:call-template name="add-icon">
                     <xsl:with-param name="elem" select="."/>
