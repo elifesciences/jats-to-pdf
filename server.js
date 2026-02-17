@@ -191,7 +191,6 @@ app.post('/', async (req, res) => {
         writeFileSync(tempHTML, htmlContent);
         console.log(`HTML written to ${tempHTML}`);
 
-        console.log("Starting Puppeteer table measurement...");
         await measureTablesWithPuppeteer(tempHTML, tempHTMLMeasured);
         console.log(`Measured HTML written to ${tempHTMLMeasured}`);
 

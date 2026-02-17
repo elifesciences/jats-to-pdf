@@ -2,6 +2,18 @@ import puppeteer from 'puppeteer';
 import fs from 'fs/promises';
 
 /**
+ * Checks if an HTML file contains any tables (excluding #funding-table).
+ * @param {string} html - HTML string to check
+ * @returns {boolean} True if article contains non-funding tables
+ */
+function hasTables(html) {
+  const tableMatches = html.match(/<table[^>]*>/g);
+  if (!tableMatches) return false;
+  return tableMatches.filter(tag => !tag.includes('id="funding-table"')).length > 0;
+}
+
+
+/**
  * Measures tables in the browser and applies layout styles before pagedJS processing.
  * This ensures pagedJS sees correct dimensions when calculating page breaks.
  * @param {string} inputPath - Path to HTML file to measure
@@ -9,6 +21,16 @@ import fs from 'fs/promises';
  * @returns {Promise<void>}
  */
 export async function measureTablesWithPuppeteer(inputPath, outputPath) {
+  const htmlContent = await fs.readFile(inputPath, 'utf-8');
+
+  // Skip Puppeteer entirely if no relevant tables exist
+  if (!hasTables(htmlContent)) {
+    console.log('No tables found, skipping Puppeteer table measurement...');
+    await fs.copyFile(inputPath, outputPath);
+    return;
+  }
+  
+  console.log("Starting Puppeteer table measurement...");
   const browser = await puppeteer.launch({
     headless: 'new',
     args: ['--no-sandbox', '--disable-setuid-sandbox']
@@ -19,9 +41,6 @@ export async function measureTablesWithPuppeteer(inputPath, outputPath) {
     
     // Set viewport
     await page.setViewport({ width: 816, height: 1056 });
-    
-    // Load the HTML file
-    const htmlContent = await fs.readFile(inputPath, 'utf-8');
     await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
     
     // Wait for fonts and styles to load
