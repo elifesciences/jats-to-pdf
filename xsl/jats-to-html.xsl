@@ -279,6 +279,9 @@
                             <li class="authors-list__item">
                                 <span class="{$author-class}">
                                     <xsl:choose>
+                                        <xsl:when test="./name-alternatives">
+                                            <xsl:apply-templates select="./name-alternatives[1]"/>
+                                        </xsl:when>
                                         <xsl:when test="./name">
                                             <xsl:apply-templates select="./name[1]"/>
                                         </xsl:when>
@@ -351,11 +354,11 @@
             <section id="orcids">
                 <h2 class="orcid-list__title">Author ORCID iDs</h2>
                 <ul class="orcid-list list-simple">
-                    <xsl:for-each select="./contrib[@contrib-type='author' and name and contrib-id[@contrib-id-type='orcid']]">
+                    <xsl:for-each select="./contrib[@contrib-type='author' and (name or name-alternatives) and contrib-id[@contrib-id-type='orcid']]">
                         <li class="orcid-list-item">
                             <p>
                                 <strong>
-                                    <xsl:apply-templates select="./name[1]"/>
+                                    <xsl:apply-templates select="./name[1]|./name-alternatives[1]"/>
                                 </strong>
                                 <xsl:text>: </xsl:text>
                                 <a>
@@ -385,7 +388,7 @@
                                 <xsl:if test="$author-contribs">
                                     <strong>
                                         <xsl:for-each select="$author-contribs">
-                                            <xsl:apply-templates select="./name[1]"/>
+                                            <xsl:apply-templates select="./name[1]|./name-alternatives[1]"/>
                                             <xsl:choose>
                                                 <xsl:when test="position() = last()">
                                                     <xsl:text>:</xsl:text>
@@ -501,9 +504,35 @@
             </xsl:if>
     </xsl:template>
     
-    <xsl:template name="get-name" match="name|string-name">
+    <xsl:template name="get-name" match="name|string-name|name-alternatives">
+        <xsl:param name="order" select="'forwards'"/>
+        <xsl:variable name="is-cjk" select="matches(@xml:lang,'^(zh|js|ko)')"/>
+        <xsl:choose>
+            <!-- Introduce class for certain scripts to coerce font -->
+            <xsl:when test="$is-cjk">
+                <span class="cjk">
+                    <xsl:call-template name="get-name-inner">
+                        <xsl:with-param name="order" select="$order"/>
+                    </xsl:call-template>
+                </span>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:call-template name="get-name-inner">
+                    <xsl:with-param name="order" select="$order"/>
+                </xsl:call-template>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+    
+    <xsl:template name="get-name-inner">
         <xsl:param name="order" select="'forwards'"/>
         <xsl:choose>
+            <xsl:when test="self::name-alternatives">
+                <xsl:apply-templates select="*[1]"/>
+                <xsl:text> (</xsl:text>
+                <xsl:apply-templates select="*[2]"/>
+                <xsl:text>)</xsl:text>
+            </xsl:when>
             <xsl:when test="./given-names and ./surname">
                 <xsl:choose>
                     <xsl:when test="$order='backwards'">
@@ -518,8 +547,11 @@
                     </xsl:otherwise>
                 </xsl:choose>
             </xsl:when>
-            <xsl:otherwise>
+            <xsl:when test="./given-names or ./surname">
                 <xsl:apply-templates select="given-names/text()|surname/text()"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="."/>
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>

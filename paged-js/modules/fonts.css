@@ -56,3 +56,9 @@
   font-style: italic;
   font-weight: 600;
 }
+
+/* Use system defaults instead of installing the large font files */
+.cjk {
+  font-family: "Noto Sans CJK SC", "Noto Sans CJK TC", "Noto Sans CJK", sans-serif;
+  font-synthesis: none;
+}
