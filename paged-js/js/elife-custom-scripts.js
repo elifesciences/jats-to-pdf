@@ -16,19 +16,18 @@ class elifeBuild extends Paged.Handler {
     addIDtoEachElement(content);
   }
 
-  // Collect page numbers for elements to add into page-ref links
   afterPageLayout(page) {
     if (!page) {
         return;
     }
+    // Collect page numbers for elements to add into page-ref links
     const pageNumber = page.getAttribute('data-page-number');
-    if (!pageNumber) {
-        return;
+    if (pageNumber) {
+        const elementsWithIds = page.querySelectorAll('[id]');
+        Array.from(elementsWithIds).forEach((el) => {
+          this.targets[el.id] = pageNumber;
+        });
     }
-    const elementsWithIds = page.querySelectorAll('[id]');
-    Array.from(elementsWithIds).forEach((el) => {
-      this.targets[el.id] = pageNumber;
-    });
   }
 
   afterRendered(pages) {

@@ -13,6 +13,7 @@ import fs from 'fs';
 import path from 'path';
 import tmp from 'tmp';
 import SaxonJS from 'saxon-js';
+import { measureTablesWithPuppeteer } from './measure-tables.js';
 
 const { readFileSync, mkdirSync, existsSync, writeFileSync, createReadStream, unlinkSync } = fs;
 const { dirname, join } = path;
@@ -174,13 +175,15 @@ app.post('/', async (req, res) => {
     const xmlContent = req.body;
     let tempXML = null;
     let tempHTML = null;
+    let tempHTMLMeasured = null;
     let tempPDF = null;
 
     try {
         tempXML = fileSync({ prefix: 'input-', postfix: '.xml', keep: false }).name;
         const pagedJsPath = join(__dirname, 'paged-js');
         const jobId = Math.random().toString(36).substring(2, 8); 
-        tempHTML = join(pagedJsPath, `output-${jobId}.html`); 
+        tempHTML = join(pagedJsPath, `output-${jobId}.html`);
+        tempHTMLMeasured = join(pagedJsPath, `output-${jobId}-measured.html`);
         tempPDF = fileSync({ prefix: 'final-', postfix: '.pdf', keep: true }).name;
 
         console.log("Starting XSLT transformation...");
@@ -188,8 +191,11 @@ app.post('/', async (req, res) => {
         writeFileSync(tempHTML, htmlContent);
         console.log(`HTML written to ${tempHTML}`);
 
+        await measureTablesWithPuppeteer(tempHTML, tempHTMLMeasured);
+        console.log(`Measured HTML written to ${tempHTMLMeasured}`);
+
         console.log("Starting PDF generation...");
-        await generatePDF(tempHTML, tempPDF);
+        await generatePDF(tempHTMLMeasured, tempPDF);
         console.log(`PDF successfully generated to ${tempPDF}`);
 
         res.setHeader('Content-Type', 'application/pdf');
@@ -198,13 +204,13 @@ app.post('/', async (req, res) => {
         const pdfStream = createReadStream(tempPDF);
         pdfStream.pipe(res);
 
-        pdfStream.on('close', () => cleanupFiles([tempXML, tempHTML, tempPDF]));
+        pdfStream.on('close', () => cleanupFiles([tempXML, tempHTML, tempHTMLMeasured, tempPDF]));
 
 
     } catch (error) {
         console.error("Pipeline error:", error.message);
         res.status(500).send({ error: `Conversion pipeline failed: ${error.message}` });
-        cleanupFiles([tempXML, tempHTML, tempPDF])
+        cleanupFiles([tempXML, tempHTML, tempHTMLMeasured, tempPDF])
     }
 });
 

@@ -1,14 +1,25 @@
+.table-wrap {
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+
 table {
   table-layout: auto;
-  border-collapse: collapse;
+  border-collapse: separate;
   border-spacing: 0;
   font-size: .8em;
-  margin: 10px 0;
+  margin: 0 auto;
+  max-width: 100%;
+}
+
+table.wide {
+  --offset: 200px;
 }
 
 tr {
   display: table-row;
-  page-break-inside: avoid;
+  page-break-inside: avoid !important;
+  break-inside: avoid !important;
 }
 
 /* add a border to the top of split tables */
@@ -18,18 +29,101 @@ table[data-split-from] > *:first-child > tr:first-child > *:is(tr, td) {
 
 th, td {
   border-bottom: 1px solid var(--color-elife-grey);
-  padding: .375rem;
+  padding: 1px;
   min-width: 1px;
   box-sizing: border-box;
-  page-break-inside: avoid;
+  page-break-inside: avoid !important;
+  break-inside: avoid !important;
 }
 
-thead th {
+td {
+  text-align: left;
+  vertical-align: top;
+}
+
+th {
   border-bottom-color: var(--color-elife-black);
   font-weight: 600;
   color: var(--color-elife-grey);
+  text-align: center;
+  vertical-align: bottom;
 }
 
+td > div, th > div {
+  break-inside: avoid !important;
+  display: contents;
+}
+
+td img, th img {
+  break-after: avoid;
+  break-before: avoid;
+}
+
+td br, th br {
+  display: inline !important;
+}
+
+td.align-left,th.align-left {
+  text-align: left;
+}
+
+td.align-center,th.align-center {
+  text-align: center;
+}
+
+td.align-right,th.align-right {
+  text-align: right;
+}
+
+td.valign-top,th.valign-top {
+  vertical-align: top;
+}
+
+td.valign-middle,th.valign-middle {
+  vertical-align: middle;
+}
+
+td.valign-bottom,th.valign-bottom {
+  vertical-align: bottom;
+}
+
+table span.line-break {
+  display: block;
+  break-inside: avoid;
+  break-before: avoid;
+  break-after: avoid;
+  margin: 0;
+  padding: 0;
+  line-height: 1px;
+}
+
+.table__caption {
+  caption-side: top;
+  text-align: left;
+  margin-bottom: 0.5em;
+  break-inside: avoid;
+  break-after: avoid;
+  width: var(--column-width);
+  max-width: 100%;
+  font-family: var(--font-sans);
+  font-size: 10px;
+  line-height: 1.2;
+}
+
+.table__caption h3 {
+  font-size: 11px;
+  font-weight: 600;
+  margin: 5px 0;
+}
+
+.table__caption p {
+  margin: 2px 0;
+}
+
+.table-wrap-foot p {
+  font-size: 9px;
+  line-height: 10px;
+}
 
 /* 
 +===========================+
@@ -42,6 +136,7 @@ table[data-id="funding-table"] {
   table-layout: fixed;
   width: 90%;
   margin-right: auto;
+  margin: 10px 0;
 }
 
 #funding-table th,
@@ -49,6 +144,7 @@ table[data-id="funding-table"] {
 table[data-id="funding-table"] td,
 table[data-id="funding-table"] th {
   text-align: left;
+  vertical-align: middle;
 }
 
 #funding-table th:first-child,
