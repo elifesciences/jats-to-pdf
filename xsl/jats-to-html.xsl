@@ -506,6 +506,26 @@
     
     <xsl:template name="get-name" match="name|string-name|name-alternatives">
         <xsl:param name="order" select="'forwards'"/>
+        <xsl:variable name="is-cjk" select="matches(@xml:lang,'^(zh|js|ko)')"/>
+        <xsl:choose>
+            <!-- Introduce class for certain scripts to coerce font -->
+            <xsl:when test="$is-cjk">
+                <span class="cjk">
+                    <xsl:call-template name="get-name-inner">
+                        <xsl:with-param name="order" select="$order"/>
+                    </xsl:call-template>
+                </span>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:call-template name="get-name-inner">
+                    <xsl:with-param name="order" select="$order"/>
+                </xsl:call-template>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+    
+    <xsl:template name="get-name-inner">
+        <xsl:param name="order" select="'forwards'"/>
         <xsl:choose>
             <xsl:when test="self::name-alternatives">
                 <xsl:apply-templates select="*[1]"/>
