@@ -93,9 +93,7 @@ export async function measureTablesWithPuppeteer(inputPath, outputPath) {
             const img = cell.querySelector('img');
             if (img && img.naturalWidth && img.naturalHeight) {
               const aspectRatio = img.naturalWidth / img.naturalHeight;
-              // Calculate ideal column width based on aspect ratio and max height
-              const idealWidth = Math.ceil((aspectRatio * maxImageHeight)/2);
-              // Keep the widest image width for this column
+              const idealWidth = Math.ceil(aspectRatio * maxImageHeight);
               const existing = imageColWidths.get(colIndex) || 0;
               imageColWidths.set(colIndex, Math.max(existing, idealWidth));
             }
@@ -103,28 +101,79 @@ export async function measureTablesWithPuppeteer(inputPath, outputPath) {
           });
         });
         
-        // Second pass: measure all column widths, using image-based widths where applicable
+        // Find reference row for colspan handling
         const referenceRow = rows.reduce((prev, curr) => 
           curr.children.length > prev.children.length ? curr : prev
         , rows[0]);
         
+        // Second pass: measure all rows with intelligent nowrap
+        const colWidthsAllRows = new Map();
+        const rowspanTracker = new Map();
+        
+        rows.forEach((row, rowIdx) => {
+          let colIndex = 0;
+          
+          Array.from(row.children).forEach(cell => {
+            // Skip columns occupied by rowspan from previous rows
+            while (rowspanTracker.has(`${rowIdx}-${colIndex}`)) {
+              colIndex++;
+            }
+            
+            const colspan = parseInt(cell.getAttribute('colspan') || '1');
+            const rowspan = parseInt(cell.getAttribute('rowspan') || '1');
+            
+            // Mark future rows as occupied if this cell has rowspan
+            if (rowspan > 1) {
+              for (let r = 1; r < rowspan; r++) {
+                for (let c = 0; c < colspan; c++) {
+                  rowspanTracker.set(`${rowIdx + r}-${colIndex + c}`, true);
+                }
+              }
+            }
+            
+            if (!imageColWidths.has(colIndex)) {
+              const originalWhiteSpace = cell.style.whiteSpace;
+              const textContent = cell.textContent.trim();
+              
+              if (textContent.length < 100) {
+                cell.style.whiteSpace = 'nowrap';
+              }
+              
+              const width = cell.getBoundingClientRect().width;
+              cell.style.whiteSpace = originalWhiteSpace;
+              
+              if (colspan === 1) {
+                // Single column - use width directly
+                const existing = colWidthsAllRows.get(colIndex) || 0;
+                colWidthsAllRows.set(colIndex, Math.max(existing, width));
+              } else {
+                // Colspan - distribute width across spanned columns
+                const widthPerCol = width / colspan;
+                for (let c = 0; c < colspan; c++) {
+                  const existing = colWidthsAllRows.get(colIndex + c) || 0;
+                  colWidthsAllRows.set(colIndex + c, Math.max(existing, widthPerCol));
+                }
+              }
+            }
+            
+            colIndex += colspan;
+          });
+        });
+        
+        // Build final column widths array
         const colWidths = [];
         let colIndex = 0;
         Array.from(referenceRow.children).forEach(cell => {
           const colspan = parseInt(cell.getAttribute('colspan') || '1');
           
           if (colspan === 1 && imageColWidths.has(colIndex)) {
-            // Use image-based width for this column
             colWidths.push(imageColWidths.get(colIndex));
+          } else if (colspan === 1 && colWidthsAllRows.has(colIndex)) {
+            colWidths.push(colWidthsAllRows.get(colIndex));
           } else {
-            // Use measured width
             const width = cell.getBoundingClientRect().width;
-            if (colspan === 1) {
-              colWidths.push(width);
-            } else {
-              const partWidth = width / colspan;
-              for (let i = 0; i < colspan; i++) colWidths.push(partWidth);
-            }
+            const partWidth = width / colspan;
+            for (let i = 0; i < colspan; i++) colWidths.push(partWidth);
           }
           
           colIndex += colspan;
