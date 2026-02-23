@@ -23,6 +23,7 @@ function normalizePdfHtml(html) {
         }
       });
       element.removeAttribute('id');
+      element.removeAttribute('width');
       if (element.hasAttribute('class') && element.classList.length === 0) {
         element.removeAttribute('class');
       }
