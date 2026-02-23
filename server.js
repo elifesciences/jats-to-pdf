@@ -134,6 +134,10 @@ export async function generatePDF(htmlPath, outputPath, htmlOnly = false) {
         }
         exec(command, { maxBuffer: 1024 * 5000 }, (error, stdout, stderr) => {
             if (error) {
+                // Ignore benign errors
+                if (fs.existsSync(outputPath)) {
+                    return resolve();
+                }
                 console.error(`Paged.js CLI failed: ${error.message}`);
                 console.error(`Stdout: ${stdout}`);
                 console.error(`Stderr: ${stderr}`);
