@@ -38,12 +38,9 @@ export async function measureTablesWithPuppeteer(inputPath, outputPath) {
   
   try {
     const page = await browser.newPage();
-    
-    // Set viewport
     await page.setViewport({ width: 816, height: 1056 });
     await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
     
-    // Wait for fonts and images to load
     await page.evaluateHandle('document.fonts.ready');
     await page.evaluate(() => {
       return Promise.all(
@@ -57,145 +54,156 @@ export async function measureTablesWithPuppeteer(inputPath, outputPath) {
     });
     await new Promise(resolve => setTimeout(resolve, 500));
     
-    // Run measurement and get CSS
     const fragmentCSS = await page.evaluate(() => {
       const physicalPageWidth = 816;
       const pageMargins = 100;
       const maxAvailableWidth = physicalPageWidth - pageMargins; // 716px
       const designOffset = 180;
       const standardWidth = maxAvailableWidth - designOffset; // 536px
-
-      // Maximum height we want images to be in a table cell
       const maxImageHeight = 80;
+      const maxColumnWidth = 500; 
       
       const tables = document.querySelectorAll('table:not(#funding-table)');
       let css = '';
       
       tables.forEach(table => {
-        // Ensure table has ID
         if (!table.id) {
           table.id = `table-${Math.random().toString(36).substr(2, 9)}`;
         }
-        
         const tableId = table.id;
         
-        // Measure columns from actual rendered table
+        const allCells = table.querySelectorAll('td, th');
+        allCells.forEach(cell => cell.style.whiteSpace = 'nowrap');
+        table.offsetHeight; // Force reflow
+        
         const rows = Array.from(table.querySelectorAll('tr'));
         if (rows.length === 0) return;
+        
+        // STEP 1: Map the table grid to account for rowspans and colspans
+        const cellMap = []; 
+        const grid = []; 
+        let maxCols = 0;
 
-        // First pass: find columns that contain images and calculate
-        // their ideal width based on aspect ratio and max height
-        const imageColWidths = new Map();
-        rows.forEach(row => {
-          let colIndex = 0;
-          Array.from(row.children).forEach(cell => {
-            const colspan = parseInt(cell.getAttribute('colspan') || '1');
-            const img = cell.querySelector('img');
-            if (img && img.naturalWidth && img.naturalHeight) {
-              const aspectRatio = img.naturalWidth / img.naturalHeight;
-              const idealWidth = Math.ceil(aspectRatio * maxImageHeight);
-              const existing = imageColWidths.get(colIndex) || 0;
-              imageColWidths.set(colIndex, Math.max(existing, idealWidth));
-            }
-            colIndex += colspan;
-          });
-        });
-        
-        // Find reference row for colspan handling
-        const referenceRow = rows.reduce((prev, curr) => 
-          curr.children.length > prev.children.length ? curr : prev
-        , rows[0]);
-        
-        // Second pass: measure all rows with intelligent nowrap
-        const colWidthsAllRows = new Map();
-        const rowspanTracker = new Map();
-        
-        rows.forEach((row, rowIdx) => {
+        rows.forEach((row, rowIndex) => {
+          if (!grid[rowIndex]) grid[rowIndex] = [];
           let colIndex = 0;
           
           Array.from(row.children).forEach(cell => {
-            // Skip columns occupied by rowspan from previous rows
-            while (rowspanTracker.has(`${rowIdx}-${colIndex}`)) {
+            // Skip columns already occupied by a rowspan from above
+            while (grid[rowIndex][colIndex]) {
               colIndex++;
             }
             
             const colspan = parseInt(cell.getAttribute('colspan') || '1');
             const rowspan = parseInt(cell.getAttribute('rowspan') || '1');
             
-            // Mark future rows as occupied if this cell has rowspan
-            if (rowspan > 1) {
-              for (let r = 1; r < rowspan; r++) {
-                for (let c = 0; c < colspan; c++) {
-                  rowspanTracker.set(`${rowIdx + r}-${colIndex + c}`, true);
-                }
+            // Mark the grid space as occupied
+            for (let r = 0; r < rowspan; r++) {
+              for (let c = 0; c < colspan; c++) {
+                if (!grid[rowIndex + r]) grid[rowIndex + r] = [];
+                grid[rowIndex + r][colIndex + c] = true;
               }
             }
             
-            if (!imageColWidths.has(colIndex)) {
-              const originalWhiteSpace = cell.style.whiteSpace;
-              const textContent = cell.textContent.trim();
-              
-              if (textContent.length < 100) {
-                cell.style.whiteSpace = 'nowrap';
-              }
-              
-              const width = cell.getBoundingClientRect().width;
-              cell.style.whiteSpace = originalWhiteSpace;
-              
-              if (colspan === 1) {
-                // Single column - use width directly
-                const existing = colWidthsAllRows.get(colIndex) || 0;
-                colWidthsAllRows.set(colIndex, Math.max(existing, width));
-              } else {
-                // Colspan - distribute width across spanned columns
-                const widthPerCol = width / colspan;
-                for (let c = 0; c < colspan; c++) {
-                  const existing = colWidthsAllRows.get(colIndex + c) || 0;
-                  colWidthsAllRows.set(colIndex + c, Math.max(existing, widthPerCol));
-                }
-              }
-            }
-            
+            cellMap.push({ cell, rowIndex, colIndex, colspan, rowspan });
+            maxCols = Math.max(maxCols, colIndex + colspan);
             colIndex += colspan;
           });
         });
+
+        // STEP 2: Measure column widths based on our accurate grid map
+        const columnWidths = new Array(maxCols).fill(0);
+        const colspanCells = [];
         
-        // Build final column widths array
-        const colWidths = [];
-        let colIndex = 0;
-        Array.from(referenceRow.children).forEach(cell => {
-          const colspan = parseInt(cell.getAttribute('colspan') || '1');
+        cellMap.forEach(({ cell, colIndex, colspan }) => {
+          let cellWidth = cell.getBoundingClientRect().width;
           
-          if (colspan === 1 && imageColWidths.has(colIndex)) {
-            colWidths.push(imageColWidths.get(colIndex));
-          } else if (colspan === 1 && colWidthsAllRows.has(colIndex)) {
-            colWidths.push(colWidthsAllRows.get(colIndex));
-          } else {
-            const width = cell.getBoundingClientRect().width;
-            const partWidth = width / colspan;
-            for (let i = 0; i < colspan; i++) colWidths.push(partWidth);
+          const img = cell.querySelector('img');
+          if (img && img.naturalWidth && img.naturalHeight && colspan === 1) {
+            const aspectRatio = img.naturalWidth / img.naturalHeight;
+            const calculatedImgWidth = Math.ceil(aspectRatio * maxImageHeight);
+            cellWidth = Math.max(cellWidth, calculatedImgWidth);
           }
-          
-          colIndex += colspan;
+
+          if (colspan === 1) {
+            columnWidths[colIndex] = Math.max(columnWidths[colIndex], cellWidth);
+          } else {
+            colspanCells.push({ cell, colIndex, colspan, cellWidth });
+          }
+        });
+
+        // STEP 3: Distribute colspan widths proportionally
+        colspanCells.sort((a, b) => a.colspan - b.colspan);
+        colspanCells.forEach(({ colIndex, colspan, cellWidth }) => {
+          let cumulativeWidth = 0;
+          for (let c = 0; c < colspan; c++) {
+            cumulativeWidth += columnWidths[colIndex + c];
+          }
+
+          if (cellWidth > cumulativeWidth) {
+            const extraWidth = cellWidth - cumulativeWidth;
+            if (cumulativeWidth > 0) {
+              for (let c = 0; c < colspan; c++) {
+                const ratio = columnWidths[colIndex + c] / cumulativeWidth;
+                columnWidths[colIndex + c] += (extraWidth * ratio);
+              }
+            } else {
+              const widthPerCol = extraWidth / colspan;
+              for (let c = 0; c < colspan; c++) {
+                columnWidths[colIndex + c] += widthPerCol;
+              }
+            }
+          }
         });
         
-        const totalWidth = colWidths.reduce((sum, w) => sum + w, 0);
-        
-        let marginLeft = 0;
-        let scaleFactor = 1;
-        let finalWidth = totalWidth;
-        
-        if (totalWidth > standardWidth) {
-          if (totalWidth <= maxAvailableWidth) {
-            marginLeft = -(totalWidth - standardWidth);
-          } else {
-            marginLeft = -designOffset;
-            finalWidth = maxAvailableWidth;
-            scaleFactor = maxAvailableWidth / totalWidth;
-          }
+        // Enforce max column width
+        for (let i = 0; i < columnWidths.length; i++) {
+          columnWidths[i] = Math.min(columnWidths[i], maxColumnWidth);
         }
         
-        // Generate CSS
+        // STEP 4: Attempt scale down if table exceeds max available width
+        let totalWidth = columnWidths.reduce((sum, w) => sum + w, 0);
+        if (totalWidth > maxAvailableWidth) {
+          const scaleFactor = maxAvailableWidth / totalWidth;
+          for (let i = 0; i < columnWidths.length; i++) {
+            columnWidths[i] = columnWidths[i] * scaleFactor;
+          }
+          totalWidth = maxAvailableWidth;
+        }
+        
+        // STEP 5: Inject Colgroup directly into HTML
+        const existingColgroup = table.querySelector('colgroup');
+        if (existingColgroup) existingColgroup.remove();
+        
+        const colgroup = document.createElement('colgroup');
+        columnWidths.forEach(width => {
+          const col = document.createElement('col');
+          col.style.width = `${width}px`;
+          colgroup.appendChild(col);
+        });
+        table.insertBefore(colgroup, table.firstChild);
+
+        // STEP 6: Apply inline image styles using exact grid data
+        cellMap.forEach(({ cell, colIndex, colspan }) => {
+          const img = cell.querySelector('img');
+          if (img && colspan === 1) {
+            const aspectRatio = img.naturalWidth / img.naturalHeight;
+            const colWidth = columnWidths[colIndex];
+            const widthByMaxHeight = aspectRatio * maxImageHeight;
+            const finalWidth = Math.min(colWidth, widthByMaxHeight);
+            const finalHeight = finalWidth / aspectRatio;
+
+            img.style.width = `${finalWidth}px`;
+            img.style.height = `${finalHeight}px`;
+            img.style.display = 'block';
+            img.style.margin = '0 auto';
+            img.style.objectFit = 'contain';
+          }
+        });
+
+        // STEP 7: Generate Base CSS for margins and word-wrapping
+        let marginLeft = totalWidth > standardWidth ? -(totalWidth - standardWidth) : 0;
+        const captionWidth = Math.max(standardWidth, totalWidth);
         const wrapper = table.closest('.table-wrap');
         
         if (wrapper) {
@@ -211,61 +219,41 @@ export async function measureTablesWithPuppeteer(inputPath, outputPath) {
         css += `
 table#${tableId},
 table[data-id="${tableId}"] {
-  width: ${finalWidth}px !important;
+  width: ${totalWidth}px !important;
   margin-left: ${wrapper ? '0px' : marginLeft + 'px'} !important;
   table-layout: fixed !important;
 }
-`;
-        
-        // Table footer - match table width
-        css += `
+
+table#${tableId} td,
+table#${tableId} th,
+table[data-id="${tableId}"] td,
+table[data-id="${tableId}"] th {
+  box-sizing: border-box !important;
+  white-space: normal !important;
+  word-wrap: break-word !important;
+  overflow-wrap: break-word !important;
+}
+
 .table-wrap:has(#${tableId}) .table-wrap-foot,
 .table-wrap:has(table[data-id="${tableId}"]) .table-wrap-foot {
-  width: ${finalWidth}px !important;
+  width: ${totalWidth}px !important;
   margin-left: 0 !important;
   margin-right: 0 !important;
   box-sizing: border-box !important;
 }
-`;
-        
-        // Column widths and image sizing based on aspect ratio
-        colWidths.forEach((width, idx) => {
-          const scaledWidth = width * scaleFactor;
-          
-          // Calculate image height based on scaled column width and aspect ratio
-          const imageHeight = imageColWidths.has(idx)
-            ? Math.ceil(scaledWidth / (imageColWidths.get(idx) / maxImageHeight))
-            : maxImageHeight;
 
-          css += `
-table#${tableId} tr > *:nth-child(${idx + 1}),
-table[data-id="${tableId}"] tr > *:nth-child(${idx + 1}) {
-  width: ${scaledWidth}px !important;
-  min-width: ${scaledWidth}px !important;
-  max-width: ${scaledWidth}px !important;
+.table-wrap:has(#${tableId}) .table__caption {
+  width: ${captionWidth}px !important;
+  max-width: ${captionWidth}px !important;
+  margin-left: 0 !important;
   box-sizing: border-box !important;
 }
 `;
-
-          // Only add image rules for columns that contain images
-          if (imageColWidths.has(idx)) {
-            css += `
-table#${tableId} tr > *:nth-child(${idx + 1}) img,
-table[data-id="${tableId}"] tr > *:nth-child(${idx + 1}) img {
-  width: ${scaledWidth}px !important;
-  height: ${imageHeight}px !important;
-  display: block !important;
-  object-fit: contain !important;
-}
-`;
-          }
-        });
       });
       
       return css;
     });
     
-    // Inject the CSS into the page
     await page.evaluate((css) => {
       const style = document.createElement('style');
       style.id = 'puppeteer-table-measurements';
