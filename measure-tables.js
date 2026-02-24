@@ -26,7 +26,7 @@ export async function measureTablesWithPuppeteer(inputPath, outputPath) {
   // Skip Puppeteer entirely if no relevant tables exist
   if (!hasTables(htmlContent)) {
     console.log('No tables found, skipping Puppeteer table measurement...');
-    await fs.copyFile(inputPath, outputPath);
+    await fs.writeFile(outputPath, htmlContent);
     return;
   }
   
