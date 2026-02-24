@@ -1307,7 +1307,7 @@
     <!-- position='float' => A floating image that is placed on it's own page -->
     <xsl:template mode="float" match="fig|table-wrap">
         <xsl:choose>
-            <xsl:when test="name()='table-wrap' and descendant::table">
+            <xsl:when test="name()='table-wrap' and descendant::table and not(preceding-sibling::node()[not(self::text())][1]/self::processing-instruction('table-escape'))">
                 <xsl:apply-templates select="self::*"/>
             </xsl:when>
             <xsl:otherwise>
@@ -1334,7 +1334,7 @@
     <!-- position='anchor' => An inline image that is placed in the flow of text -->
     <xsl:template mode="anchor" match="fig|table-wrap">
         <xsl:choose>
-            <xsl:when test="name()='table-wrap' and descendant::table">
+            <xsl:when test="name()='table-wrap' and descendant::table and not(preceding-sibling::node()[not(self::text())][1]/self::processing-instruction('table-escape'))">
                 <xsl:apply-templates select="self::*"/>
             </xsl:when>
             <xsl:otherwise>
@@ -1408,9 +1408,16 @@
     </xsl:template>
     
     <xsl:template match="table-wrap[descendant::table]">
-        <div class="table-wrap">
-            <xsl:apply-templates select="@id|caption|descendant::table|descendant::table-wrap-foot|processing-instruction()"/>
-        </div>
+        <xsl:choose>
+            <xsl:when test="preceding-sibling::node()[not(self::text())][1]/self::processing-instruction('table-escape')">
+                <xsl:apply-templates mode="anchor" select="self::*"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <div class="table-wrap">
+                    <xsl:apply-templates select="@id|caption|descendant::table|descendant::table-wrap-foot|processing-instruction()"/>
+                </div>
+            </xsl:otherwise>
+        </xsl:choose>
     </xsl:template>
     
     <xsl:template match="table-wrap[descendant::table]/label">
