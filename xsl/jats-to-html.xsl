@@ -1305,42 +1305,56 @@
     </xsl:template>
     
     <!-- position='float' => A floating image that is placed on it's own page -->
-    <xsl:template mode="float" match="fig|table-wrap[graphic and not(descendant::table)]">
-        <xsl:variable name="class" select="if (self::table-wrap) then 'table tofill'
-            else 'figure tofill'"/>
-        <figure class="{$class}">
-            <xsl:apply-templates select="@id"/>
-            <xsl:apply-templates select="caption"/>
-            <xsl:if test="not(caption)">
-                <figcaption class="figure__caption">
-                    <h3>
-                        <span class="label figure-name">
-                            <xsl:apply-templates select="label"/>
-                        </span>
-                    </h3>
-                </figcaption>
-            </xsl:if>
-            <xsl:apply-templates select="descendant::graphic[not(ancestor::caption)]"/>
-        </figure>
+    <xsl:template mode="float" match="fig|table-wrap">
+        <xsl:choose>
+            <xsl:when test="name()='table-wrap' and descendant::table">
+                <xsl:apply-templates select="self::*"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:variable name="class" select="if (self::table-wrap) then 'table tofill'
+                    else 'figure tofill'"/>
+                <figure class="{$class}">
+                    <xsl:apply-templates select="@id"/>
+                    <xsl:apply-templates select="caption"/>
+                    <xsl:if test="not(caption)">
+                        <figcaption class="figure__caption">
+                            <h3>
+                                <span class="label figure-name">
+                                    <xsl:apply-templates select="label"/>
+                                </span>
+                            </h3>
+                        </figcaption>
+                    </xsl:if>
+                    <xsl:apply-templates select="descendant::graphic[not(ancestor::caption)]"/>
+                </figure>
+            </xsl:otherwise>
+         </xsl:choose>
     </xsl:template>
     
     <!-- position='anchor' => An inline image that is placed in the flow of text -->
-    <xsl:template mode="anchor" match="fig|table-wrap[graphic and not(descendant::table)]">
-        <xsl:variable name="class" select="if (self::table-wrap) then 'fig-group table'
-            else 'fig-group figure'"/>
-        <div class="{$class}">
-            <xsl:apply-templates select="@id"/>
-            <xsl:apply-templates select="descendant::graphic[not(ancestor::caption)]"/>
-            <xsl:apply-templates mode="inline" select="caption"/>
-            <xsl:if test="label and not(caption)">
-                <p class="figure__caption">
-                    <span class="label figure-name">
-                        <xsl:apply-templates select="label"/>
-                    </span>
-                </p>
-            </xsl:if>
-            <xsl:apply-templates select="permissions|attrib"/>
-        </div>
+    <xsl:template mode="anchor" match="fig|table-wrap">
+        <xsl:choose>
+            <xsl:when test="name()='table-wrap' and descendant::table">
+                <xsl:apply-templates select="self::*"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:variable name="class" select="if (self::table-wrap) then 'fig-group table'
+                    else 'fig-group figure'"/>
+                <div class="{$class}">
+                    <xsl:apply-templates select="@id"/>
+                    <xsl:apply-templates select="descendant::graphic[not(ancestor::caption)]"/>
+                    <xsl:apply-templates mode="inline" select="caption"/>
+                    <xsl:if test="label and not(caption)">
+                        <p class="figure__caption">
+                            <span class="label figure-name">
+                                <xsl:apply-templates select="label"/>
+                            </span>
+                        </p>
+                    </xsl:if>
+                    <xsl:apply-templates select="permissions|attrib"/>
+                </div>
+            </xsl:otherwise>
+        </xsl:choose>
     </xsl:template>
     
     <xsl:template match="graphic[not(ancestor::caption) and (ancestor::fig or ancestor::table-wrap)]">
