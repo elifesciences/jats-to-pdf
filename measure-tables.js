@@ -161,14 +161,64 @@ export async function measureTablesWithPuppeteer(inputPath, outputPath) {
           columnWidths[i] = Math.min(columnWidths[i], maxColumnWidth);
         }
         
+        // STEP 3.5: Measure minimum content widths (longest word per column)
+        const minColumnWidths = new Array(maxCols).fill(0);
+        
+        allCells.forEach(cell => {
+          cell.style.whiteSpace = 'normal';
+          cell.style.width = '1px';
+        });
+        table.offsetHeight;
+        
+        cellMap.forEach(({ cell, colIndex, colspan }) => {
+          const minWidth = cell.getBoundingClientRect().width;
+          
+          if (colspan === 1) {
+            minColumnWidths[colIndex] = Math.max(minColumnWidths[colIndex], minWidth);
+          } else {
+            const minPerCol = minWidth / colspan;
+            for (let c = 0; c < colspan; c++) {
+              minColumnWidths[colIndex + c] = Math.max(minColumnWidths[colIndex + c], minPerCol);
+            }
+          }
+        });
+        
+        // Enforce max on minimums too
+        for (let i = 0; i < minColumnWidths.length; i++) {
+          minColumnWidths[i] = Math.min(minColumnWidths[i], maxColumnWidth);
+        }
+        
+        // Reset cells
+        allCells.forEach(cell => {
+          cell.style.whiteSpace = 'nowrap';
+          cell.style.width = '';
+        });
+        table.offsetHeight;
+        
         // STEP 4: Attempt scale down if table exceeds max available width
         let totalWidth = columnWidths.reduce((sum, w) => sum + w, 0);
+        let fontSizeScale = 1;
+        
         if (totalWidth > maxAvailableWidth) {
           const scaleFactor = maxAvailableWidth / totalWidth;
+          
+          // Apply scaling but enforce minimum content widths
           for (let i = 0; i < columnWidths.length; i++) {
-            columnWidths[i] = columnWidths[i] * scaleFactor;
+            const scaledWidth = columnWidths[i] * scaleFactor;
+            columnWidths[i] = Math.max(scaledWidth, minColumnWidths[i]);
           }
-          totalWidth = maxAvailableWidth;
+          
+          totalWidth = columnWidths.reduce((sum, w) => sum + w, 0);
+          
+          // If still too wide after enforcing minimums, reduce font size and scale columns
+          if (totalWidth > maxAvailableWidth) {
+            fontSizeScale = maxAvailableWidth / totalWidth;
+            // Scale the columns down to fit
+            for (let i = 0; i < columnWidths.length; i++) {
+              columnWidths[i] = columnWidths[i] * fontSizeScale;
+            }
+            totalWidth = maxAvailableWidth;
+          }
         }
         
         // STEP 5: Inject Colgroup directly into HTML
@@ -222,6 +272,7 @@ table[data-id="${tableId}"] {
   width: ${totalWidth}px !important;
   margin-left: ${wrapper ? '0px' : marginLeft + 'px'} !important;
   table-layout: fixed !important;
+  font-size: calc(0.8em * ${fontSizeScale}) !important;
 }
 
 table#${tableId} td,
