@@ -1869,6 +1869,12 @@
         </em>
     </xsl:template>
     
+    <xsl:template match="underline">
+        <span class="underline">
+            <xsl:apply-templates select="node()"/>
+        </span>
+    </xsl:template>
+    
     <!-- To do: Fix this semantically -->
     <xsl:template match="monospace">
         <code>
