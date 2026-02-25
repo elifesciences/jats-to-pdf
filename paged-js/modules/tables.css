@@ -12,10 +12,6 @@ table {
   max-width: 100%;
 }
 
-table.wide {
-  --offset: 200px;
-}
-
 tr {
   display: table-row;
   page-break-inside: avoid !important;
@@ -23,7 +19,7 @@ tr {
 }
 
 /* add a border to the top of split tables */
-table[data-split-from] > *:first-child > tr:first-child > *:is(tr, td) {
+table[data-split-from] > :is(thead, tbody):first-of-type > tr:first-child > :is(th, td) {
   border-top: 1px solid var(--color-elife-grey);
 }
 
@@ -87,16 +83,6 @@ td.valign-bottom,th.valign-bottom {
   vertical-align: bottom;
 }
 
-table span.line-break {
-  display: block;
-  break-inside: avoid;
-  break-before: avoid;
-  break-after: avoid;
-  margin: 0;
-  padding: 0;
-  line-height: 1px;
-}
-
 .table__caption {
   caption-side: top;
   text-align: left;
@@ -124,6 +110,7 @@ table span.line-break {
   font-size: 9px;
   line-height: 10px;
   margin-top: 2px;
+  break-before: avoid;
 }
 
 /* 
