@@ -1452,9 +1452,15 @@
         </xsl:copy>
     </xsl:template>
     
+    <xsl:template match="tr">
+        <xsl:copy>
+            <xsl:apply-templates select="@*|node()|processing-instruction()"/>
+        </xsl:copy>
+    </xsl:template>
+    
     <xsl:template match="td|th">
         <xsl:copy>
-            <xsl:apply-templates select="@colspan|@rowspan"/>
+            <xsl:apply-templates select="@colspan|@rowspan|@style"/>
             <xsl:if test="@align or @valign">
                 <xsl:variable name="class" select="if (@align and @valign) then concat('align-',@align,' valign-',@valign)
                                                    else if (@align) then concat('align-',@align)
@@ -1469,9 +1475,7 @@
         </xsl:copy>
     </xsl:template>
     
-    <!-- Use span instead of br because pagedJS will break on a br -->
     <xsl:template match="break">
-        <!--<span class="line-break">&#8203;</span>-->
         <br/>
     </xsl:template>
     
