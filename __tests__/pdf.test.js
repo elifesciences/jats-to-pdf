@@ -15,6 +15,20 @@ function updateImagePaths(htmlString) {
 function normalizePdfHtml(html) {
   const document = new DOMParser().parseFromString(html, 'text/html');
   document.querySelectorAll('script, style').forEach(el => el.remove());
+
+  // Ignore PagedJS pagination wrappers, but preserve their content
+  const pagedJsSelectors = [
+    '.pagedjs_page',
+    '.pagedjs_area',
+    '.pagedjs_page_content',
+    '.pagedjs_pages',
+  ];
+  pagedJsSelectors.forEach(selector => {
+    document.querySelectorAll(selector).forEach(el => {
+      el.replaceWith(...el.childNodes);
+    });
+  });
+
   const cleanTree = root => {
     root.querySelectorAll('*').forEach(element => {
       [...element.attributes].forEach(attr => {
