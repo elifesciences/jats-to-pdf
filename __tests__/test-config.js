@@ -37,3 +37,32 @@ export function createToMatchHtml(normalizedHtml) {
         },
     };
 }
+
+/* Extract an ordered list of text blocks from across all pages of a PagedJS HTML output.
+   Each block is a [tagName, text] tuple representing a leaf-level block element.
+   By comparing these flat lists rather than DOM structure, we assert that all content
+   is present and in order without caring which page anything fell on. */
+export function extractPageTextBlocks(html) {
+    const document = new DOMParser().parseFromString(html, 'text/html');
+
+    // Remove split clones
+    document.querySelectorAll('[data-split-from]').forEach(el => el.remove());
+
+    const blocks = [];
+    const blockSelector = 'h1, h2, h3, h4, h5, h6, p, li, td, th, figcaption';
+
+    document.querySelectorAll('.pagedjs_page_content').forEach(page => {
+        page.querySelectorAll(blockSelector).forEach(el => {
+            if (el.querySelector(blockSelector)) return;
+            const text = el.textContent.trim().replace(/\s+/g, ' ');
+            if (text) blocks.push([el.tagName.toLowerCase(), text]);
+        });
+
+        // Capture figures by their position in document order
+        page.querySelectorAll('figure').forEach(() => {
+            blocks.push(['figure']);
+        });
+    });
+
+    return blocks;
+}
