@@ -1482,7 +1482,7 @@
     
     <xsl:template match="disp-formula[mml:math or alternatives/mml:math]">
         <div class="math-block">
-            <xsl:apply-templates select="mml:math | alternatives/mml:math" mode="mathml"/>
+            <xsl:apply-templates select="@id | mml:math | alternatives/mml:math" mode="mathml"/>
             <xsl:if test="label">
                 <span class="equation-label">
                     <xsl:value-of select="label"/>
@@ -1502,7 +1502,7 @@
         </xsl:element>
     </xsl:template>
     
-    <xsl:template match="text()" mode="mathml">
+    <xsl:template match="@*|text()" mode="mathml">
         <xsl:copy/>
     </xsl:template>
     
