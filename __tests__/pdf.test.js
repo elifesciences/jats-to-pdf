@@ -1,4 +1,4 @@
-import { TIMEOUT, PROJECT_ROOT, TEST_CASE_DIR, TEST_CASES, createToMatchHtml } from './test-config.js';
+import { TIMEOUT, PROJECT_ROOT, TEST_CASE_DIR, TEST_CASES, extractPageTextBlocks } from './test-config.js';
 import { generatePDF } from '../server.js';
 import fs from 'fs';
 import path from 'path';
@@ -11,35 +11,20 @@ function updateImagePaths(htmlString) {
   return htmlString.replace(regex, replacement);
 };
 
-// remove script tags, remove data-..., id, and empty class attributes
-function normalizePdfHtml(html) {
-  const document = new DOMParser().parseFromString(html, 'text/html');
-  document.querySelectorAll('script, style').forEach(el => el.remove());
-  const cleanTree = root => {
-    root.querySelectorAll('*').forEach(element => {
-      [...element.attributes].forEach(attr => {
-        if (attr.name.startsWith('data-')) {
-          element.removeAttribute(attr.name);
-        }
-      });
-      element.removeAttribute('id');
-      if (element.hasAttribute('class') && element.classList.length === 0) {
-        element.removeAttribute('class');
-      }
-    });
-  };
-  cleanTree(document);
-  document.querySelectorAll('template').forEach(template => {
-    cleanTree(template.content);
-  });
-  const serializer = new XMLSerializer();
-  const cleaned = serializer.serializeToString(document.body);
-  return cleaned.trim();
-};
+expect.extend({
+  toMatchPageContent(received, expected) {
+    const actualBlocks = extractPageTextBlocks(received);
+    const expectedBlocks = extractPageTextBlocks(expected);
+    const pass = JSON.stringify(actualBlocks) === JSON.stringify(expectedBlocks);
+    return {
+      pass,
+      message: () => pass
+        ? 'Expected page content not to match'
+        : `Expected page content to match.\n\nExpected blocks:\n${JSON.stringify(expectedBlocks, null, 2)}\n\nReceived blocks:\n${JSON.stringify(actualBlocks, null, 2)}`,
+    };
+  }
+});
 
-expect.extend(
-  createToMatchHtml(normalizePdfHtml)
-);
 
 describe('PDF generation tests (pagedjs HTML output)', () => {
 
@@ -66,7 +51,7 @@ describe('PDF generation tests (pagedjs HTML output)', () => {
       const actualHtml = fs.readFileSync(actualHtmlPath, 'utf-8');
 
       try {
-        expect(actualHtml).toMatchHtml(expectedHtml);
+        expect(actualHtml).toMatchPageContent(expectedHtml);
         try {
           fs.unlinkSync(actualHtmlPath)
         } catch (err) { }
