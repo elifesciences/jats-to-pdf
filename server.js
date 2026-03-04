@@ -144,7 +144,7 @@ export async function generatePDF(htmlPath, outputPath, htmlOnly = false) {
                 return reject(new Error(`PDF Generation Failed: ${error.message}`));
             }
             if (process.env.NODE_ENV !== 'test') {
-                if (stderr) {
+                if (stderr.trim()) {
                     console.warn(`Paged.js CLI warnings:\n${stderr}`);
                 }
             }
