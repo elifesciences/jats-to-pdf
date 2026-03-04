@@ -144,7 +144,7 @@ export async function generatePDF(htmlPath, outputPath, htmlOnly = false) {
                 return reject(new Error(`PDF Generation Failed: ${error.message}`));
             }
             if (process.env.NODE_ENV !== 'test') {
-                if (stderr) {
+                if (stderr.trim()) {
                     console.warn(`Paged.js CLI warnings:\n${stderr}`);
                 }
             }
@@ -196,7 +196,6 @@ app.post('/', async (req, res) => {
         console.log(`HTML written to ${tempHTML}`);
 
         await measureTablesWithPuppeteer(tempHTML, tempHTMLMeasured);
-        console.log(`Measured HTML written to ${tempHTMLMeasured}`);
 
         console.log("Starting PDF generation...");
         await generatePDF(tempHTMLMeasured, tempPDF);
@@ -228,10 +227,18 @@ app.get('/health', (req, res) => {
 async function startServer() {
     if (process.env.NODE_ENV !== 'test') {
         try {
-            await initializeAssets(); 
-            app.listen(port, () => {
+            await initializeAssets();
+            const server = app.listen(port, () => {
                 console.log(`PDF Conversion Service listening on port ${port}`);
-                console.log(`POST XML to http://localhost:${port}/ to start conversion.`); 
+                console.log(`POST XML to http://localhost:${port}/ to start conversion.`);
+            });
+
+            process.on('SIGTERM', () => {
+                console.log('SIGTERM received, shutting down gracefully');
+                server.close(() => {
+                    console.log('Server closed');
+                    process.exit(0);
+                });
             });
         } catch (error) {
             console.error("Server failed to start:", error.message);
