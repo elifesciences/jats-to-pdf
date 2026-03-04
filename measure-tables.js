@@ -314,6 +314,7 @@ table[data-id="${tableId}"] th {
     
     const modifiedHTML = await page.content();
     await fs.writeFile(outputPath, modifiedHTML);
+    console.log(`Measured HTML written to ${outputPath}`);
     
   } finally {
     await browser.close();

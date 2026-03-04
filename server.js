@@ -196,7 +196,6 @@ app.post('/', async (req, res) => {
         console.log(`HTML written to ${tempHTML}`);
 
         await measureTablesWithPuppeteer(tempHTML, tempHTMLMeasured);
-        console.log(`Measured HTML written to ${tempHTMLMeasured}`);
 
         console.log("Starting PDF generation...");
         await generatePDF(tempHTMLMeasured, tempPDF);
