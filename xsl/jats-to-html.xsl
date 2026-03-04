@@ -54,7 +54,7 @@
                       };
                 </xsl:text>
             </script>
-            <script id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/mml-chtml.js"></script>
+            <script id="MathJax-script" src="js/mathjax/mml-chtml.js"></script>
         </head>
     </xsl:variable>
     

@@ -45,6 +45,9 @@ async function initializeAssets() {
             mkdirSync(dir, { recursive: true });
         }
     });
+    if (!existsSync(join(__dirname, 'paged-js', 'js', 'mathjax', 'mml-chtml.js'))) {
+        copyMathJaxAssets();
+    }
     if (!existsSync(XSL_STYLESHEET)) {
         console.error(`\nCritical error: XSL file not found at: ${XSL_STYLESHEET}`);
         process.exit(1);
@@ -64,6 +67,19 @@ async function initializeAssets() {
         console.error(`\nCRITICAL ERROR: Failed to load or parse SEF file (${COMPILED_SEF}): ${e.message}. Shutting down.`);
         process.exit(1);
     }
+}
+
+function copyMathJaxAssets() {
+    const mathjaxEs5 = join(__dirname, 'node_modules', 'mathjax', 'es5');
+    const destDir = join(__dirname, 'paged-js', 'js', 'mathjax');
+    const fontsSrc = join(mathjaxEs5, 'output', 'chtml', 'fonts');
+    const fontsDest = join(destDir, 'output', 'chtml', 'fonts');
+    mkdirSync(join(fontsDest, 'woff-v2'), { recursive: true });
+    writeFileSync(join(destDir, 'mml-chtml.js'), readFileSync(join(mathjaxEs5, 'mml-chtml.js')));
+    writeFileSync(join(fontsDest, 'tex.js'), readFileSync(join(fontsSrc, 'tex.js')));
+    fs.readdirSync(join(fontsSrc, 'woff-v2')).forEach(file => {
+        writeFileSync(join(fontsDest, 'woff-v2', file), readFileSync(join(fontsSrc, 'woff-v2', file)));
+    });
 }
 
 export async function compileXsl() {
