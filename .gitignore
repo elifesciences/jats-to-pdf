@@ -9,6 +9,7 @@ final-document.pdf
 /*.html
 /xsl/*.html
 /paged-js/*.html
+/paged-js/js/mathjax/
 __tests__/test-cases/*.actual.html
 __tests__/test-cases/*.actual.pdf.html
 CLAUDE.md
