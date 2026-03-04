@@ -17,4 +17,4 @@ RUN mkdir -p node_modules/pagedjs-cli/docker-userdata
 COPY --chown=node:node . .
 USER node
 EXPOSE 3000
-CMD ["npm", "start"]
+CMD ["node", "server.js"]
