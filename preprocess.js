@@ -44,10 +44,7 @@ export async function preprocess(inputPath, outputPath) {
         console.log('Starting Puppeteer table measurement...');
     }
 
-    const browser = await puppeteer.launch({
-        headless: 'new',
-        args: ['--no-sandbox', '--disable-setuid-sandbox']
-    });
+    const browser = await puppeteer.launch({ headless: 'new' })
 
     try {
         const page = await browser.newPage();
