@@ -13,7 +13,7 @@ import fs from 'fs';
 import path from 'path';
 import tmp from 'tmp';
 import SaxonJS from 'saxon-js';
-import { measureTablesWithPuppeteer } from './measure-tables.js';
+import { preprocess } from './preprocess.js';
 
 const { readFileSync, mkdirSync, existsSync, writeFileSync, createReadStream, unlinkSync } = fs;
 const { dirname, join } = path;
@@ -45,7 +45,7 @@ async function initializeAssets() {
             mkdirSync(dir, { recursive: true });
         }
     });
-    if (!existsSync(join(__dirname, 'paged-js', 'js', 'mathjax', 'mml-chtml.js'))) {
+    if (!existsSync(join(__dirname, 'paged-js', 'js', 'mathjax', 'mml-chtml-nofont.js'))) {
         copyMathJaxAssets();
     }
     if (!existsSync(XSL_STYLESHEET)) {
@@ -70,16 +70,12 @@ async function initializeAssets() {
 }
 
 function copyMathJaxAssets() {
-    const mathjaxEs5 = join(__dirname, 'node_modules', 'mathjax', 'es5');
     const destDir = join(__dirname, 'paged-js', 'js', 'mathjax');
-    const fontsSrc = join(mathjaxEs5, 'output', 'chtml', 'fonts');
-    const fontsDest = join(destDir, 'output', 'chtml', 'fonts');
-    mkdirSync(join(fontsDest, 'woff-v2'), { recursive: true });
-    writeFileSync(join(destDir, 'mml-chtml.js'), readFileSync(join(mathjaxEs5, 'mml-chtml.js')));
-    writeFileSync(join(fontsDest, 'tex.js'), readFileSync(join(fontsSrc, 'tex.js')));
-    fs.readdirSync(join(fontsSrc, 'woff-v2')).forEach(file => {
-        writeFileSync(join(fontsDest, 'woff-v2', file), readFileSync(join(fontsSrc, 'woff-v2', file)));
-    });
+    mkdirSync(destDir, { recursive: true });
+    writeFileSync(
+        join(destDir, 'mml-chtml-nofont.js'),
+        readFileSync(join(__dirname, 'node_modules', 'mathjax', 'mml-chtml-nofont.js'))
+    );
 }
 
 export async function compileXsl() {
@@ -201,7 +197,7 @@ app.post('/', async (req, res) => {
     try {
         tempXML = fileSync({ prefix: 'input-', postfix: '.xml', keep: false }).name;
         const pagedJsPath = join(__dirname, 'paged-js');
-        const jobId = Math.random().toString(36).substring(2, 8); 
+        const jobId = Math.random().toString(36).substring(2, 8);
         tempHTML = join(pagedJsPath, `output-${jobId}.html`);
         tempHTMLMeasured = join(pagedJsPath, `output-${jobId}-measured.html`);
         tempPDF = fileSync({ prefix: 'final-', postfix: '.pdf', keep: true }).name;
@@ -211,7 +207,7 @@ app.post('/', async (req, res) => {
         writeFileSync(tempHTML, htmlContent);
         console.log(`HTML written to ${tempHTML}`);
 
-        await measureTablesWithPuppeteer(tempHTML, tempHTMLMeasured);
+        await preprocess(tempHTML, tempHTMLMeasured);
 
         console.log("Starting PDF generation...");
         await generatePDF(tempHTMLMeasured, tempPDF);
