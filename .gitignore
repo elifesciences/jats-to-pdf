@@ -11,3 +11,4 @@ final-document.pdf
 /paged-js/*.html
 __tests__/test-cases/*.actual.html
 __tests__/test-cases/*.actual.pdf.html
+CLAUDE.md
