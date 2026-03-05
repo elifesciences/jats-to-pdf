@@ -296,6 +296,7 @@ export async function preprocess(inputPath, outputPath) {
                     // STEP 4: Attempt scale down if table exceeds max available width
                     let totalWidth = columnWidths.reduce((sum, w) => sum + w, 0);
                     let fontSizeScale = 1;
+                    let effectivePaddingH = cellPaddingH;
 
                     if (totalWidth > maxAvailableWidth) {
                         const scaleFactor = maxAvailableWidth / totalWidth;
@@ -308,14 +309,29 @@ export async function preprocess(inputPath, outputPath) {
 
                         totalWidth = columnWidths.reduce((sum, w) => sum + w, 0);
 
-                        // If still too wide after enforcing minimums, reduce font size and scale columns
+                        // If still too wide after enforcing minimums, halve the padding to reclaim space
                         if (totalWidth > maxAvailableWidth) {
-                            fontSizeScale = maxAvailableWidth / totalWidth;
+                            effectivePaddingH = cellPaddingH / 2;
                             for (let i = 0; i < columnWidths.length; i++) {
-                                columnWidths[i] = columnWidths[i] * fontSizeScale;
+                                const content = columnWidths[i] - cellPaddingH * 2;
+                                columnWidths[i] = content + effectivePaddingH * 2;
                             }
-                            totalWidth = maxAvailableWidth;
-                            scaledTables.push({ id: tableId, fontSizeScale: Math.round(fontSizeScale * 100) });
+                            totalWidth = columnWidths.reduce((sum, w) => sum + w, 0);
+
+                            // If still too wide, reduce font size. Padding does not scale with font
+                            // size so scale only the content portion of each column width.
+                            if (totalWidth > maxAvailableWidth) {
+                                const totalPadding = columnWidths.length * effectivePaddingH * 2;
+                                const totalContent = totalWidth - totalPadding;
+                                const maxContent = maxAvailableWidth - totalPadding;
+                                fontSizeScale = maxContent / totalContent;
+                                for (let i = 0; i < columnWidths.length; i++) {
+                                    const content = columnWidths[i] - effectivePaddingH * 2;
+                                    columnWidths[i] = content * fontSizeScale + effectivePaddingH * 2;
+                                }
+                                totalWidth = maxAvailableWidth;
+                                scaledTables.push({ id: tableId, fontSizeScale: Math.round(fontSizeScale * 100) });
+                            }
                         }
                     }
 
@@ -336,7 +352,7 @@ export async function preprocess(inputPath, outputPath) {
                         const img = cell.querySelector('img');
                         if (img && colspan === 1) {
                             const aspectRatio = img.naturalWidth / img.naturalHeight;
-                            const colWidth = columnWidths[colIndex] - cellPaddingH * 2;
+                            const colWidth = columnWidths[colIndex] - effectivePaddingH * 2;
                             const widthByMaxHeight = aspectRatio * maxImageHeight;
                             const finalWidth = Math.min(colWidth, widthByMaxHeight);
                             const finalHeight = finalWidth / aspectRatio;
@@ -381,7 +397,7 @@ table[data-id="${tableId}"] th {
   white-space: normal !important;
   word-wrap: break-word !important;
   overflow-wrap: break-word !important;
-  padding: 1px ${cellPaddingH}px !important;
+  padding: 1px ${effectivePaddingH}px !important;
 }
 
 .table-wrap:has(#${tableId}) .table-wrap-foot,
