@@ -1,3 +1,6 @@
+/**
+ * @jest-environment node
+ */
 import { TEST_CASE_DIR, TEST_CASES, createToMatchHtml, updateImagePaths } from './test-config.js';
 import { preprocess } from '../preprocess.js';
 import fs from 'fs';
