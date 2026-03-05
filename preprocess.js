@@ -32,33 +32,30 @@ function hasTables(html) {
  * accounted for in any tables containing inline maths.
  * @param {string} inputPath
  * @param {string} outputPath
- * @returns {Promise<void>}
+ * @returns {Promise<{ warnings: string[] }>}
  */
 export async function preprocess(inputPath, outputPath) {
     const htmlContent = await fs.readFile(inputPath, 'utf-8');
     const mathsPresent = hasMaths(htmlContent);
     const tablesPresent = hasTables(htmlContent);
 
-    if (!mathsPresent && !tablesPresent) {
-        console.log('No maths or tables found, skipping preprocessing...');
-        await fs.writeFile(outputPath, htmlContent);
-        return;
-    }
-
-    if (mathsPresent && tablesPresent) {
-        console.log('Starting maths rendering and table measurement...');
-    } else if (mathsPresent) {
-        console.log('Starting maths rendering...');
-    } else {
-        console.log('Starting Puppeteer table measurement...');
-    }
+    const tasks = [mathsPresent && 'maths rendering', tablesPresent && 'table measurement'].filter(Boolean);
+    const taskDescription = tasks.length > 0 ? `: ${tasks.join(' and ')}` : '';
+    console.log(`Starting preprocessing${taskDescription}...`);
 
     const browser = await puppeteer.launch({ headless: 'new' })
+    const warnings = [];
 
     try {
         const page = await browser.newPage();
         page.on('pageerror', err => console.error('BROWSER ERROR:', err.message));
-        page.on('response', res => { if (res.status() === 404) console.error('404:', res.url()); });
+        page.on('response', res => {
+            if (res.status() === 404) {
+                const url = res.url();
+                console.error('404:', url);
+                warnings.push(`404: ${url}`);
+            }
+        });
         await page.setViewport({ width: 816, height: 1056 });
 
         await page.goto(`file://${path.resolve(inputPath)}`, { waitUntil: 'load' });
@@ -410,4 +407,6 @@ table[data-id="${tableId}"] th {
     } finally {
         await browser.close();
     }
+
+    return { warnings };
 }
