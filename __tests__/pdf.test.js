@@ -1,15 +1,8 @@
-import { TIMEOUT, PROJECT_ROOT, TEST_CASE_DIR, TEST_CASES, extractPageTextBlocks } from './test-config.js';
+import { TIMEOUT, PROJECT_ROOT, TEST_CASE_DIR, TEST_CASES, extractPageTextBlocks, updateImagePaths } from './test-config.js';
 import { generatePDF } from '../server.js';
 import fs from 'fs';
 import path from 'path';
 
-// Replace 'real' images in test case HTML with placeholder
-function updateImagePaths(htmlString) {
-  const placeholderPath = './assets/placeholder-for-testing.png';
-  const regex = /(<img[^>]*?src=["'])(.*?)(["'][^>]*?>)/gi;
-  const replacement = `$1${placeholderPath}$3`;
-  return htmlString.replace(regex, replacement);
-};
 
 expect.extend({
   toMatchPageContent(received, expected) {
@@ -31,10 +24,10 @@ describe('PDF generation tests (pagedjs HTML output)', () => {
   test.each(TEST_CASES)(
     'generated PDF-ready HTML for $id (exhibiting $description) should match expected PDF-ready HTML',
     async ({ id }) => {
-      const inputFilePath = path.join(TEST_CASE_DIR, `${id}.expected.html`);
+      const inputFilePath = path.join(TEST_CASE_DIR, `${id}.expected.preprocessed.html`);
       const expectedHtmlFile = path.join(TEST_CASE_DIR, `${id}.expected.pdf.html`);
 
-      if (!fs.existsSync(inputFilePath)) throw new Error(`Missing input HTML file: ${inputFilePath}`);
+      if (!fs.existsSync(inputFilePath)) throw new Error(`Missing preprocessed HTML file: ${inputFilePath}`);
       if (!fs.existsSync(expectedHtmlFile)) throw new Error(`Missing expected HTML file: ${expectedHtmlFile}`);
 
       // For pagedjs to load the styles, this needs to be copied into the root/paged-js folder(!)

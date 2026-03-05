@@ -14,6 +14,13 @@ export const TEST_CASES = [
     { id: '002', description: 'some processing-instruction examples' }
 ];
 
+// Replace 'real' images in test case HTML with placeholder to avoid hitting prod servers
+export function updateImagePaths(htmlString) {
+    const placeholderPath = './assets/placeholder-for-testing.png';
+    const regex = /(<img[^>]*?src=["'])(.*?)(["'][^>]*?>)/gi;
+    return htmlString.replace(regex, `$1${placeholderPath}$3`);
+}
+
 export function createToMatchHtml(normalizedHtml) {
     return {
         toMatchHtml(received, expected) {
