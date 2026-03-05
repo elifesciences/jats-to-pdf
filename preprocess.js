@@ -142,7 +142,8 @@ export async function preprocess(inputPath, outputPath) {
                 );
             });
 
-            const fragmentCSS = await page.evaluate(() => {
+            const fragmentCSS = await page.evaluate((maxAvailableWidth, standardWidth,
+  maxImageHeight, maxColumnWidth) => {
                 const tables = document.querySelectorAll('table:not(#funding-table)');
                 let css = '';
 
