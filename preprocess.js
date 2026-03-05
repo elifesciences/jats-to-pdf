@@ -14,6 +14,7 @@ const standardWidth = maxAvailableWidth - designOffset; // 536px
 const equationWidth = standardWidth - 64;
 const maxImageHeight = 80;
 const maxColumnWidth = 500;
+const cellPaddingH = 5; // horizontal padding per side added to each table cell
 
 function hasMaths(html) {
     return /<math[\s>]/i.test(html);
@@ -143,7 +144,7 @@ export async function preprocess(inputPath, outputPath) {
             });
 
             const fragmentCSS = await page.evaluate((maxAvailableWidth, standardWidth,
-  maxImageHeight, maxColumnWidth) => {
+  maxImageHeight, maxColumnWidth, cellPaddingH) => {
                 const tables = document.querySelectorAll('table:not(#funding-table)');
                 let css = '';
 
@@ -242,6 +243,11 @@ export async function preprocess(inputPath, outputPath) {
                         columnWidths[i] = Math.min(columnWidths[i], maxColumnWidth);
                     }
 
+                    // Reserve space for horizontal cell padding (measured widths are content-only)
+                    for (let i = 0; i < columnWidths.length; i++) {
+                        columnWidths[i] += cellPaddingH * 2;
+                    }
+
                     // STEP 3.5: Measure minimum content widths (longest word per column)
                     const minColumnWidths = new Array(maxCols).fill(0);
 
@@ -267,6 +273,11 @@ export async function preprocess(inputPath, outputPath) {
                     // Enforce max on minimums too
                     for (let i = 0; i < minColumnWidths.length; i++) {
                         minColumnWidths[i] = Math.min(minColumnWidths[i], maxColumnWidth);
+                    }
+
+                    // Reserve space for horizontal cell padding
+                    for (let i = 0; i < minColumnWidths.length; i++) {
+                        minColumnWidths[i] += cellPaddingH * 2;
                     }
 
                     // Reset cells
@@ -318,7 +329,7 @@ export async function preprocess(inputPath, outputPath) {
                         const img = cell.querySelector('img');
                         if (img && colspan === 1) {
                             const aspectRatio = img.naturalWidth / img.naturalHeight;
-                            const colWidth = columnWidths[colIndex];
+                            const colWidth = columnWidths[colIndex] - cellPaddingH * 2;
                             const widthByMaxHeight = aspectRatio * maxImageHeight;
                             const finalWidth = Math.min(colWidth, widthByMaxHeight);
                             const finalHeight = finalWidth / aspectRatio;
@@ -363,6 +374,7 @@ table[data-id="${tableId}"] th {
   white-space: normal !important;
   word-wrap: break-word !important;
   overflow-wrap: break-word !important;
+  padding: 1px ${cellPaddingH}px !important;
 }
 
 .table-wrap:has(#${tableId}) .table-wrap-foot,
@@ -383,7 +395,7 @@ table[data-id="${tableId}"] th {
                 });
 
                 return css;
-            });
+            }, maxAvailableWidth, standardWidth, maxImageHeight, maxColumnWidth, cellPaddingH);
 
             await page.evaluate((css) => {
                 const style = document.createElement('style');
