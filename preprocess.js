@@ -42,6 +42,7 @@ export async function preprocess(inputPath, outputPath) {
     const tasks = [mathsPresent && 'maths rendering', tablesPresent && 'table measurement'].filter(Boolean);
     const taskDescription = tasks.length > 0 ? `: ${tasks.join(' and ')}` : '';
     console.log(`Starting preprocessing${taskDescription}...`);
+    const startTime = Date.now();
 
     const browser = await puppeteer.launch({ headless: 'new' })
     const warnings = [];
@@ -49,10 +50,17 @@ export async function preprocess(inputPath, outputPath) {
     try {
         const page = await browser.newPage();
         page.on('pageerror', err => console.error('BROWSER ERROR:', err.message));
+        page.on('console', msg => {
+            if (msg.type() === 'error' || msg.type() === 'warning') {
+                const text = msg.text();
+                if (text.includes('404')) return; // captured in response listener
+                const warning = `Browser ${msg.type()}: ${text}`;
+                warnings.push(warning);
+            }
+        });
         page.on('response', res => {
             if (res.status() === 404) {
                 const url = res.url();
-                console.error('404:', url);
                 warnings.push(`404: ${url}`);
             }
         });
@@ -140,10 +148,11 @@ export async function preprocess(inputPath, outputPath) {
             });
             
             const cellPaddingH = 5; // horizontal table cell padding
-            const fragmentCSS = await page.evaluate((maxAvailableWidth, standardWidth,
+            const { css: fragmentCSS, scaledTables } = await page.evaluate((maxAvailableWidth, standardWidth,
   maxImageHeight, maxColumnWidth, cellPaddingH) => {
                 const tables = document.querySelectorAll('table:not(#funding-table)');
                 let css = '';
+                const scaledTables = [];
 
                 tables.forEach(table => {
                     if (!table.id) {
@@ -306,6 +315,7 @@ export async function preprocess(inputPath, outputPath) {
                                 columnWidths[i] = columnWidths[i] * fontSizeScale;
                             }
                             totalWidth = maxAvailableWidth;
+                            scaledTables.push({ id: tableId, fontSizeScale: Math.round(fontSizeScale * 100) });
                         }
                     }
 
@@ -391,8 +401,13 @@ table[data-id="${tableId}"] th {
 `;
                 });
 
-                return css;
+                return { css, scaledTables };
             }, maxAvailableWidth, standardWidth, maxImageHeight, maxColumnWidth, cellPaddingH);
+
+            scaledTables.forEach(({ id, fontSizeScale }) => {
+                const msg = `Font size reduced to ${fontSizeScale}% for table #${id}`;
+                warnings.push(msg);
+            });
 
             await page.evaluate((css) => {
                 const style = document.createElement('style');
@@ -408,5 +423,6 @@ table[data-id="${tableId}"] th {
         await browser.close();
     }
 
+    console.log(`Preprocessing completed in ${Date.now() - startTime}ms.`);
     return { warnings };
 }
