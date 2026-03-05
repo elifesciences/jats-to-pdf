@@ -38,23 +38,6 @@
             <xsl:if test="descendant::processing-instruction()">
                 <xsl:call-template name="inject-styling"/>
             </xsl:if>
-            <script>
-                <xsl:text disable-output-escaping="yes">
-                    window.MathJax = {
-                        options: {
-                            enableEnrichment: false,
-                            enableExplorer: false,
-                            enableAssistiveMml: false
-                        },
-                        chtml: {
-                          scale: 0.9,
-                          matchFontHeight: false,
-                          minScale: 0.5
-                        }
-                      };
-                </xsl:text>
-            </script>
-            <script id="MathJax-script" src="js/mathjax/mml-chtml.js"></script>
         </head>
     </xsl:variable>
     
