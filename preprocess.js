@@ -6,6 +6,15 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+const physicalPageWidth = 816;
+const pageMargins = 100;
+const maxAvailableWidth = physicalPageWidth - pageMargins; // 716px
+const designOffset = 180;
+const standardWidth = maxAvailableWidth - designOffset; // 536px
+const equationWidth = standardWidth - 64;
+const maxImageHeight = 80;
+const maxColumnWidth = 500;
+
 function hasMaths(html) {
     return /<math[\s>]/i.test(html);
 }
@@ -96,7 +105,11 @@ export async function preprocess(inputPath, outputPath) {
                 output: {
                     scale: 0.9,
                     minScale: 0.5,
-                    displayOverflow: 'overflow'
+                    displayOverflow: 'linebreak',
+                    linebreaks: {
+                        inline: true,
+                        width: "${equationWidth}px",
+                    }
                 }
             };`);
 
@@ -130,14 +143,6 @@ export async function preprocess(inputPath, outputPath) {
             });
 
             const fragmentCSS = await page.evaluate(() => {
-                const physicalPageWidth = 816;
-                const pageMargins = 100;
-                const maxAvailableWidth = physicalPageWidth - pageMargins; // 716px
-                const designOffset = 180;
-                const standardWidth = maxAvailableWidth - designOffset; // 536px
-                const maxImageHeight = 80;
-                const maxColumnWidth = 500;
-
                 const tables = document.querySelectorAll('table:not(#funding-table)');
                 let css = '';
 
