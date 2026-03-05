@@ -14,7 +14,6 @@ const standardWidth = maxAvailableWidth - designOffset; // 536px
 const equationWidth = standardWidth - 64;
 const maxImageHeight = 80;
 const maxColumnWidth = 500;
-const cellPaddingH = 5; // horizontal padding per side added to each table cell
 
 function hasMaths(html) {
     return /<math[\s>]/i.test(html);
@@ -142,7 +141,8 @@ export async function preprocess(inputPath, outputPath) {
                         }))
                 );
             });
-
+            
+            const cellPaddingH = 5; // horizontal table cell padding
             const fragmentCSS = await page.evaluate((maxAvailableWidth, standardWidth,
   maxImageHeight, maxColumnWidth, cellPaddingH) => {
                 const tables = document.querySelectorAll('table:not(#funding-table)');
