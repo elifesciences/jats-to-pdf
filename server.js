@@ -208,7 +208,7 @@ app.post('/', async (req, res) => {
         writeFileSync(tempHTML, htmlContent);
         console.log(`HTML written to ${tempHTML}`);
 
-        const { warnings } = await preprocess(tempHTML, tempHTMLMeasured);
+        const { warnings, info } = await preprocess(tempHTML, tempHTMLMeasured);
 
         console.log("Starting PDF generation...");
         await generatePDF(tempHTMLMeasured, tempPDF);
@@ -218,6 +218,9 @@ app.post('/', async (req, res) => {
         res.setHeader('Content-Disposition', 'attachment; filename=document.pdf');
         if (warnings.length > 0) {
             res.setHeader('X-Warnings', warnings.join('; '));
+        }
+        if (info.length > 0) {
+            res.setHeader('X-Info', info.join('; '));
         }
         
         const pdfStream = createReadStream(tempPDF);

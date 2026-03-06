@@ -32,7 +32,7 @@ function hasTables(html) {
  * accounted for in any tables containing inline maths.
  * @param {string} inputPath
  * @param {string} outputPath
- * @returns {Promise<{ warnings: string[] }>}
+ * @returns {Promise<{ warnings: string[], info: string[] }>}
  */
 export async function preprocess(inputPath, outputPath) {
     const htmlContent = await fs.readFile(inputPath, 'utf-8');
@@ -46,6 +46,7 @@ export async function preprocess(inputPath, outputPath) {
 
     const browser = await puppeteer.launch({ headless: 'new' })
     const warnings = [];
+    const info = [];
 
     try {
         const page = await browser.newPage();
@@ -421,8 +422,7 @@ table[data-id="${tableId}"] th {
             }, maxAvailableWidth, standardWidth, maxImageHeight, maxColumnWidth, cellPaddingH);
 
             scaledTables.forEach(({ id, fontSizeScale }) => {
-                const msg = `Font size reduced to ${fontSizeScale}% for table #${id}`;
-                warnings.push(msg);
+                info.push(`Font size reduced to ${fontSizeScale}% for table #${id}`);
             });
 
             await page.evaluate((css) => {
@@ -440,5 +440,5 @@ table[data-id="${tableId}"] th {
     }
 
     console.log(`Preprocessing completed in ${Date.now() - startTime}ms.`);
-    return { warnings };
+    return { warnings, info };
 }
