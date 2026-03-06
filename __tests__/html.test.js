@@ -21,7 +21,7 @@ describe('HTML generation tests', () => {
     await compileXsl();
     const sefContent = fs.readFileSync(COMPILED_SEF, 'utf8');
     COMPILED_STYLESHEET = JSON.parse(sefContent);
-  });
+  }, TIMEOUT);
 
   test.each(TEST_CASES)(
     'generated HTML for $id (exhibiting $description) should match expected HTML',
