@@ -32,33 +32,39 @@ function hasTables(html) {
  * accounted for in any tables containing inline maths.
  * @param {string} inputPath
  * @param {string} outputPath
- * @returns {Promise<void>}
+ * @returns {Promise<{ warnings: string[], info: string[] }>}
  */
 export async function preprocess(inputPath, outputPath) {
     const htmlContent = await fs.readFile(inputPath, 'utf-8');
     const mathsPresent = hasMaths(htmlContent);
     const tablesPresent = hasTables(htmlContent);
 
-    if (!mathsPresent && !tablesPresent) {
-        console.log('No maths or tables found, skipping preprocessing...');
-        await fs.writeFile(outputPath, htmlContent);
-        return;
-    }
-
-    if (mathsPresent && tablesPresent) {
-        console.log('Starting maths rendering and table measurement...');
-    } else if (mathsPresent) {
-        console.log('Starting maths rendering...');
-    } else {
-        console.log('Starting Puppeteer table measurement...');
-    }
+    const tasks = [mathsPresent && 'maths rendering', tablesPresent && 'table measurement'].filter(Boolean);
+    const taskDescription = tasks.length > 0 ? `: ${tasks.join(' and ')}` : '';
+    console.log(`Starting preprocessing${taskDescription}...`);
+    const startTime = Date.now();
 
     const browser = await puppeteer.launch({ headless: 'new' })
+    const warnings = [];
+    const info = [];
 
     try {
         const page = await browser.newPage();
         page.on('pageerror', err => console.error('BROWSER ERROR:', err.message));
-        page.on('response', res => { if (res.status() === 404) console.error('404:', res.url()); });
+        page.on('console', msg => {
+            if (msg.type() === 'error' || msg.type() === 'warning') {
+                const text = msg.text();
+                if (text.includes('404')) return; // captured in response listener
+                const warning = `Browser ${msg.type()}: ${text}`;
+                warnings.push(warning);
+            }
+        });
+        page.on('response', res => {
+            if (res.status() === 404) {
+                const url = res.url();
+                warnings.push(`404: ${url}`);
+            }
+        });
         await page.setViewport({ width: 816, height: 1056 });
 
         await page.goto(`file://${path.resolve(inputPath)}`, { waitUntil: 'load' });
@@ -143,10 +149,11 @@ export async function preprocess(inputPath, outputPath) {
             });
             
             const cellPaddingH = 5; // horizontal table cell padding
-            const fragmentCSS = await page.evaluate((maxAvailableWidth, standardWidth,
+            const { css: fragmentCSS, scaledTables } = await page.evaluate((maxAvailableWidth, standardWidth,
   maxImageHeight, maxColumnWidth, cellPaddingH) => {
                 const tables = document.querySelectorAll('table:not(#funding-table)');
                 let css = '';
+                const scaledTables = [];
 
                 tables.forEach(table => {
                     if (!table.id) {
@@ -290,6 +297,7 @@ export async function preprocess(inputPath, outputPath) {
                     // STEP 4: Attempt scale down if table exceeds max available width
                     let totalWidth = columnWidths.reduce((sum, w) => sum + w, 0);
                     let fontSizeScale = 1;
+                    let effectivePaddingH = cellPaddingH;
 
                     if (totalWidth > maxAvailableWidth) {
                         const scaleFactor = maxAvailableWidth / totalWidth;
@@ -302,13 +310,29 @@ export async function preprocess(inputPath, outputPath) {
 
                         totalWidth = columnWidths.reduce((sum, w) => sum + w, 0);
 
-                        // If still too wide after enforcing minimums, reduce font size and scale columns
+                        // If still too wide after enforcing minimums, halve the padding to reclaim space
                         if (totalWidth > maxAvailableWidth) {
-                            fontSizeScale = maxAvailableWidth / totalWidth;
+                            effectivePaddingH = cellPaddingH / 2;
                             for (let i = 0; i < columnWidths.length; i++) {
-                                columnWidths[i] = columnWidths[i] * fontSizeScale;
+                                const content = columnWidths[i] - cellPaddingH * 2;
+                                columnWidths[i] = content + effectivePaddingH * 2;
                             }
-                            totalWidth = maxAvailableWidth;
+                            totalWidth = columnWidths.reduce((sum, w) => sum + w, 0);
+
+                            // If still too wide, reduce font size. Padding does not scale with font
+                            // size so scale only the content portion of each column width.
+                            if (totalWidth > maxAvailableWidth) {
+                                const totalPadding = columnWidths.length * effectivePaddingH * 2;
+                                const totalContent = totalWidth - totalPadding;
+                                const maxContent = maxAvailableWidth - totalPadding;
+                                fontSizeScale = maxContent / totalContent;
+                                for (let i = 0; i < columnWidths.length; i++) {
+                                    const content = columnWidths[i] - effectivePaddingH * 2;
+                                    columnWidths[i] = content * fontSizeScale + effectivePaddingH * 2;
+                                }
+                                totalWidth = maxAvailableWidth;
+                                scaledTables.push({ id: tableId, fontSizeScale: Math.round(fontSizeScale * 100) });
+                            }
                         }
                     }
 
@@ -329,7 +353,7 @@ export async function preprocess(inputPath, outputPath) {
                         const img = cell.querySelector('img');
                         if (img && colspan === 1) {
                             const aspectRatio = img.naturalWidth / img.naturalHeight;
-                            const colWidth = columnWidths[colIndex] - cellPaddingH * 2;
+                            const colWidth = columnWidths[colIndex] - effectivePaddingH * 2;
                             const widthByMaxHeight = aspectRatio * maxImageHeight;
                             const finalWidth = Math.min(colWidth, widthByMaxHeight);
                             const finalHeight = finalWidth / aspectRatio;
@@ -374,7 +398,7 @@ table[data-id="${tableId}"] th {
   white-space: normal !important;
   word-wrap: break-word !important;
   overflow-wrap: break-word !important;
-  padding: 1px ${cellPaddingH}px !important;
+  padding: 1px ${effectivePaddingH}px !important;
 }
 
 .table-wrap:has(#${tableId}) .table-wrap-foot,
@@ -394,8 +418,12 @@ table[data-id="${tableId}"] th {
 `;
                 });
 
-                return css;
+                return { css, scaledTables };
             }, maxAvailableWidth, standardWidth, maxImageHeight, maxColumnWidth, cellPaddingH);
+
+            scaledTables.forEach(({ id, fontSizeScale }) => {
+                info.push(`Font size reduced to ${fontSizeScale}% for table #${id}`);
+            });
 
             await page.evaluate((css) => {
                 const style = document.createElement('style');
@@ -410,4 +438,7 @@ table[data-id="${tableId}"] th {
     } finally {
         await browser.close();
     }
+
+    console.log(`Preprocessing completed in ${Date.now() - startTime}ms.`);
+    return { warnings, info };
 }

@@ -156,8 +156,9 @@ export async function generatePDF(htmlPath, outputPath, htmlOnly = false) {
                 return reject(new Error(`PDF Generation Failed: ${error.message}`));
             }
             if (process.env.NODE_ENV !== 'test') {
-                if (stderr.trim()) {
-                    console.warn(`Paged.js CLI warnings:\n${stderr}`);
+                const renderingSummary = stderr.split('\n').find(line => line.includes('Rendering') && line.includes('pages took'));
+                if (renderingSummary) {
+                    console.log(renderingSummary.trim());
                 }
             }
             resolve();
@@ -207,7 +208,7 @@ app.post('/', async (req, res) => {
         writeFileSync(tempHTML, htmlContent);
         console.log(`HTML written to ${tempHTML}`);
 
-        await preprocess(tempHTML, tempHTMLMeasured);
+        const { warnings, info } = await preprocess(tempHTML, tempHTMLMeasured);
 
         console.log("Starting PDF generation...");
         await generatePDF(tempHTMLMeasured, tempPDF);
@@ -215,6 +216,12 @@ app.post('/', async (req, res) => {
 
         res.setHeader('Content-Type', 'application/pdf');
         res.setHeader('Content-Disposition', 'attachment; filename=document.pdf');
+        if (warnings.length > 0) {
+            res.setHeader('X-Warnings', warnings.join('; '));
+        }
+        if (info.length > 0) {
+            res.setHeader('X-Info', info.join('; '));
+        }
         
         const pdfStream = createReadStream(tempPDF);
         pdfStream.pipe(res);

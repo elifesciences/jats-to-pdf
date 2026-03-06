@@ -124,6 +124,66 @@
             background: #f8d7da;
             color: #721c24;
         }
+        .warnings {
+            margin-top: 20px;
+            padding: 12px 15px;
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            border-radius: 8px;
+            display: none;
+        }
+        .warnings.show {
+            display: block;
+        }
+        .warnings-title {
+            font-weight: 600;
+            color: #856404;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        .warnings ul {
+            margin: 0;
+            padding-left: 20px;
+            color: #856404;
+            font-size: 13px;
+        }
+        .warnings ul li {
+            margin-bottom: 4px;
+            overflow-wrap: break-word;
+        }
+        .warnings ul li:last-child {
+            margin-bottom: 0;
+        }
+        .info {
+            margin-top: 20px;
+            padding: 12px 15px;
+            background: #d1ecf1;
+            border-left: 4px solid #17a2b8;
+            border-radius: 8px;
+            display: none;
+        }
+        .info.show {
+            display: block;
+        }
+        .info-title {
+            font-weight: 600;
+            color: #0c5460;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        .info ul {
+            margin: 0;
+            padding-left: 20px;
+            color: #0c5460;
+            font-size: 13px;
+        }
+        .info ul li {
+            margin-bottom: 4px;
+            overflow-wrap: break-word;
+        }
+        .info ul li:last-child {
+            margin-bottom: 0;
+        }
         .spinner {
             border: 3px solid #f3f3f3;
             border-top: 3px solid #667eea;
@@ -160,6 +220,14 @@
         </div>
         
         <div class="status" id="status"></div>
+        <div class="warnings" id="warnings">
+            <div class="warnings-title">⚠ Warnings</div>
+            <ul id="warningsList"></ul>
+        </div>
+        <div class="info" id="info">
+            <div class="info-title">ℹ Info</div>
+            <ul id="infoList"></ul>
+        </div>
     </div>
 
     <script>
@@ -169,7 +237,11 @@
         const fileName = document.getElementById('fileName');
         const fileSize = document.getElementById('fileSize');
         const status = document.getElementById('status');
-        
+        const warnings = document.getElementById('warnings');
+        const warningsList = document.getElementById('warningsList');
+        const info = document.getElementById('info');
+        const infoList = document.getElementById('infoList');
+
         let selectedFile = null;
 
         // Click to upload
@@ -216,6 +288,8 @@
             fileSize.textContent = formatFileSize(file.size);
             fileInfo.classList.add('show');
             hideStatus();
+            hideWarnings();
+            hideInfo();
             
             // Automatically start conversion
             convertToPDF();
@@ -248,6 +322,22 @@
                     throw new Error(errorData.error || `Server error: ${response.status}`);
                 }
 
+                // Show any warnings from the server
+                const warningHeader = response.headers.get('X-Warnings');
+                if (warningHeader) {
+                    showWarnings(warningHeader.split('; '));
+                } else {
+                    hideWarnings();
+                }
+
+                // Show any info messages from the server
+                const infoHeader = response.headers.get('X-Info');
+                if (infoHeader) {
+                    showInfo(infoHeader.split('; '));
+                } else {
+                    hideInfo();
+                }
+
                 // Get the PDF blob
                 const blob = await response.blob();
                 const url = window.URL.createObjectURL(blob);
@@ -273,6 +363,24 @@
                 console.error('Conversion error:', error);
                 showStatus('✗ Conversion failed: ' + error.message, 'error');
             }
+        }
+
+        function showWarnings(items) {
+            warningsList.innerHTML = items.map(w => `<li>${w}</li>`).join('');
+            warnings.classList.add('show');
+        }
+
+        function hideWarnings() {
+            warnings.classList.remove('show');
+        }
+
+        function showInfo(items) {
+            infoList.innerHTML = items.map(i => `<li>${i}</li>`).join('');
+            info.classList.add('show');
+        }
+
+        function hideInfo() {
+            info.classList.remove('show');
         }
 
         function showStatus(message, type) {
