@@ -279,7 +279,7 @@ async function startServer() {
             });
 
             process.on('SIGTERM', () => {
-                console.log('SIGTERM received, shutting down gracefully');
+                console.log('SIGTERM received, shutting down');
                 server.close(() => {
                     console.log('Server closed');
                     process.exit(0);
