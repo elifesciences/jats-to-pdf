@@ -180,7 +180,7 @@ export async function checkPdfTruncation(pdfPath) {
                 return resolve([]);
             }
             const warnings = [];
-            if (!stdout.includes('Peer reviews')) {
+            if (!/^\s*Peer reviews\s*$/m.test(stdout)) {
                 warnings.push('PDF may be truncated: "Peer reviews" section not found');
             }
             // Add more checks here?
