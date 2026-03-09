@@ -166,6 +166,29 @@ export async function generatePDF(htmlPath, outputPath, htmlOnly = false) {
     });
 }
 
+/**
+ * Checks a generated PDF for the "Peer reviews" section heading using pdftotext.
+ * Returns an array of warning strings for any issues found, or an empty array.
+ * @param {string} pdfPath
+ * @returns {Promise<string[]>}
+ */
+export async function checkPdfTruncation(pdfPath) {
+    return new Promise((resolve) => {
+        exec(`pdftotext "${pdfPath}" -`, (error, stdout) => {
+            if (error) {
+                console.warn(`pdftotext truncation check failed: ${error.message}`);
+                return resolve([]);
+            }
+            const warnings = [];
+            if (!/^\s*Peer reviews\s*$/m.test(stdout)) {
+                warnings.push('PDF may be truncated: "Peer reviews" section not found');
+            }
+            // Add more checks here?
+            resolve(warnings);
+        });
+    });
+}
+
 function cleanupFiles(filesToClean) {
      filesToClean.filter(f => f && existsSync(f));
      filesToClean.forEach(f => {
@@ -214,6 +237,9 @@ app.post('/', async (req, res) => {
         await generatePDF(tempHTMLMeasured, tempPDF);
         console.log(`PDF successfully generated to ${tempPDF}`);
 
+        const truncationWarnings = await checkPdfTruncation(tempPDF);
+        warnings.push(...truncationWarnings);
+
         res.setHeader('Content-Type', 'application/pdf');
         res.setHeader('Content-Disposition', 'attachment; filename=document.pdf');
         if (warnings.length > 0) {
@@ -253,7 +279,7 @@ async function startServer() {
             });
 
             process.on('SIGTERM', () => {
-                console.log('SIGTERM received, shutting down gracefully');
+                console.log('SIGTERM received, shutting down');
                 server.close(() => {
                     console.log('Server closed');
                     process.exit(0);
