@@ -31,6 +31,8 @@ body {
 
 #article-content li p {
   font-size: 1em;
+  orphans: 1;
+  widows: 1;
 }
 
 #article-content p,
