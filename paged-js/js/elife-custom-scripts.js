@@ -961,57 +961,6 @@ class avoidBreakAfter extends Paged.Handler {
 }
 Paged.registerHandlers(avoidBreakAfter);
 
-/* avoidBreakInsideListItem
-   Uses finalizePage + page.endToken (same mechanism as avoidBreakAfter).
-   Detects split li elements by comparing fragment text against source text,
-   then moves the break point to before the li. */
-class avoidBreakInsideListItem extends Paged.Handler {
-  constructor(chunker, polisher, caller) {
-    super(chunker, polisher, caller);
-  }
-
-  finalizePage(pageFragment, page) {
-    if (!page.endToken) return;
-
-    // Find all li elements rendered on this page
-    const fragmentLis = Array.from(pageFragment.querySelectorAll("li"));
-    if (fragmentLis.length === 0) return;
-
-    // Check from the last li backwards — the split one will be last
-    for (let i = fragmentLis.length - 1; i >= 0; i--) {
-      const fragmentLi = fragmentLis[i];
-      if (!fragmentLi.dataset.ref) continue;
-
-      const sourceLi = this.chunker.source.querySelector(
-        `[data-ref="${fragmentLi.dataset.ref}"]`
-      );
-      if (!sourceLi) continue;
-
-      const fragText = fragmentLi.textContent.trim().replace(/\s+/g, " ");
-      const srcText = sourceLi.textContent.trim().replace(/\s+/g, " ");
-
-      // If fragment has less text than source, this li was split across pages
-      if (fragText === srcText) break; // lis before this one are complete — stop
-
-      // Guard against infinite loops: only move if there is content before this li
-      const pageContent = pageFragment.querySelector(".pagedjs_page_content");
-      if (!pageContent) continue;
-      let hasPrecedingContent = false;
-      let el = fragmentLi;
-      while (el && el !== pageContent) {
-        if (el.previousElementSibling) { hasPrecedingContent = true; break; }
-        el = el.parentElement;
-      }
-      if (!hasPrecedingContent) break;
-
-      page.endToken.node = sourceLi;
-      page.endToken.offset = 0;
-      return;
-    }
-  }
-}
-Paged.registerHandlers(avoidBreakInsideListItem);
-
 function tagImgInFigures(content) {
   const figures = content.querySelectorAll("figure");
   figures.forEach((figure) => {
