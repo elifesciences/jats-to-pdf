@@ -163,7 +163,6 @@
     <xsl:template match="article">
         <article>
             <xsl:call-template name="aside"/>
-            <xsl:call-template name="header"/>
             <xsl:call-template name="main"/>
         </article>
     </xsl:template>
@@ -630,6 +629,7 @@
     
     <xsl:template name="main">
         <section id="article-content">
+            <xsl:call-template name="header"/>
             <xsl:apply-templates select="./sub-article[@article-type='editor-report']"/>
             <xsl:apply-templates select=".//article-meta/abstract"/>
             <xsl:apply-templates select="body | back | processing-instruction('page-break')[not(preceding::sub-article[@article-type=('referee-report','author-comment')])]"/>
