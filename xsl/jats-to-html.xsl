@@ -526,11 +526,19 @@
                         <xsl:value-of select="given-names"/>
                         <xsl:text> </xsl:text>
                         <xsl:value-of select="surname"/>
+                        <xsl:if test="suffix">
+                            <xsl:text> </xsl:text>
+                            <xsl:value-of select="suffix"/>
+                        </xsl:if>
                     </xsl:otherwise>
                 </xsl:choose>
             </xsl:when>
             <xsl:when test="./given-names or ./surname">
                 <xsl:apply-templates select="given-names/text()|surname/text()"/>
+                <xsl:if test="suffix">
+                    <xsl:text> </xsl:text>
+                    <xsl:value-of select="suffix"/>
+                </xsl:if>
             </xsl:when>
             <xsl:otherwise>
                 <xsl:value-of select="."/>
