@@ -963,7 +963,7 @@
         <xsl:apply-templates select="person-group[@person-group-type='author']"/>
         <xsl:apply-templates select="year"/>
         <xsl:apply-templates select="article-title | chapter-title"/>
-        <xsl:if test="source or edition or volume or fpage or elocation-id">
+        <xsl:if test="conf-name or source or edition or volume or fpage or elocation-id">
             <span class="reference__origin">
                 <xsl:if test="article-title or chapter-title or person-group[@person-group-type='editor']">
                     <xsl:text>In: </xsl:text>
