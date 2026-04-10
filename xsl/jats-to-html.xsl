@@ -963,7 +963,7 @@
         <xsl:apply-templates select="person-group[@person-group-type='author']"/>
         <xsl:apply-templates select="year"/>
         <xsl:apply-templates select="article-title | chapter-title"/>
-        <xsl:if test="source or edition or volume or fpage or elocation-id">
+        <xsl:if test="conf-name or source or edition or volume or fpage or elocation-id">
             <span class="reference__origin">
                 <xsl:if test="article-title or chapter-title or person-group[@person-group-type='editor']">
                     <xsl:text>In: </xsl:text>
@@ -1054,7 +1054,7 @@
     <xsl:template match="ref/mixed-citation[@publication-type=('report','thesis')]">
         <xsl:apply-templates select="person-group[@person-group-type='author']"/>
         <xsl:apply-templates select="year"/>
-        <xsl:apply-templates select="source"/>
+        <xsl:apply-templates select="article-title|source"/>
         <xsl:if test="person-group[@person-group-type='editor'] or publisher-name or fpage or elocation-id">
             <span class="reference__origin">
                 <xsl:apply-templates select="person-group[@person-group-type='editor']"/>
@@ -1150,11 +1150,11 @@
         </span>
     </xsl:template>
     
-    <xsl:template match="ref/mixed-citation[@publication-type=('other')]">
+    <xsl:template match="ref/mixed-citation[@publication-type=('other','patent')]">
         <xsl:apply-templates select="person-group[@person-group-type='author']"/>
         <xsl:apply-templates select="year"/>
         <xsl:apply-templates select="article-title | data-title | chapter-title"/>
-        <xsl:if test="source or person-group[@person-group-type='editor'] or publisher-name or fpage or elocation-id">
+        <xsl:if test="source or person-group[@person-group-type='editor'] or patent or publisher-name or fpage or elocation-id">
             <span class="reference__origin">
                 <xsl:apply-templates select="person-group[@person-group-type='editor']"/>
                 <xsl:if test="person-group[@person-group-type='editor']">
@@ -1169,6 +1169,14 @@
                 </xsl:if>
                 <xsl:if test="source">
                     <xsl:value-of select="source"/>
+                    <xsl:text>. </xsl:text>
+                </xsl:if>
+                <xsl:if test="patent">
+                    <xsl:value-of select="patent"/>
+                    <xsl:if test="patent/@country[.!='']">
+                        <xsl:text>. </xsl:text>
+                        <xsl:value-of select="patent/@country"/>
+                    </xsl:if>
                     <xsl:text>. </xsl:text>
                 </xsl:if>
                 <xsl:if test="publisher-loc or publisher-name">

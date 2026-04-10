@@ -10,9 +10,10 @@ export const TEST_DIR = path.resolve(__dirname);
 export const TEST_CASE_DIR = path.join(TEST_DIR, 'test-cases');
 
 export const TEST_CASES = [
-    { id: '001', description: 'a kitchen sink article' },
+    { id: '001', description: 'a representative article' },
     { id: '002', description: 'some processing-instruction examples' },
-    { id: '003', description: 'a large number of author affiliations' }
+    { id: '003', description: 'a large number of author affiliations' },
+    { id: 'kitchen-sink', description: 'a kitchen sink article' }
 ];
 
 // Replace 'real' images in test case HTML with placeholder to avoid hitting prod servers
