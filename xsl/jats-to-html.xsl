@@ -1054,7 +1054,7 @@
     <xsl:template match="ref/mixed-citation[@publication-type=('report','thesis')]">
         <xsl:apply-templates select="person-group[@person-group-type='author']"/>
         <xsl:apply-templates select="year"/>
-        <xsl:apply-templates select="source"/>
+        <xsl:apply-templates select="article-title|source"/>
         <xsl:if test="person-group[@person-group-type='editor'] or publisher-name or fpage or elocation-id">
             <span class="reference__origin">
                 <xsl:apply-templates select="person-group[@person-group-type='editor']"/>
