@@ -5,6 +5,7 @@
   "main": "server.js",
   "type": "module",
   "scripts": {
+    "postinstall": "node -e \"const fs=require('fs'); fs.mkdirSync('paged-js/js/mathjax',{recursive:true}); ['mml-chtml-nofont.js','mml-svg-nofont.js'].forEach(f=>fs.copyFileSync('node_modules/mathjax/'+f,'paged-js/js/mathjax/'+f))\"",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
     "start": "node server.js"
   },

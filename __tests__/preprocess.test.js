@@ -10,7 +10,10 @@ import pretty from 'pretty';
 const PREPROCESS_TIMEOUT = 60000;
 
 function normalizePreprocessedHtml(html) {
-    return pretty(html, { ocd: true }).trim();
+    // Remove style attributes from mjx-container elements — the font-size values
+    // are computed and differ between platforms (e.g. macOS and Linux).
+    const normalized = html.replace(/(<mjx-container\b[^>]*?) style="[^"]*"/g, '$1');
+    return pretty(normalized, { ocd: true }).trim();
 }
 
 expect.extend(
