@@ -116,7 +116,8 @@ img {
 }
 
 /* Inline graphics */
-img.inline {
+img.inline, .figure__caption img.inline {
+  display: inline;
   margin: 0 auto;
 }
 
