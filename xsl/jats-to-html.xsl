@@ -1664,7 +1664,7 @@
             ./@xlink:href,
             '/full/max/0/default.jpg'
             )"/>
-        <img loading="eager" src="{$image-uri}" alt=""/>
+        <img class="inline" loading="eager" src="{$image-uri}" alt=""/>
     </xsl:template>
     
     <xsl:template match="list">
