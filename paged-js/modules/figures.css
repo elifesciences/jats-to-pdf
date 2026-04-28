@@ -115,6 +115,11 @@ img {
   margin-right: auto;
 }
 
+/* Inline graphics */
+img.inline {
+  margin: 0 auto;
+}
+
 p > img {
   margin-top: 17px;
   margin-bottom: 12px;
