@@ -719,7 +719,7 @@
             <xsl:if test="not(./title) and not(@abstract-type)">
                 <h1>Abstract</h1>
             </xsl:if>
-            <xsl:apply-templates select="* | processing-instruction('page-break')"/>
+            <xsl:apply-templates select="*[name()!='label'] | processing-instruction('page-break')"/>
         </section>
     </xsl:template>
     
