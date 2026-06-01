@@ -273,6 +273,12 @@
                                         <xsl:when test="collab">
                                             <xsl:apply-templates select="./collab[1]"/>
                                         </xsl:when>
+                                        <xsl:when test="collab-name">
+                                            <xsl:apply-templates select="./collab-name[1]"/>
+                                        </xsl:when>
+                                        <xsl:when test="collab-wrap[collab-name]">
+                                            <xsl:apply-templates select="./collab-wrap[1]/collab-name[1]"/>
+                                        </xsl:when>
                                         <xsl:otherwise/>
                                     </xsl:choose>
                                     <xsl:if test="xref">
@@ -1254,7 +1260,7 @@
         </li>
     </xsl:template>
     
-    <xsl:template match="person-group/collab | person-group/etal">
+    <xsl:template match="person-group/collab | person-group/collab-name | person-group/etal">
         <li>
             <xsl:attribute name="class">
                 <xsl:value-of select="if (parent::*/@person-group-type='editor') then 'reference__editor' else 'reference__author'"/>
@@ -2093,13 +2099,39 @@
   <xsl:function name="e:get-surname" as="text()">
     <xsl:param name="contrib"/>
     <xsl:choose>
-      <xsl:when test="$contrib/collab">
-        <xsl:value-of select="$contrib/collab[1]/text()[1]"/>
+      <xsl:when test="$contrib/*[name()=('collab','collab-wrap')]">
+        <xsl:value-of select="e:get-collab($contrib/*[name()=('collab','collab-wrap')])"/>
       </xsl:when>
       <xsl:otherwise>
-        <xsl:value-of select="$contrib/descendant::name[1]/surname[1]"/>
+        <xsl:value-of select="$contrib//name[1]/surname[1]"/>
       </xsl:otherwise>
     </xsl:choose>
+  </xsl:function>
+    
+  <xsl:function name="e:get-collab" as="xs:string">
+    <xsl:param name="node"/>
+    <xsl:variable name="result">
+      <xsl:choose>
+        <xsl:when test="$node/self::collab-name">
+          <xsl:value-of select="$node"/>
+        </xsl:when>
+        <xsl:when test="$node/self::collab-wrap">
+          <xsl:value-of select="$node/collab-name"/>
+        </xsl:when>
+        <xsl:when test="$node/self::collab">
+          <xsl:for-each select="$node/(*|text())">
+            <xsl:choose>
+              <xsl:when test="./name()='contrib-group' or normalize-space(.)=''"/>
+              <xsl:otherwise>
+                <xsl:value-of select="."/>
+              </xsl:otherwise>
+            </xsl:choose>
+          </xsl:for-each>
+        </xsl:when>
+        <xsl:otherwise/>
+      </xsl:choose>
+    </xsl:variable>
+    <xsl:value-of select="string($result)"/>
   </xsl:function>
     
 </xsl:stylesheet>
