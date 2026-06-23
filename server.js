@@ -139,7 +139,8 @@ export async function generatePDF(htmlPath, outputPath, htmlOnly = false) {
         const scripts = ADDITIONAL_SCRIPTS.map(s => `--additional-script ${join(__dirname, s)}`).join(' ');
         const styles = `--style ${join(__dirname, MAIN_CSS)}`;
         const htmlFlag = htmlOnly ? '--html' : '';
-        const command = `${cliPath} ${htmlPath} ${scripts} ${styles} -o ${outputPath} ${htmlFlag}`.trim();
+        const browserArgs = '--browserArgs "--disable-dev-shm-usage"';
+        const command = `${cliPath} ${htmlPath} ${scripts} ${styles} -o ${outputPath} ${htmlFlag} ${browserArgs}`.trim();
 
         if (process.env.NODE_ENV !== 'test') {
             console.log(`Running Paged.js CLI: ${command}`);
