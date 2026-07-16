@@ -187,38 +187,29 @@ ol>li {
   text-align: left;
 }
 
-ol.list-roman-lower {
-  list-style-type: lower-roman;
-}
-
-ol.list-roman-upper {
-  list-style-type: upper-roman;
-}
-
-ol.list-alpha-lower {
-  list-style-type: lower-alpha;
-}
-
-ol.list-alpha-upper {
-  list-style-type: upper-alpha;
-}
-
 ul.list-simple > li:has(label) {
   list-style: none;
 }
 
 ul.list-simple > li > label {
   float: left;
-  width: 20px;
+  min-width: 16px;
+  white-space: nowrap;
   text-align: right;
-  margin-left: 28px;
+  margin-left: 8px;
   margin-right: 4px;
-  font-weight: bold;
   color: var(--color-elife-black);
+  font-weight: normal;
+  font-family: inherit;
+  font-size: inherit;
+}
+
+ul.list-simple.list-bullet > li > label {
+  font-size: 1.5em;
 }
 
 ul.list-simple > li > p {
-  margin-left: 58px;
+  margin-left: 28px;
 }
 
 ul.list-simple.orcid-list > li > p,
@@ -228,7 +219,9 @@ ul.list-simple.author-notes-expanded-list > li > p {
 
 ul.list-simple > li > ul,
 ul.list-simple > li > ol {
-  margin-left: 58px;
+  margin-left: 28px;
+  margin-top: 0;
+  margin-bottom: 0;
 }
 
 code, pre {
