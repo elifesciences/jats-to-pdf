@@ -1687,24 +1687,12 @@
                 </xsl:otherwise>
             </xsl:choose>
         </xsl:variable>
-        <xsl:choose>
-            <xsl:when test="$list-class=('list-simple','list-custom','list-bullet')">
-                <ul>
-                    <xsl:attribute name="class">
-                        <xsl:value-of select="$list-class"/>
-                    </xsl:attribute>
-                    <xsl:apply-templates select="@id|*"/>
-                </ul>
-            </xsl:when>
-            <xsl:otherwise>
-                <ol>
-                    <xsl:attribute name="class">
-                        <xsl:value-of select="$list-class"/>
-                    </xsl:attribute>
-                    <xsl:apply-templates select="@id|*"/>
-                </ol>
-            </xsl:otherwise>
-        </xsl:choose>
+        <ul>
+            <xsl:attribute name="class">
+                <xsl:value-of select="if ($list-class='list-simple') then $list-class else concat('list-simple ', $list-class)"/>
+            </xsl:attribute>
+            <xsl:apply-templates select="@id|*"/>
+        </ul>
     </xsl:template>
     
     <xsl:template match="p">
@@ -1717,17 +1705,38 @@
     </xsl:template>
     
     <xsl:template match="list-item">
+        <xsl:variable name="list-type" select="parent::list/@list-type"/>
         <li>
-            <xsl:apply-templates select="@id|*"/>
+            <xsl:apply-templates select="@id"/>
+            <!-- Manually mark/number/letter items instead of relying on native ol/ul markers: paged.js/Chromium
+                 can render a marker box on one page while its li content flows to the next across a page break. -->
+            <xsl:if test="not(label) and $list-type=('order','roman-lower','roman-upper','alpha-lower','alpha-upper','bullet')">
+                <xsl:choose>
+                    <xsl:when test="$list-type='bullet'">
+                        <xsl:variable name="bullet-depth" select="count(ancestor::list[@list-type='bullet'])"/>
+                        <xsl:variable name="bullet-chars" select="('&#x25AA;', '&#x2022;', '&#x25E6;')"/>
+                        <label><xsl:value-of select="$bullet-chars[($bullet-depth mod 3) + 1]"/></label>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:variable name="number-format">
+                            <xsl:choose>
+                                <xsl:when test="$list-type='roman-lower'">i</xsl:when>
+                                <xsl:when test="$list-type='roman-upper'">I</xsl:when>
+                                <xsl:when test="$list-type='alpha-lower'">a</xsl:when>
+                                <xsl:when test="$list-type='alpha-upper'">A</xsl:when>
+                                <xsl:otherwise>1</xsl:otherwise>
+                            </xsl:choose>
+                        </xsl:variable>
+                        <xsl:variable name="offset" select="e:list-item-offset(parent::list)"/>
+                        <label>
+                            <xsl:number value="$offset + count(preceding-sibling::list-item) + 1" format="{$number-format}"/>
+                            <xsl:text>.</xsl:text>
+                        </label>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:if>
+            <xsl:apply-templates select="*"/>
         </li>
-    </xsl:template>
-    
-    <xsl:template match="list-item/p[label]">
-        <p>
-            <xsl:value-of select="label[1]"/>
-            <xsl:text> </xsl:text>
-            <xsl:apply-templates select="node()"/>
-        </p>
     </xsl:template>
     
     <!-- To do: Add proper semantic HTML support: <dl> -->
@@ -2133,5 +2142,19 @@
     </xsl:variable>
     <xsl:value-of select="string($result)"/>
   </xsl:function>
+    
+    <xsl:function name="e:list-item-offset" as="xs:integer">
+        <xsl:param name="current-list" as="element(list)"/>
+        <xsl:variable name="continued-from-id" select="$current-list/@continued-from"/>
+        <xsl:variable name="previous-list" select="if ($continued-from-id) then root($current-list)//list[@id=$continued-from-id][1] else ()"/>
+        <xsl:choose>
+            <xsl:when test="$previous-list">
+                <xsl:sequence select="count($previous-list/list-item) + e:list-item-offset($previous-list)"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:sequence select="0"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:function>
     
 </xsl:stylesheet>
