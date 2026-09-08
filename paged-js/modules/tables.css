@@ -152,7 +152,7 @@ table[data-id="funding-table"] td:nth-last-child(2):first-child {
 
 #funding-table th:nth-child(2),
 #funding-table td:nth-child(2),
-table[data-id="funding-table"] td:nth-child(2)
+table[data-id="funding-table"] td:nth-child(2),
 table[data-id="funding-table"] th:nth-child(2) {
   width: 35%;
   word-break: break-word;
